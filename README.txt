@@ -2,13 +2,14 @@
 Contributors: (this should be a list of wordpress.org userid's)
 Donate link: http://little-dream.fr
 Tags: comments, spam
-Requires at least: 3.0.1
-Tested up to: 3.4
+Requires at least: 4.0
+Tested up to: 4.2.2
 Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+Online Booking allows to create a full environment for short trip booking purpose, aimed at event agencies
+This readme will be updated later on -- we did use the DevinVinson excellent boilerplate : https://github.com/DevinVinson/WordPress-Plugin-Boilerplate
 
 == Description ==
 
