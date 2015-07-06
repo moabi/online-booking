@@ -13,14 +13,19 @@
  */
 
 get_header(); ?>
-<div class="pure-g" id="booking-wrapper">
-	
-	<div id="primary-b" class="booking pure-u-1 pure-u-md-18-24">
-		<div class="padd-l">
 
-	
-		<h2 class="upptitle">Paramètres de votre séjour</h2>	
-		<form class="form-booking">
+<div class="pure-g form-booking" id="booking-wrapper">
+
+
+
+	<div id="primary-b" class="booking pure-u-1 pure-u-md-18-24">
+		
+		<div class="padd-l">
+		
+<! -- SETTINGS -->
+<div id="on-settings">
+<h2 id="settings-title" class="upptitle"><span class="fs1" aria-hidden="true" data-icon=""></span> Paramètres de votre séjour</h2>	
+		
 			<?php $args = array(
 			'show_option_all'    => '',
 			'show_option_none'   => '',
@@ -65,39 +70,64 @@ get_header(); ?>
 			'hide_if_empty'      => false,
 			'value_field'	     => 'term_id',	
 		); ?>
+		
+
 
 <div class="pure-g">
-							<div class="pure-u-1 pure-u-md-1-4">
+	<div class="pure-u-1 pure-u-md-8-24 on-field">
+		<div class="pure-u-1 pure-u-md-12-24">
+		<label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon=""></span>Le lieu</label>
+		</div>
+		<div class="pure-u-1 pure-u-md-12-24">
+		<?php wp_dropdown_categories( $argsLieux ); ?> 
+		</div>
+	</div>
+	
+	<div class="pure-u-1 pure-u-md-8-24 on-field">
+		<div class="pure-u-1 pure-u-md-12-24">							
+			<label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon="g"></span>Le théme</label>
+		</div>
+		<div class="pure-u-1 pure-u-md-12-24">
+			<?php wp_dropdown_categories( $args ); ?> 
+		</div>
+
+	</div>
+							
+	<div class="pure-u-1 pure-u-md-8-24 on-field">
+							<div class="pure-u-1 pure-u-md-2-4 on-field">
 									
 	
 			<label class="floating-label" for="participants"><span class="fs1" aria-hidden="true" data-icon=""></span>Nombre de participants</label>
 			<input type="number" id="participants" value="5" class="bk-form form-control" />
 </div>
+	</div>
 
-	<div class="pure-u-1 pure-u-md-1-4">
+
+<div class="pure-u-1 pure-u-md-8-24 on-field">
+	
+	<div class="pure-u-1 pure-u-md-2-4">
 		<label class="floating-label" for="arrival"><span class="fs1" aria-hidden="true" data-icon=""></span> Arrivée sur place</label>					
 		<input data-value="" value="<?php echo date("d/m/Y"); ?>" class="datepicker bk-form form-control" id="arrival">
 	</div>
-							
-	<div class="pure-u-1 pure-u-md-1-4">
+</div>
+<div class="pure-u-1 pure-u-md-8-24 on-field">							
+	<div class="pure-u-1 pure-u-md-2-4 hidden">
 		<label class="floating-label" for="departure"><span class="fs1" aria-hidden="true" data-icon=""></span> Retour</label>	
 		<input data-value="" value="<?php echo date("d/m/Y", time()+86400); ?>" class="datepicker bk-form form-control" id="departure">
 	</div>
-		<div class="pure-u-1 pure-u-md-1-4">
+</div>
+<div class="pure-u-1 pure-u-md-8-24 on-field">
+		<div class="pure-u-1 pure-u-md-12-24">
 		<label class="floating-label" for="days"><span class="fs1" aria-hidden="true" data-icon=""></span> Nombre de jours</label>	
-		<div id="days-modifier">
+		</div>
+		<div id="days-modifier" class="pure-u-1 pure-u-md-12-24">
 			<button onclick="addADay();">+</button>
 			<button onclick="removeADay();">-</button>
 		</div>
-		
-	</div>
-</div>
 	
-
-
-							<div class="pure-g">
+</div>
 		
-<div class="pure-u-1 ">
+<div class="pure-u-1 on-field">
 									
 
 			<label for=""><span class="fs1" aria-hidden="true" data-icon=""></span>Budget par personne ( entre <span id="st">45</span> et <span id="end">300</span> Euros )</label>
@@ -107,29 +137,78 @@ get_header(); ?>
 							</div>
 
 	
-	
+</div>
+<!-- #SETTING -->
 
+
+<!-- ACTIVITES -->
 	<h2 class="upptitle">Ajoutez une activité à votre séjour</h2>
 	<div class="clearfix"></div>
 	
 							<div class="pure-g">
-								
-									<div class="pure-u-1 pure-u-md-8-24">
-		<label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon=""></span>Le lieu</label>
-		<?php wp_dropdown_categories( $argsLieux ); ?> 
-	</div>
-	
-								<div class="pure-u-1 pure-u-md-8-24">
-									
-									<label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon="g"></span>Le théme</label>
-	<?php wp_dropdown_categories( $args ); ?> 
 
-							</div>
-						
-			
-<div class="pure-u-1 pure-u-md-8-24">
+<div class="pure-u-1 pure-u-md-24-24">
 <label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon="g"></span>Type d'activité</label>
-	<?php wp_dropdown_categories( $args ); ?> 
+
+	<?php
+		// no default values. using these as examples
+$taxonomies = array( 
+    'reservation_type'
+);
+
+$args = array(
+
+    'hide_empty'        => true, 
+    'exclude'           => array(), 
+    'exclude_tree'      => array(), 
+    'include'           => array(),
+    'number'            => '', 
+    'fields'            => 'all', 
+    'slug'              => '',
+    'parent'            => 0,
+    'hierarchical'      => true, 
+    'child_of'          => 0,
+    'childless'         => false,
+    'get'               => '', 
+    'name__like'        => '',
+    'description__like' => '',
+    'pad_counts'        => false, 
+    'offset'            => '', 
+    'search'            => '', 
+    'cache_domain'      => 'core',
+    'order'				=> 'ASC'
+); 
+
+$terms = get_terms($taxonomies, $args);
+
+//var_dump($terms);
+ if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
+     echo '<ul id="typeterms" class="sf-menu">';
+     foreach ( $terms as $term ) {
+	 	//var_dump($term);
+	 	echo '<li>';
+       echo '<span><input type="checkbox" name="typeactivite" value="'.$term->name.'" />' . $term->name.'</span>';
+       	     $args = array(
+		    'hide_empty'        => true, 
+		    'child_of'          => $term->term_id,
+		    'cache_domain'      => 'core',
+		    'order'				=> 'ASC'
+		); 
+		$childTerms = get_terms($taxonomies, $args);
+		 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
+			 echo '<ul class="sub">';
+		foreach ( $childTerms as $childterm ) {
+			echo '<li><span><input type="checkbox" name="typeactivite" value="'.$childterm->name.'" />' . $childterm->name.'</span></li>';
+		}
+		echo '</ul>';
+		}
+		echo '</li>';
+        
+     }
+     echo '</ul>';
+ }
+	
+		?>
 </div>
 </div>
 
@@ -146,14 +225,17 @@ get_header(); ?>
             echo '<div id="activities-content" class="blocks">';
             while ( $the_query->have_posts() ) {
                 $the_query->the_post();
-                
+                global $post;
                 $postID = $the_query->post->ID;
+                $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
                 $termstheme = wp_get_post_terms($postID,'theme');
-                $terms = wp_get_post_terms($postID,'lieu');
+                $terms = wp_get_post_terms($post->ID,'lieu');
+                $term_list = wp_get_post_terms($post->ID, 'reservation_type');
+                $type = json_decode(json_encode($term_list), true);
                 $price = get_field('prix');
                 $termsarray = json_decode(json_encode($terms), true);
                 $themearray = json_decode(json_encode($termstheme), true);
-                //var_dump($termsarray);
+                //var_dump($term_list);
                 $lieu = 'data-lieux="';
                 foreach($termsarray as $activity){
 	                $lieu .= $activity['slug'].', ';
@@ -165,8 +247,13 @@ get_header(); ?>
 	                $themes .= $activity['slug'].', ';
                 }
                 $themes .= '"';
+                $typearray = '';
+                foreach($type as $singleType){
+	               $typearray .= ' '.$singleType['slug'];
+                }
                 
-
+                
+				
 
                 echo '<div class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
                 echo '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.'euros</span></div>';
@@ -174,7 +261,7 @@ get_header(); ?>
                 the_post_thumbnail('thumbnail');
                 echo '<div class="presta"><h3>la prestation comprend : </h3>';
                 echo get_field("la_prestation_comprend").'</div>';
-                echo '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                echo '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',"'.$typearray.'",'.$url.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 echo '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 echo '</div>';
                 
@@ -183,9 +270,7 @@ get_header(); ?>
          }
 		
 		?>
-	
-	
-</form>
+
 		<h2 class="upptitle">Choisissez un séjour parmi notre sélection</h2>
 		<?php Online_Booking_Public::the_sejours(); ?>
 		</div>
@@ -194,9 +279,24 @@ get_header(); ?>
 
 
 <div id="sidebar-booking-b" class="pure-u-1 pure-u-md-6-24">
+	<div id="sidebar-sticky">
+	<?php  if ( is_user_logged_in() ): ?>
+<div class="pure-g" id="user-actions">
+	<div id="savetrip" onclick="saveTrip()">
+		<input maxlength="20" id="tripName" type="text" value="" placeholder="Nom de votre reservation" />
+		Sauvegarder votre voyage<div class="fs1" aria-hidden="true" data-icon=""></div>
+		</div>
+</div>
+<?php endif; ?>
+
+
+<!-- JOURNEES -->
 	<h2 class="upptitle">Votre séjour</h2>
 	
 		<div id="daysTrip"></div>
+<!-- #JOURNEES -->	
+
+<!-- FORMUAIRE SEND -->	
 	<h2 class="upptitle">Votre devis sur mesure</h2>
 		<form action="tpl-booking.php" method="" accept-charset="utf-8">
 			        <input type="text" name="s" id="name" placeholder="Votre nom" value="" type="text"  /> <br />
@@ -207,7 +307,9 @@ get_header(); ?>
 			        <input type="submit" name="s" id="name" value="Envoyer" type="text"  />
 
 		</form>
+<!-- #formulaire send -->
 	
+</div>
 </div>
 </div><!-- pure-g -->
 

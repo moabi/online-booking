@@ -118,6 +118,7 @@ class Online_Booking {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-user.php';
 
 		$this->loader = new Online_Booking_Loader();
 
@@ -180,6 +181,7 @@ class Online_Booking {
 		
 		$this->loader->add_action( 'init', $plugin_public, 'lieu',0 );
 		$this->loader->add_action( 'init', $plugin_public, 'theme',0 );
+		$this->loader->add_action( 'init', $plugin_public, 'reservation_type',0 );
 		$this->loader->add_action( 'init', $plugin_public, 'car_post_type',0 );
 		$this->loader->add_action( 'init', $plugin_public, 'sejour_post_type',0 );
 		
@@ -188,8 +190,11 @@ class Online_Booking {
 		//add_filter('media_upload_tabs', 'remove_media_library_tab');
 		$this->loader->add_filter( 'media_upload_tabs', $plugin_public, 'remove_media_library_tab',0 );
 		//AJAX
-		$this->loader->add_action('wp_ajax_nopriv_do_ajax', $plugin_public,  'retrieve_activities');
-		$this->loader-> add_action('wp_ajax_do_ajax', $plugin_public, 'retrieve_activities');
+		$this->loader->add_action('wp_ajax_nopriv_do_ajax', $plugin_public,  'ajxfn');
+		$this->loader-> add_action('wp_ajax_do_ajax', $plugin_public, 'ajxfn');
+		
+		//USER FILTERS/HOOK
+		$this->loader->add_filter( 'login_redirect',$plugin_public,'my_login_redirect', 10, 3 );
 
 
 	}

@@ -1,7 +1,8 @@
 var $ = jQuery;
 var bookingPage = '/reservation-service/';
-var isBookingTpl = $('body.page-id-785').length;
+var isBookingTpl = $('#booking-wrapper').length;
 var reservation = {
+	name	  : '',
 	theme 	  : '',
 	lieu      : '',
 	sejour    : '',
@@ -21,7 +22,7 @@ var reservation = {
 
 
 $.noty.defaults = {
-    layout: 'top',
+    layout: 'bottom',
     theme: 'defaultTheme', // or 'relax'
     type: 'alert',
     text: '', // can be html or string
@@ -50,15 +51,14 @@ $.noty.defaults = {
 };
 
 
-function doAjaxRequest( type , type2 ){
-     // here is where the request will happen
-     
+function doAjaxRequest( theme , geo, type ){
      jQuery.ajax({
           url: '/wp-admin/admin-ajax.php',
           data:{
                'action':'do_ajax',
-               'type':type,
-               'geo' : type2,
+               'theme':theme,
+               'geo' : geo,
+               'type' : type,
                'count':1
                },
           dataType: 'JSON',
@@ -66,15 +66,12 @@ function doAjaxRequest( type , type2 ){
 		            jQuery('#activities-content').empty().append(jQuery('<div>', {
 		                html : data
 		            }));
-		       
-                
+		            //console.log(data);
                              },
           error: function(errorThrown){
                alert('error');
                console.log(errorThrown);
           }
-           
- 
      });
  
 }
@@ -124,21 +121,65 @@ function read_cookie(cname) {
 
 //ACTIONS
 
-function addActivity(id,activityname,price){
+/*
+	User Account functions
+*/
+function deleteUserTrip(tripID,userID){
+	doAjaxRequest( type , type2 );
+}
+
+/*
+	Global functions
+*/
+function saveTrip(){
+		tripName = $('#tripName').val();
+		if(tripName === ''){
+			$('#tripName').addClass('required').attr('placeholder','champs obligatoire');
+		} else{
+			$('#tripName').removeClass('required');
+			$.ajax({
+	          url: '/wp-admin/admin-ajax.php',
+	          data:{
+	               'action':'do_ajax',
+	               'reservation' : 1,
+	               'bookinkTrip': tripName
+	               },
+	          dataType: 'JSON',
+	          success:function(data){    
+			        console.log(data);
+			       var n = noty({text: 'Résérvation effectué ! elle est visible dans "mon compte"'});
+	                
+	                             },
+	          error: function(errorThrown){
+	               var n = noty({text: 'Echec de la sauvegarde :('});
+	               console.log(errorThrown.responseText);
+	          }
+		     });
+		}
+
+     
+	
+	
+}
+
+function addActivity(id,activityname,price,type,img){
 
 	getLength = reservation.tripObject[reservation.currentDay][id];
 	if(!getLength){
 		reservation.tripObject[reservation.currentDay][id] = {
 			name  : activityname,
-			price : price
+			price : price,
+			type  : type,
+			img   : img
 		}
 		reservation.currentBudget = parseInt( (reservation.currentBudget + price),10);
-		$('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content').append('<div data-id="'+ id +'">'+ activityname +' '+ price +' euros <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
+		tripImg = (img) ? '<img src="'+img+'" />' : '';
+		tripType = (type) ? type : 'notDefined';
+					
+		$('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content').append('<div data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
 
 		var n = noty({text: 'Ajouté à votre séjour'});
-		console.log('addActivity');
 		cookieValue = JSON.stringify(reservation);
-		//setCookie('reservation', cookieValue, 2);
 		Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
 	} else {
 		var n = noty({text: 'cette activité est déjà présente sur cette journée'});
@@ -191,7 +232,11 @@ function removeDay(day){
 	reservation.days = reservation.days - 1;
 	
 	$(".dayblock[data-date='"+ day+"']").remove();
+	reservation.departure = $('.dayblock:last-child').attr('data-date');
+	
+	
 	console.log(reservation);
+
 	cookieValue = JSON.stringify(reservation);
 	Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
 
@@ -228,6 +273,9 @@ function setNumberOfPersonns(personNb){
 	Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
 }
 //INIT TRIP
+/*
+	a useless function
+*/
 function createdayTrip(id,day){
 	this.idTrip = id;
 	this.idDay = day;
@@ -237,7 +285,6 @@ function createdayTrip(id,day){
 	this.soiree = soiree;
 	this.hebergement = hebergement;
 	this.transport = transport;
-
 	this.createDay = createDay;
 }
 
@@ -338,9 +385,9 @@ function defineTripDates(){
 		}
 		//build html list
 		var currentClass = (i === 0) ? 'current' : 'classic';
-		var removeFn = (i === 0) ? '' : '<span onclick="removeDay(\''+ dayIs+'\');" class="fs1 rd" aria-hidden="true" data-icon="Q">';
+		var removeFn = (i !== reservation.days - 1) ? '' : '<span onclick="removeDay(\''+ dayIs+'\');" class="fs1 rd" aria-hidden="true" data-icon="Q">';
 		
-		$('#daysTrip').append('<div class="dayblock '+currentClass+'" data-date="'+ dayIs +'" ><div class="day-wrapper"> '+removeFn+'</span><span onclick="changeCurrentDay(\''+ dayIs+'\');" class="fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
+		$('#daysTrip').append('<div class="dayblock '+currentClass+'" data-date="'+ dayIs +'" ><div class="day-wrapper">'+removeFn+'</span><span onclick="changeCurrentDay(\''+ dayIs+'\');" class="fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
 		i++;
 	});
 }
@@ -366,7 +413,11 @@ function the_activites(){
 					//console.log(id);
 					var activityname = reservation.tripObject[day][id]['name'];
 					var price = reservation.tripObject[day][id]['price'];
-					$('.dayblock[data-date="'+ day +'"]').find('.day-content').append('<div data-id="'+ id +'">'+ activityname +' '+ price +' euros <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+					var img = reservation.tripObject[day][id]['img'];
+					var type = reservation.tripObject[day][id]['type'];
+					tripImg = (img) ? '<img src="'+img+'" />' : '';
+					tripType = (type) ? type : 'notDefined';
+					$('.dayblock[data-date="'+ day +'"]').find('.day-content').append('<div data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
 				}
 			}
 
@@ -380,7 +431,10 @@ jQuery(function () {
     //$('#loginform').fancybox();
     //BOOKING JS
     
-    $('.postform').select2();
+    $('.postform').select2({
+	    'width' : '96%'
+    });
+   
     $('.open-popup-link').magnificPopup({
   type:'inline',
   midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
@@ -460,7 +514,17 @@ jQuery(function () {
         setReservationTerms(theme, lieu);
         doAjaxRequest(theme, lieu);
     });
-
+	$('#typeterms input[type=checkbox]').change(function(){
+		var type = $(this).attr('value');
+		var theme = $('#theme').val();
+        var lieu = $('#lieu').val();
+        checkedTypes = [];
+        $("#typeterms input[type=checkbox]:checked").each(function(){
+		    checkedTypes.push($(this).val());
+		});
+		console.log(checkedTypes);
+		doAjaxRequest(theme, lieu, checkedTypes);
+	});
 
     moment.locale('fr', {
         months: "janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre".split("_"),

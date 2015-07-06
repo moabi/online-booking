@@ -39,6 +39,8 @@ class Online_Booking_Public {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
+	
+	private $booking_url = "reservation-service";
 
 	/**
 	 * Initialize the class and set its properties.
@@ -53,6 +55,8 @@ class Online_Booking_Public {
 		$this->version = $version;
 
 	}
+	
+	
 
 	/**
 	 * Register the stylesheets for the public-facing side of the site.
@@ -113,7 +117,7 @@ public function get_custom_post_type_template($single_template) {
           $single_template = plugin_dir_path( __FILE__ ) . 'tpl/single-reservation.php';
      } else if ($post->post_type == 'sejour') {
           $single_template = plugin_dir_path( __FILE__ ) . 'tpl/single-sejour.php';
-     }
+     } 
      return $single_template;
 }
 
@@ -123,11 +127,14 @@ public function get_custom_post_type_template($single_template) {
 */
 public function booking_page_template( $page_template )
 {
-    if ( is_page( 'reservation-service' ) ) {
+    if ( is_page( $this->booking_url ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-booking.php';
     }
-    elseif ( is_page( 'Réservations' ) ) {
-        $page_template = plugin_dir_path( __FILE__ ) .'tpl/archive-reservation.php';
+    elseif ( is_page( 'nos-sejours' ) ) {
+        $page_template = plugin_dir_path( __FILE__ ) .'tpl/archive-sejours.php';
+    }
+    elseif ( is_page( 'compte' ) ) {
+        $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-compte.php';
     }
     return $page_template;
 }
@@ -172,7 +179,7 @@ public function create_booking_pages() {
 				'comment_status'	=>	'closed',
 				'ping_status'		=>	'closed',
 				'post_author'		=>	$author_id,
-				'post_name'		=>	'reservation-service',
+				'post_name'		=>	$this->booking_url,
 				'post_title'		=>	'Réservation',
 				'post_status'		=>	'publish',
 				'post_type'		=>	'page'
@@ -180,7 +187,23 @@ public function create_booking_pages() {
 		);
 
 	// Otherwise, we'll stop
-	} else {
+	} elseif( null == get_page_by_title( 'Mon compte' ) ) {
+
+		// Set the post ID so that we know the post was created successfully
+		$post_id = wp_insert_post(
+			array(
+				'comment_status'	=>	'closed',
+				'ping_status'		=>	'closed',
+				'post_author'		=>	$author_id,
+				'post_name'		=>	'compte',
+				'post_title'		=>	'Mon compte',
+				'post_status'		=>	'publish',
+				'post_type'		=>	'page'
+			)
+		);
+
+	// Otherwise, we'll stop
+	}else {
 
     		// Arbitrarily use -2 to indicate that the page with the title already exists
     		$post_id = -2;
@@ -242,6 +265,40 @@ public function lieu() {
 
 }
 
+// Register Custom Taxonomy
+public function reservation_type() {
+
+	$labels = array(
+		'name'                       => _x( 'type', 'Taxonomy General Name', 'twentyfifteen' ),
+		'singular_name'              => _x( 'type', 'Taxonomy Singular Name', 'twentyfifteen' ),
+		'menu_name'                  => __( 'types', 'twentyfifteen' ),
+		'all_items'                  => __( 'Tous les types', 'twentyfifteen' ),
+		'parent_item'                => __( 'Parent', 'twentyfifteen' ),
+		'parent_item_colon'          => __( 'Parent type', 'twentyfifteen' ),
+		'new_item_name'              => __( 'Nouveau type', 'twentyfifteen' ),
+		'add_new_item'               => __( 'Ajouter nouveau type', 'twentyfifteen' ),
+		'edit_item'                  => __( 'Editer type', 'twentyfifteen' ),
+		'update_item'                => __( 'Mettre à jout ', 'twentyfifteen' ),
+		'view_item'                  => __( 'Voir type', 'twentyfifteen' ),
+		'separate_items_with_commas' => __( 'Separate items with commas', 'twentyfifteen' ),
+		'add_or_remove_items'        => __( 'Add or remove items', 'twentyfifteen' ),
+		'choose_from_most_used'      => __( 'Choose from the most used', 'twentyfifteen' ),
+		'popular_items'              => __( 'Popular Items', 'twentyfifteen' ),
+		'search_items'               => __( 'Search Items', 'twentyfifteen' ),
+		'not_found'                  => __( 'Not Found', 'twentyfifteen' ),
+	);
+	$args = array(
+		'labels'                     => $labels,
+		'hierarchical'               => true,
+		'public'                     => true,
+		'show_ui'                    => true,
+		'show_admin_column'          => true,
+		'show_in_nav_menus'          => true,
+		'show_tagcloud'              => true,
+	);
+	register_taxonomy( 'reservation_type', array( 'reservation' ), $args );
+
+}
 
 // Register Custom Taxonomy
 public function theme() {
@@ -371,12 +428,14 @@ public function sejour_post_type() {
 /*
 	FUNCTIONS
 */
-public function retrieve_activities(){
-   $theme = $_REQUEST['type'];
-   $lieu = $_REQUEST['geo'];
-   
-     if($theme !== ''){
-         $output = Online_Booking_Public::ajax_get_latest_posts($theme,$lieu);
+public function ajxfn(){
+
+     if(!empty($_REQUEST['theme']) && !empty($_REQUEST['geo'])){
+	     $type = isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : null;
+         $output = Online_Booking_Public::ajax_get_latest_posts($_REQUEST['theme'],$_REQUEST['geo'],$type);
+    } else if(!empty($_REQUEST['reservation'])){
+	    $tripName = htmlspecialchars($_REQUEST['bookinkTrip']);
+	    $output = online_booking_user::save_trip($tripName);
     } else {
          $output = 'No function specified, check your jQuery.ajax() call';
  
@@ -396,7 +455,18 @@ public function retrieve_activities(){
 
 
 
-public function ajax_get_latest_posts($theme,$lieu){
+public function ajax_get_latest_posts($theme,$lieu,$type){
+	if($type != null){
+		$typetoArray = $type;
+		$types = array(
+					'taxonomy' => 'reservation_type',
+					'field'    => 'name',
+					'terms'    => $type,
+				);
+	} else {
+		$types = '';
+	}
+	
      $args = array(
 	      'post_type' => 'reservation',
           'post_status' => 'publish',
@@ -413,6 +483,8 @@ public function ajax_get_latest_posts($theme,$lieu){
 					'field'    => 'term_id',
 					'terms'    => array($lieu),
 				),
+				$types
+				
 			),
         );
         $the_query = new WP_Query( $args );
@@ -421,10 +493,15 @@ public function ajax_get_latest_posts($theme,$lieu){
             $posts = '<div id="activities-content" class="blocks">';
             while ( $the_query->have_posts() ) {
                 $the_query->the_post();
-                
+                global $post;
                 $postID = $the_query->post->ID;
+                $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
+                $term_list = wp_get_post_terms($post->ID, 'reservation_type');
+                $type = json_decode(json_encode($term_list), true);
+                //var_dump($type);
                 $termstheme = wp_get_post_terms($postID,'theme');
                 $terms = wp_get_post_terms($postID,'lieu');
+                
                 $price = get_field('prix');
                 $termsarray = json_decode(json_encode($terms), true);
                 $themearray = json_decode(json_encode($termstheme), true);
@@ -440,14 +517,17 @@ public function ajax_get_latest_posts($theme,$lieu){
 	                $themes .= $activity['slug'].', ';
                 }
                 $themes .= '"';
-                
+                $typearray = '';
+                foreach($type as $singleType){
+	               $typearray .= ' '.$singleType['slug'];
+                }
                 
                 $posts .=  '<div class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
                 $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.'euros</span></div>';
                 $posts .= '<div class="presta"><h3>la prestation comprend : </h3>';
                 $posts .= get_field("la_prestation_comprend").'</div>';
                 $posts .= get_the_post_thumbnail($postID, 'thumbnail');
-                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 $posts.= '</div>';
                 
@@ -465,10 +545,11 @@ public function ajax_get_latest_posts($theme,$lieu){
 * INVITE YOU
 */
 
-public static function the_sejours(){
+public static function the_sejours($nb = 5,$onBookingPage = false){
+    
         $args = array(
 	        'post_type' => 'sejour',
-			'posts_per_page' => 5,
+			'posts_per_page' => $nb,
 			'post_status'		=> 'publish',
         );
         $the_query = new WP_Query( $args );
@@ -477,8 +558,9 @@ public static function the_sejours(){
             $sejour = '<div id="sejour-content" class="blocks pure-g"><div class="slick-multi">';
             while ( $the_query->have_posts() ) {
                 $the_query->the_post();
-                
+                global $post;
                 $postID = $the_query->post->ID;
+                
                 $price = get_field('prix');
                 $personnes = get_field('personnes');
                 $budget_min = get_field('budget_min');
@@ -509,8 +591,11 @@ public static function the_sejours(){
 								$len = count($activityArr);
 					        	foreach($activityArr as $data){
 									$field = get_field('prix', $data->ID);
+									$url = wp_get_attachment_url( get_post_thumbnail_id($data->ID) );
+									$term_list = wp_get_post_terms($data->ID, 'reservation_type');
+									$type = json_decode(json_encode($term_list), true);
 									$comma = ($i == $len - 1) ? '' : ',';
-						        	$dayTrip .= '"'.$data->ID.'": { "name" : "'.$data->post_title.'","price": '.$field.'}'.$comma;
+						        	$dayTrip .= '"'.$data->ID.'": { "name" : "'.$data->post_title.'","price": '.$field.',"type": "'.$type[0]['slug'].'","img": "'.$url.'"}'.$comma;
 						        	$i++;
 					        	}
 					        endwhile;
@@ -620,7 +705,7 @@ public static function the_sejour($postid){
 
 
 // Add Shortcode
-public function front_form_shortcode() {
+public function front_form_shortcode($booking_url) {
 	// Code
 			$args = array(
 			'show_option_all'    => '',
@@ -667,7 +752,15 @@ public function front_form_shortcode() {
 			'value_field'	     => 'term_id',	
 		); 
 		
-	$front_form = '<div id="front-form" class="booking">'.wp_dropdown_categories( $argsLieux ).' '.wp_dropdown_categories( $args ).'<input data-value="" value="'.date("d/m/Y").'" class="datepicker bk-form form-control" id="arrival"><input type="number" id="participants" value="5" class="bk-form form-control" /><input type="submit" value="GO" /><div class="clearfix"></div></div><div class="clearfix"></div>';
+	if(!isset($_COOKIE['reservation'])):
+	
+		$front_form = '<div id="front-form" class="booking" data-url="'.get_bloginfo('url').'/'.$this->booking_url.'/">'.wp_dropdown_categories( $argsLieux ).' '.wp_dropdown_categories( $args ).'<input data-value="" value="'.date("d/m/Y").'" class="datepicker bk-form form-control" id="arrival"><input type="number" id="participants" value="5" class="bk-form form-control" /><input type="submit" value="GO" /><div class="clearfix"></div></div><div class="clearfix"></div>';
+	
+	else: 
+	
+		$front_form = '<div id="front-form" class="booking exists"><a href="'.get_bloginfo('url').'/'.$this->booking_url.'/" title="'.__('Voir votre réservation','twentyfifteen').'">'.__('Voir votre réservation','twentyfifteen').'</a></div>';
+	
+	endif;
 	
 	return $front_form;
 }
@@ -678,6 +771,30 @@ public function remove_media_library_tab($tabs) {
     unset($tabs['library']);
     return $tabs;
     endif;
+}
+
+ /**
+ * Redirect user after successful login.
+ *
+ * @param string $redirect_to URL to redirect to.
+ * @param string $request URL the user is coming from.
+ * @param object $user Logged user's data.
+ * @return string
+ */
+public function my_login_redirect( $redirect_to, $request, $user ) {
+	//is there a user to check?
+	global $user;
+	if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+		//check for admins
+		if ( in_array( 'administrator', $user->roles ) ) {
+			// redirect them to the default place
+			return $redirect_to;
+		} else {
+			return home_url();
+		}
+	} else {
+		return $redirect_to;
+	}
 }
 
 
