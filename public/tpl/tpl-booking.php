@@ -75,7 +75,7 @@ get_header(); ?>
 
 <div class="pure-g">
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-md-12-24">
+		<div class="pure-u-1 pure-u-md-8-24">
 		<label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon=""></span>Le lieu</label>
 		</div>
 		<div class="pure-u-1 pure-u-md-12-24">
@@ -84,7 +84,7 @@ get_header(); ?>
 	</div>
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-md-12-24">							
+		<div class="pure-u-1 pure-u-md-8-24">							
 			<label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon="g"></span>Le théme</label>
 		</div>
 		<div class="pure-u-1 pure-u-md-12-24">
@@ -94,23 +94,26 @@ get_header(); ?>
 	</div>
 							
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-							<div class="pure-u-1 pure-u-md-2-4 on-field">
-									
-	
+		<div class="pure-u-1 pure-u-md-8-24">
 			<label class="floating-label" for="participants"><span class="fs1" aria-hidden="true" data-icon=""></span>Nombre de participants</label>
+		</div>
+		<div class="pure-u-1 pure-u-md-10-24">	
 			<input type="number" id="participants" value="5" class="bk-form form-control" />
-</div>
+		</div>
 	</div>
 
 
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-	
-	<div class="pure-u-1 pure-u-md-2-4">
-		<label class="floating-label" for="arrival"><span class="fs1" aria-hidden="true" data-icon=""></span> Arrivée sur place</label>					
+	<div class="pure-u-1 pure-u-md-12-24">	
+		<label class="floating-label" for="arrival"><span class="fs1" aria-hidden="true" data-icon=""></span> Arrivée sur place</label>	
+	</div>
+	<div class="pure-u-1 pure-u-md-12-24">					
 		<input data-value="" value="<?php echo date("d/m/Y"); ?>" class="datepicker bk-form form-control" id="arrival">
 	</div>
 </div>
-<div class="pure-u-1 pure-u-md-8-24 on-field">							
+
+
+<div class="pure-u-1 pure-u-md-8-24 on-field hidden">							
 	<div class="pure-u-1 pure-u-md-2-4 hidden">
 		<label class="floating-label" for="departure"><span class="fs1" aria-hidden="true" data-icon=""></span> Retour</label>	
 		<input data-value="" value="<?php echo date("d/m/Y", time()+86400); ?>" class="datepicker bk-form form-control" id="departure">

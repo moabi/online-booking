@@ -9,7 +9,7 @@
 
 get_header(); ?>
 <div class="pure-g inner-content">
-	<div id="primary-b" class="site-content single-animations pure-u-1 pure-u-md-18-24">
+	<div id="primary-b" class="site-content single-animations pure-u-1 pure-u-md-24-24">
 		<div id="content" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
@@ -38,6 +38,58 @@ get_header(); ?>
 		</div>
 </div>
 
+<h2>Activités de l'event</h2>
+
+<?php 
+
+				// check for rows (parent repeater)
+				if( have_rows('votre_sejour') ): ?>
+					<ul id="event-trip-planning">
+					<?php 
+
+					// loop through rows (parent repeater)
+					$i = 1;
+					while( have_rows('votre_sejour') ): the_row(); ?>
+					
+
+							<?php 
+								echo '<li><span class="etp-day">Jour '.$i.'</span>';
+							// check for rows (sub repeater)
+							if( have_rows('activites') ): ?>
+								<ul class="etp-days">
+								<?php 
+
+								// loop through rows (sub repeater)
+								while( have_rows('activites') ): the_row();
+
+									// display each item as a list - with a class of completed ( if completed )
+									?>
+									<?php $postActivity = get_sub_field('activite'); ?>
+									<?php //var_dump($postActivity); ?>
+									<?php foreach($postActivity as $data){
+										echo '<li><h3>';
+										echo '<a href="'.get_permalink($data->ID).'">';
+										echo $data->post_title;
+										
+										echo get_the_post_thumbnail( $data->ID, 'thumbnail' );
+										echo '</a>';
+										echo '</li>';
+									} ?>
+								
+						
+									
+								<?php endwhile; ?>
+								</ul>
+							<?php endif; //if( get_sub_field('items') ): ?>
+						
+							<?php $i++; ?>
+					<?php endwhile; // while( has_sub_field('to-do_lists') ): ?>
+					</ul>
+				<?php endif; // if( get_field('to-do_lists') ): ?>
+
+			
+			
+<h2>Photos de l'event</h2>
 	<div class="sej">
 			<?php
 	$images = get_field('gallerie');
@@ -67,10 +119,6 @@ if( $images ): ?>
 	</div><!-- #primary -->
 
 
-<div id="secondary" class="pure-u-1 pure-u-md-6-24">
-	<h2>D'autres séjours qui peuvent vous intéresser</h2>
-	
-</div>
 
 </div>
 <?php get_footer(); ?>

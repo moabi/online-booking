@@ -160,12 +160,27 @@ hr.clearfix{display:block;}
 #primary-b.booking #content{padding:0 2%}
 #sidebar-booking-b{margin-left:0}
 #daysTrip{padding:20px 0;border:none;clear:both;width:100%;margin:10px 0}
-.dayblock.current,.dayblock:hover{color:#2eaadd;font-weight:700;opacity: 1;}
+.dayblock.current,.dayblock:hover{color:#2eaadd;opacity: 1;}
+.dayblock.current .day-wrapper{
+    box-shadow: 0px 1px 0px rgb(42, 172, 222);
+    font-weight: 300;
+    color: rgb(37, 160, 232);
+}
 .dayblock.current:before{content:"";font-family:'ElegantIcons';speak:none;font-weight:400;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;position:absolute;z-index:2;left: 9px;top: 3px;font-size:20px;color:#ffae00}
-.day-wrapper:hover{color:#99d32e}
-.day-wrapper{width: 100%;display:block;clear:none;float:left;min-height:85px;text-align:center;background: #FFF;cursor:pointer;position:relative;font-size: 12px;color: rgb(37, 160, 232);}
+.dayblock:before{content:"";font-family:'ElegantIcons';speak:none;font-weight:400;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;position:absolute;z-index:2;left: 9px;top: 3px;font-size:20px;color: #EAEAEA;}
+
+.day-wrapper:hover,.day-wrapper:hover span.fs1{color: #2DA9DC;}
+.day-wrapper{width: 100%;display:block;clear:none;float:left;min-height: 80px;text-align:center;background: #FFF;cursor:pointer;position:relative;font-size: 12px;color: rgb(152, 155, 157);}
 .day-wrapper .fs1.rd{position:absolute; font-size:16px; right: 7px;top: 0px;margin: 0;background-color: transparent;padding: 0;}
-.day-wrapper .fs1{clear:both;display:block;font-size: 30px;margin: 25px 0 0;color: rgb(37, 160, 232);}
+.day-wrapper .fs1{clear:both;display:block;font-size: 30px;margin: 5px 0 0;color: rgb(98, 98, 98);}
+.day-wrapper .js-change{
+    width: 90%;
+    z-index: 99;
+    position: relative;
+}
+.dayblock.current .day-wrapper .fs1{
+    color: rgb(37, 160, 232);
+}
 .day-content > div:nth-child(even){background:#fcfcfc}
 .day-content .dc .dp{position:absolute; /* background:#fff; */font-size: 10px;right: 28px; top: 12px;padding: 0 1em;line-height: 16px;/* border-left: 1px solid #ededed; *//* border-top: 1px solid #ededed; */}
 .day-content .dc{line-height: 17px;text-align:left;padding: 11px 0% 0 20%;color:rgba(0,0,0,0.7);font-weight:300;font-size: 14px;position:relative;overflow: visible;text-overflow:ellipsis;display:block;float: left;width: 80%;height: 30px;overflow: visible;}
@@ -255,8 +270,9 @@ hr.clearfix{display:block;}
 .block-trip h2{position:absolute;background:rgba(255,255,255,0.7);font-weight:300;font-size:10px;text-align:center;width:100%;line-height:20px;padding: 0;top: 0;margin: 0;}
 .day-wrapper.anim-effect-boris::after{background:rgba(111,148,182,0.1);content:'';position:absolute;top:22px;left:22px;margin:-35px 0 0 -35px;width:110%;height:110%;opacity:0;pointer-events:none;animation:anim-effect-boris .3s forwards;-webkit-animation:anim-effect-boris .3s forwards}
 img{max-width:100%%; display:block; height:auto;}
-html.no-js{padding:83px 0 0;}
+html.no-js{padding: 110px 0 0;}
 #primary-b .entry-title{text-align:left; font-size:22px;padding:0}
+a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 35px;display: block;float: right;padding: 0 20px;}
 #secondary{}
 #secondary .widget{}
 #secondary h2{
@@ -271,9 +287,25 @@ html.no-js{padding:83px 0 0;}
 #userTrips{
     list-style: none;
 }
+#userTrips .sharetrip{
+    clear: both;
+    margin: 0 10px;
+    font-size: 14px;
+    display: block;
+}
+#userTrips .sharetrip pre{
+    background-color: rgb(46, 170, 221);
+    border-radius: 4px;
+    padding: 0px 8px;
+    color: #fff;
+    float: right;
+    margin: 0 0 0 10px;
+}
 #userTrips li{
     margin: 0 0 10px;
-    padding: 5px;
+    padding: 10px;
+    line-height: 30px;
+    font-size: 16px;
 }
 #userTrips li .fs1{
     float: left;
@@ -286,7 +318,25 @@ html.no-js{padding:83px 0 0;}
 #on-settings .on-field{
     padding: 0 0 20px;
 }
-
+.hidden{display:none !important; visibility: hidden;}
+#event-trip-planning{
+    list-style: none;
+    display: block;
+    padding: 30px 0;
+    width: 100%;
+    float: left;
+    clear: both;
+}
+#event-trip-planning li{
+    float: left;
+    margin: 0 2%;
+    width: 25%;
+}
+#event-trip-planning .etp-day{ background: #ECECEC;text-align:center; color: #575757;line-height:30px; width: 90%;display:block; margin: 0 auto 20px; text-transform: uppercase;}
+#event-trip-planning .etp-days{clear:both;display: block;width: 100%;float: left;}
+#event-trip-planning .etp-days li{width:100%; display: block; clear:both;}
+#event-trip-planning .etp-days h3{font-size:14px;text-align:center;}
+#event-trip-planning .etp-days img{margin:auto; display:block;}
 @-webkit-keyframes anim-effect-boris {
 	0% {
 		-webkit-transform: scale3d(0.3, 0.3, 1);

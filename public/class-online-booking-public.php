@@ -436,7 +436,10 @@ public function ajxfn(){
     } else if(!empty($_REQUEST['reservation'])){
 	    $tripName = htmlspecialchars($_REQUEST['bookinkTrip']);
 	    $output = online_booking_user::save_trip($tripName);
-    } else {
+    }  else if(!empty($_REQUEST['deleteUserTrip'])){
+	    $userTrip = intval($_REQUEST['deleteUserTrip']);
+	    $output = online_booking_user::delete_trip($userTrip);
+	}else {
          $output = 'No function specified, check your jQuery.ajax() call';
  
      }
@@ -665,10 +668,15 @@ public static function the_sejour($postid){
 					        	$activityArr = get_sub_field('activite');
 					        	$i = 0;
 								$len = count($activityArr);
+								
 					        	foreach($activityArr as $data){
 									$field = get_field('prix', $data->ID);
+									$url = wp_get_attachment_url( get_post_thumbnail_id($data->ID) );
+									$term_list = wp_get_post_terms($data->ID, 'reservation_type');
+									$type = json_decode(json_encode($term_list), true);
+								
 									$comma = ($i == $len - 1) ? '' : ',';
-						        	$dayTrip .= '"'.$data->ID.'": { "name" : "'.$data->post_title.'","price": '.$field.'}'.$comma;
+						        	$dayTrip .= '"'.$data->ID.'": { "name" : "'.$data->post_title.'","price": '.$field.',"type": "'.$type[0]['slug'].'","img": "'.$url.'"}'.$comma;
 						        	$i++;
 					        	}
 					        endwhile;

@@ -65,9 +65,12 @@ class online_booking_user  {
 					$tripID = $result->ID;
 					$tripName = $result->booking_ID;
 					
-					echo '<li><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.','.$userID.')"></div>';
-					echo '<a href="'.get_bloginfo("url").'/public/?ut='.$tripID.'">'.$tripName.'</a>';
+					echo '<li id="ut-'.$tripID.'">';
 					echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
+					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')"></div>';
+					echo '<a title="Voir votre event" onclick="loadTrip(trip'.$result->ID.',true)" href="#">'.$tripName.'</a>';
+					echo '<div class="sharetrip">partager votre event : <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'</pre></div>';
+					
 					echo '</li>';
 				}
 			echo '</ul>';
@@ -77,39 +80,95 @@ class online_booking_user  {
 		save user's trip to DB
 	*/
 	public static function  save_trip($tripName){
-		global $wpdb;
 		
+		global $wpdb;
 		$userID = get_current_user_id();
-		$date =  current_time('mysql', 1);
-		if(!empty($_COOKIE['reservation'])):
-			$bookink_obj = stripslashes( $_COOKIE['reservation'] );
-		else: 
-			$bookink_obj = NULL;
-		endif;
-		$table = $wpdb->prefix.'online_booking';
-		$userTrips = $wpdb->get_results( $wpdb->prepare("
-				SELECT * 
-				FROM event_wp_online_booking
-				WHERE user_ID = %d 
-				",
-				$userID
-				) );
-		$trips = array();
-		foreach ($userTrips as $userTrip) { 
-			echo $userTrip->booking_ID;
-			array_push($stack, $userTrip->booking_ID);       
-		}
-		if (in_array($tripName, $trips)) {
+		
+		if(!empty($userID) &&  is_user_logged_in() ):
+			$date =  current_time('mysql', 1);
+			if(!empty($_COOKIE['reservation'])):
+				$bookink_obj = stripslashes( $_COOKIE['reservation'] );
+				$data = json_decode($bookink_obj, true);
+			else: 
+				$bookink_obj = 'nothing was recorded';
+			endif;
+			$table = $wpdb->prefix.'online_booking';
+			$userTrips = $wpdb->get_results( $wpdb->prepare("
+					SELECT * 
+					FROM event_wp_online_booking
+					WHERE user_ID = %d 
+					",
+					$userID
+					) );
+			$trips = array();
+			foreach ($userTrips as $userTrip) { 
+				array_push($trips, $userTrip->booking_ID);       
+			}
+			
+			if (in_array($tripName, $trips) && count($trips) < 11 ) {
+			    online_booking_user::updateTrip($bookink_obj,$tripName);
+			    //$out = "update";
+			} elseif (!in_array($tripName, $trips) && count($trips) < 11 ) {
+				//online_booking_user::storeTrip($bookink_obj,$tripName);
+				$date =  current_time('mysql', 1);
+				$table = $wpdb->prefix.'online_booking';
+				$wpdb->insert( 
+					$table, 
+					array( 
+						'user_ID' => $userID, 
+						'booking_date' => $date,
+						'booking_object' => $bookink_obj,
+						'booking_ID' => $tripName,	
+					), 
+					array( 
+						'%d', 
+						'%s',
+						'%s',
+						'%s' 
+					) 
+				);
 
-		    online_booking_user::updateTrip($bookink_obj,$tripName);
-		} else {
-			online_booking_user::storeTrip($bookink_obj,$tripName);
-		}
-		return $userTrips;
+			} else {
+				return "10";
+			}
+			//return $bookink_obj;
+		else:
+			return "fail to  store trip";
+		endif;
 		
 		
 		
 	}
+	
+	
+	/*
+		delete user's trip to DB
+	*/
+	public static function  delete_trip($tripIDtoDelete){
+		global $wpdb;
+		
+		$userID = get_current_user_id();
+		$date =  current_time('mysql', 1);
+		if(!empty($userID) &&  is_user_logged_in() ):
+			$table = $wpdb->prefix.'online_booking';
+			$rowToDelete = $wpdb->delete( $table, array( 
+				'ID' 	=> $tripIDtoDelete,
+			 ) );
+			$userTripsDelete = "success";
+		else: 
+			$userTripsDelete = 'failed to delete';
+		endif;
+
+		return $userTripsDelete;
+		
+		
+		
+	}
+
+
+
+
+
 	/*
 		store DATA
 		@param obj 
@@ -122,11 +181,11 @@ class online_booking_user  {
 			'user_ID' => $userID, 
 			'booking_date' => $date,
 			'booking_object' => $bookink_obj,
-			'booking_ID' => $tripName	
+			'booking_ID' => $tripName,	
 		);
-		$wpdb->insert( 
-		$wpdb->prefix.'online_booking', $data);
-		
+		$table = $wpdb->prefix.'online_booking';
+		$wpdb->insert($table, $data);
+
 		return 'done';
 	}
 	
