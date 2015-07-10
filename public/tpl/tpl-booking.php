@@ -125,7 +125,7 @@ get_header(); ?>
 		</div>
 		<div id="days-modifier" class="pure-u-1 pure-u-md-12-24">
 			<button onclick="addADay();">+</button>
-			<button onclick="removeADay();">-</button>
+			<button onclick="removeLastDay();">-</button>
 		</div>
 	
 </div>

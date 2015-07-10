@@ -34,7 +34,7 @@ $.noty.defaults = {
         easing: 'swing',
         speed: 500 // opening & closing animation speed
     },
-    timeout: 1500, // delay for closing event. Set false for sticky notifications
+    timeout: 1800, // delay for closing event. Set false for sticky notifications
     force: false, // adds notification to the beginning of queue when set to true
     modal: false,
     maxVisible: 2, // you can set max visible notification for dismissQueue true option,
@@ -138,7 +138,10 @@ function deleteUserTrip(tripID){
 	               $('#ut-' + tripID).remove();
 	                             },
 	          error: function(errorThrown){
-	               var n = noty({text: 'Echec de la suppression :('});
+	               var n = noty({
+		               text: 'Echec de la suppression :(',
+		               template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+		               });
 	               console.warn(errorThrown.responseText);
 	          }
 		     });
@@ -153,6 +156,11 @@ function saveTrip(){
 			$('#tripName').addClass('required').attr('placeholder','champs obligatoire');
 		} else{
 			$('#tripName').removeClass('required');
+			//set name and store it in reservation object
+			reservation.name = tripName;
+			cookieValue = JSON.stringify(reservation);
+			Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
+			//request the ajax store fn
 			$.ajax({
 	          url: '/wp-admin/admin-ajax.php',
 	          data:{
@@ -164,15 +172,35 @@ function saveTrip(){
 	          success:function(data){    
 			        console.log(data);
 			        if(data === '10'){
-				        var n = noty({text: 'Il n\'est pas possible d\'enregistrer plus de 10 élements.Merci d\'effacer des events dans votre compte',type: 'alert'});
-			        } else {
+				        var n = noty({
+					        text: 'Il n\'est pas possible d\'enregistrer plus de 10 élements.Merci d\'effacer des events dans votre compte',
+					        template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+					        });
+			        } else if( data === null){
+				        var n = noty({
+					        text: 'enregistrement non effectué, merci de nous contacter directement',
+					        template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+					        });
+			        } else if( data === 'updated'){
+				        var n = noty({
+					        text: 'enregistrement mis à jour'
+					        });
+			        } else if( data === 'stored'){
 				        var n = noty({text: 'Résérvation effectué ! elle est visible dans "mon compte"'});
+			        } else {
+				        var n = noty({
+					        text: 'enregistrement non effectué, merci de nous contacter directement',
+					        template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+					        });
 			        }
 			       
 	                
 	                             },
 	          error: function(errorThrown){
-	               var n = noty({text: 'Echec de la sauvegarde :('});
+	               var n = noty({
+		               text: 'Echec de la sauvegarde :(',
+		               template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+		               });
 	               console.log(errorThrown.responseText);
 	          }
 		     });
@@ -203,7 +231,10 @@ function addActivity(id,activityname,price,type,img){
 		cookieValue = JSON.stringify(reservation);
 		Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
 	} else {
-		var n = noty({text: 'cette activité est déjà présente sur cette journée'});
+		var n = noty({
+			text: 'cette activité est déjà présente sur cette journée',
+			template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+			});
 	}
 
 }
@@ -230,6 +261,114 @@ function deleteActivity(day,id,price){
 	
 }
 
+/**************
+	DAYS RELATED FUNCTIONS
+	**************/
+/*
+* define dates for the trip
+* check if object dates exists, calculate range, define nb of days
+* create html days list (without activites)
+*/
+function defineTripDates(){
+
+	if(!reservation.departure){
+		reservation.departure = $('#departure').val();
+		reservation.arrival = $('#arrival').val();
+	}
+	
+	var start   = moment(reservation.arrival, "DD/MM/YYYY");
+	var end = moment(reservation.departure, "DD/MM/YYYY");
+	//define range & modify html
+	var range = moment().range(start,end);
+	//define number of days
+	reservation.days = range.diff('days') + 1;
+	i = 0;
+	//for each days, define an obj
+	range.by('days', function(momentTime) {
+		var dayIs = moment(momentTime).format("DD/MM/YYYY");
+		var niceDayIs = moment(momentTime).format("dddd DD MMMM ");
+		//define first day as the curent day in the global var
+		if(i === 0){
+			reservation.currentDay = dayIs;
+		}
+		//day obj is not defined we define it 
+		if(!reservation.tripObject[dayIs]){
+			reservation.tripObject[dayIs] = {};
+		}
+		//build html list
+		var currentClass = (i === 0) ? 'current' : 'classic';
+		var removeFn = (i !== reservation.days - 1) ? '' : '<span onclick="removeDay(\''+ dayIs+'\');" class="fs1 rd" aria-hidden="true" data-icon="Q">';
+		
+		$('#daysTrip').append('<div class="dayblock '+currentClass+'" data-date="'+ dayIs +'" ><div class="day-wrapper">'+removeFn+'</span><span onclick="changeCurrentDay(\''+ dayIs+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
+		i++;
+	});
+}
+
+/*
+	add a day to event
+	maximum is 4 days
+	minimum is 2 days
+	increment number of days
+	update departure day
+	update trip object
+*/
+function addADay(){
+	if(reservation.days > 3){
+		
+		var n = noty({
+			text: 'Nombre maximum de jour atteint',
+			template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+		});
+		
+	} else {
+		lastDay = moment(reservation.departure, "DD/MM/YYYY");
+		reservation.departure = lastDay.add(1, 'days').format("DD/MM/YYYY");
+		var niceDayIs = lastDay.format("dddd DD MMMM ");
+		dayIs = reservation.departure;
+		reservation.days++;
+		reservation.tripObject[dayIs] = {};
+		var removeFn = '<span onclick="removeDay(\''+ reservation.departure+'\');" class="fs1 rd" aria-hidden="true" data-icon="Q">';
+		//html append Day
+		$('#daysTrip').append('<div class="dayblock" data-date="'+ reservation.departure +'" ><div class="day-wrapper">'+removeFn+'</span><span onclick="changeCurrentDay(\''+ reservation.departure+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
+		
+		//store the day added
+		console.log(reservation);
+		cookieValue = JSON.stringify(reservation);
+		Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
+		var n = noty({text: 'Jour ajouté'});
+	}
+}
+
+/*
+	remove Last day
+	decrement number of days
+	decrement departure day
+*/
+
+function removeLastDay(){
+	if(reservation.days < 2){
+		var n = noty({
+			text: 'Nombre minimum de jour atteint',
+			template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+		});
+	} else{
+		lastDay = moment(reservation.departure, "DD/MM/YYYY");
+		reservation.days--;
+		lastDayString = lastDay.format("DD/MM/YYYY");
+		console.log(lastDayString);
+		delete reservation.tripObject[lastDayString];
+		$(".dayblock[data-date='"+ lastDayString +"']").remove();
+		newDeparture = lastDay.subtract(1, 'days').format("DD/MM/YYYY");
+		reservation.departure = newDeparture;
+		
+		//store the day added
+		console.log(reservation);
+		cookieValue = JSON.stringify(reservation);
+		Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
+		var n = noty({text: 'Jour supprimé'});
+	}
+}
+
 /*
 * Get this day active
 * set it active globally and in html
@@ -254,15 +393,51 @@ function removeDay(day){
 	
 	$(".dayblock[data-date='"+ day+"']").remove();
 	reservation.departure = $('.dayblock:last-child').attr('data-date');
-	
-	
+	//store results
 	console.log(reservation);
-
 	cookieValue = JSON.stringify(reservation);
 	Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
-
 	var n = noty({text: 'Jour supprimé'});
 }
+
+/*
+	Change tripObject
+	duplicate key (day) 
+	rename it to the new day
+	delete old key
+	rebuild html list
+	obj : replace departure && arrival
+*/
+function changeDateRangeEvent(selectedDate){
+	obj = reservation.tripObject;
+	oldTrip = Object.keys(reservation.tripObject);
+
+	for (var i in oldTrip) {
+    	if (oldTrip.hasOwnProperty(i) && typeof(i) !== 'function') {
+	    	oldDay = oldTrip[i];
+	    	//calculate days
+	    	formattDay = moment(oldDay, "DD/MM/YYYY");
+	    	if(i > 0){
+		    	incrementDay = moment(selectedDate, "DD/MM/YYYY").add(1, 'days').format("DD/MM/YYYY");
+	    	} else {
+		    	incrementDay = selectedDate;
+	    	}
+	    	console.log(incrementDay);
+	    	//replace with new day
+	    	reservation.tripObject[incrementDay] = reservation.tripObject[oldDay];
+	    	//delete old day
+			delete reservation.tripObject[oldDay];
+	        //console.log(oldTrip[i]);
+	    }
+	}
+	
+	
+	
+}
+
+
+
+
 /*
 * set Budget in obj, store it in cookies
 * @param min : number 
@@ -328,6 +503,7 @@ function loadTrip($trip,gotoBookingPage){
 		$getBudgetMin = ( reservation.budgetPerMin ) ? reservation.budgetPerMin : 100;
 		$getBudgetMax = ( reservation.budgetPerMax ) ? reservation.budgetPerMax : 300;
 		$('#daysTrip').empty();
+		$('#tripName').val(reservation.name);
 		$( "#arrival" ).datepicker( "setDate", reservation.arrival );
 		$( "#departure" ).datepicker( "setDate", reservation.departure );
 		$( "#slider-range" ).slider( "option", "values", [ reservation.budgetPerMin, reservation.budgetPerMax ] );
@@ -373,45 +549,7 @@ function initTrip(){
 	
 }
 
-/*
-* define dates for the trip
-* check if object dates exists, calculate range, define nb of days
-* create html days list (without activites)
-*/
-function defineTripDates(){
 
-	if(!reservation.departure){
-		reservation.departure = $('#departure').val();
-		reservation.arrival = $('#arrival').val();
-	}
-	
-	var start   = moment(reservation.arrival, "DD/MM/YYYY");
-	var end = moment(reservation.departure, "DD/MM/YYYY");
-	//define range & modify html
-	var range = moment().range(start,end);
-	//define number of days
-	reservation.days = range.diff('days') + 1;
-	i = 0;
-	//for each days, define an obj
-	range.by('days', function(momentTime) {
-		var dayIs = moment(momentTime).format("DD/MM/YYYY");
-		var niceDayIs = moment(momentTime).format("dddd DD MMMM ");
-		//define first day as the curent day in the global var
-		if(i === 0){
-			reservation.currentDay = dayIs;
-		}
-		//day obj is not defined we define it 
-		if(!reservation.tripObject[dayIs]){
-			reservation.tripObject[dayIs] = {};
-		}
-		//build html list
-		var currentClass = (i === 0) ? 'current' : 'classic';
-		var removeFn = (i !== reservation.days - 1) ? '' : '<span onclick="removeDay(\''+ dayIs+'\');" class="fs1 rd" aria-hidden="true" data-icon="Q">';
-		
-		$('#daysTrip').append('<div class="dayblock '+currentClass+'" data-date="'+ dayIs +'" ><div class="day-wrapper">'+removeFn+'</span><span onclick="changeCurrentDay(\''+ dayIs+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
-		i++;
-	});
-}
 
 /*
 * get activites from the obj
@@ -421,9 +559,8 @@ function defineTripDates(){
 function the_activites(){
 	//console.log(reservation);
 	daysObj = reservation.tripObject;
-	
 	days = Object.keys(daysObj).length;
-	console.log();
+	
 	if(days !== 0){
 		//iterate thrue days
 		for (var day in daysObj){
@@ -501,7 +638,8 @@ jQuery(function () {
             //$( "#departure" ).datepicker( "option", "minDate", maxDate );
             $("#departure").datepicker("setDate", maxDate);
             console.log(selectedDate);
-            //$( "#departure" ).datepicker( "option", "maxDate", maxRange._i );
+            changeDateRangeEvent(selectedDate);
+            
         }
     });
 
@@ -519,7 +657,7 @@ jQuery(function () {
             $('#ui-datepicker-div').addClass('ll-skin-melon');
         },
         onClose: function (selectedDate) {
-            $("#arrival").datepicker("option", "maxDate", selectedDate);
+            //$("#arrival").datepicker("option", "maxDate", selectedDate);
 
         }
     });

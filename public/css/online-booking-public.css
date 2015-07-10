@@ -131,8 +131,9 @@ h1.archive-title{padding-top:0}
 #front-form{background: rgba(0, 0, 0, 0.65);clear:both; min-height:80px;display:block;margin: 80px auto;max-width: 980px;padding: 20px;}
 #front-form.exists{color:#fff;text-align: center;font-size: 18px;max-width: 320px;line-height: 24px;min-height: 0;}
 #primary.booking #content{padding:0 2%}
-#add_success,#add_duplicate,#add_trip_success{position:fixed;left: 20px;background: rgba(149, 202, 40, 1);padding: 5px 15px;color:rgba(255,255,255,0.92);border-radius: 2px;/* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.11); */transition:all .4s ease;margin:auto;width: auto;text-align:center;line-height:20px;font-size: 14px;min-width: 80px;min-height: 20px;font-weight:300;}
-#add_success.active,#add_duplicate.active,#add_trip_success.active{bottom: 20px;}
+#add_success,#add_duplicate,#add_trip_success{position:fixed;left: 0;background: rgba(149, 202, 40, 1);padding: 5px 15px;color:rgba(255,255,255,0.92);border-radius: 2px;/* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.11); */transition:all .4s ease;margin:auto;width: auto;text-align:center;line-height:20px;font-size: 16px;min-width: 80px;min-height: 20px;font-weight: 500;right: 0;}
+#add_success.active.error{background: rgb(242, 105, 105);}
+#add_success.active,#add_duplicate.active,#add_trip_success.active{bottom: 0;}
 #add_duplicate{background:rgba(177,25,25,0.87)}
 #user-actions{padding:20px 0;   position: relative;   width: 96%;   margin: auto;   display: block;}
 
@@ -283,6 +284,7 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
 .home .post-onepage.notFullWidth{width:100%;max-width: 100%;}
 #logger{position:absolute; top: 0;right:0;background: #F7F7F7;color: rgb(45, 169, 220);border-radius:4px;padding: 10px;}
 #logger a{color: rgb(45, 169, 220);padding:0 20px;}
+#logger a.log-out{display:block; float:right;background:url(../img/out.png) no-repeat 0 50%;text-indent:-9999px;height: 24px;width: 24px;padding: 0;}
 .hidden{display: none;}
 #userTrips{
     list-style: none;

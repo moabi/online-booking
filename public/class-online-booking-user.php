@@ -107,7 +107,7 @@ class online_booking_user  {
 			
 			if (in_array($tripName, $trips) && count($trips) < 11 ) {
 			    online_booking_user::updateTrip($bookink_obj,$tripName);
-			    //$out = "update";
+			    
 			} elseif (!in_array($tripName, $trips) && count($trips) < 11 ) {
 				//online_booking_user::storeTrip($bookink_obj,$tripName);
 				$date =  current_time('mysql', 1);
@@ -127,7 +127,7 @@ class online_booking_user  {
 						'%s' 
 					) 
 				);
-
+				return "stored";
 			} else {
 				return "10";
 			}

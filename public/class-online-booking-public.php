@@ -129,12 +129,18 @@ public function booking_page_template( $page_template )
 {
     if ( is_page( $this->booking_url ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-booking.php';
+        
     }
     elseif ( is_page( 'nos-sejours' ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/archive-sejours.php';
+        
     }
     elseif ( is_page( 'compte' ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-compte.php';
+        
+    } elseif ( is_page( 'public' ) ) {
+        $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-public.php';
+        
     }
     return $page_template;
 }
@@ -181,6 +187,22 @@ public function create_booking_pages() {
 				'post_author'		=>	$author_id,
 				'post_name'		=>	$this->booking_url,
 				'post_title'		=>	'Réservation',
+				'post_status'		=>	'publish',
+				'post_type'		=>	'page'
+			)
+		);
+
+	// Otherwise, we'll stop
+	} elseif( null == get_page_by_title( 'public' ) ) {
+
+		// Set the post ID so that we know the post was created successfully
+		$post_id = wp_insert_post(
+			array(
+				'comment_status'	=>	'closed',
+				'ping_status'		=>	'closed',
+				'post_author'		=>	$author_id,
+				'post_name'		=>	'public',
+				'post_title'		=>	'public',
 				'post_status'		=>	'publish',
 				'post_type'		=>	'page'
 			)
