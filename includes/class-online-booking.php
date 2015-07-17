@@ -195,6 +195,8 @@ class Online_Booking {
 		
 		//USER FILTERS/HOOK
 		$this->loader->add_filter( 'login_redirect',$plugin_public,'my_login_redirect', 10, 3 );
+		//filter head
+		$this->loader->add_action('wp_head',$plugin_public,'header_form');
 
 
 	}

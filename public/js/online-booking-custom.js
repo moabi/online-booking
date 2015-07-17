@@ -297,7 +297,7 @@ function defineTripDates(){
 		}
 		//build html list
 		var currentClass = (i === 0) ? 'current' : 'classic';
-		var removeFn = (i !== reservation.days - 1) ? '' : '<span onclick="removeDay(\''+ dayIs+'\');" class="fs1 rd" aria-hidden="true" data-icon="Q">';
+		var removeFn = (i !== reservation.days - 1) ? '' : '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q">';
 		
 		$('#daysTrip').append('<div class="dayblock '+currentClass+'" data-date="'+ dayIs +'" ><div class="day-wrapper">'+removeFn+'</span><span onclick="changeCurrentDay(\''+ dayIs+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
 		i++;
@@ -321,13 +321,14 @@ function addADay(){
 		});
 		
 	} else {
+		$('.fs1.rd').remove();
 		lastDay = moment(reservation.departure, "DD/MM/YYYY");
 		reservation.departure = lastDay.add(1, 'days').format("DD/MM/YYYY");
 		var niceDayIs = lastDay.format("dddd DD MMMM ");
 		dayIs = reservation.departure;
 		reservation.days++;
 		reservation.tripObject[dayIs] = {};
-		var removeFn = '<span onclick="removeDay(\''+ reservation.departure+'\');" class="fs1 rd" aria-hidden="true" data-icon="Q">';
+		var removeFn = '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q">';
 		//html append Day
 		$('#daysTrip').append('<div class="dayblock" data-date="'+ reservation.departure +'" ><div class="day-wrapper">'+removeFn+'</span><span onclick="changeCurrentDay(\''+ reservation.departure+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
 		
@@ -343,10 +344,11 @@ function addADay(){
 	remove Last day
 	decrement number of days
 	decrement departure day
+	add a delete button to new last day
 */
 
 function removeLastDay(){
-	if(reservation.days < 2){
+	if(parseInt(reservation.days,10) < 2){
 		var n = noty({
 			text: 'Nombre minimum de jour atteint',
 			template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
@@ -360,7 +362,9 @@ function removeLastDay(){
 		$(".dayblock[data-date='"+ lastDayString +"']").remove();
 		newDeparture = lastDay.subtract(1, 'days').format("DD/MM/YYYY");
 		reservation.departure = newDeparture;
-		
+		//add a del button
+		var spanBtn = '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q"></span>';
+		$(".dayblock:last-child").find('.day-wrapper').append(spanBtn);
 		//store the day added
 		console.log(reservation);
 		cookieValue = JSON.stringify(reservation);
@@ -403,33 +407,68 @@ function removeDay(day){
 /*
 	Change tripObject
 	duplicate key (day) 
-	rename it to the new day
+	rename it to the new day - add a prefix to make it unique
 	delete old key
+	rename it correctly (remove prefix)
 	rebuild html list
 	obj : replace departure && arrival
 */
 function changeDateRangeEvent(selectedDate){
 	obj = reservation.tripObject;
 	oldTrip = Object.keys(reservation.tripObject);
+	
 
 	for (var i in oldTrip) {
     	if (oldTrip.hasOwnProperty(i) && typeof(i) !== 'function') {
 	    	oldDay = oldTrip[i];
 	    	//calculate days
 	    	formattDay = moment(oldDay, "DD/MM/YYYY");
-	    	if(i > 0){
-		    	incrementDay = moment(selectedDate, "DD/MM/YYYY").add(1, 'days').format("DD/MM/YYYY");
-	    	} else {
-		    	incrementDay = selectedDate;
+	    	if(i < 1){
+		    	incrementDay = selectedDate + '*';
+		    	reservation.arrival = selectedDate;
+		    	reservation.currentDay = selectedDate;
+		    	//console.log(incrementDay);
+		    	//replace with new day
+		    	reservation.tripObject[incrementDay] = reservation.tripObject[oldDay];
+		    	//delete old day
+				delete reservation.tripObject[oldDay];
+		        //console.log(oldTrip[i]);
+		    	
+	    	} else{
+		    	incrementDay = moment(selectedDate, "DD/MM/YYYY").add(i, 'days').format("DD/MM/YYYY");
+		        var dminys = parseInt((reservation.days),10) - 1;
+		        //console.log(i);
+			    //console.log('number of days = ',dminys);
+		    	if( parseInt(i,10)  ===  dminys){
+			    	//console.log('bingo');
+			    	reservation.departure = incrementDay;
+		    	}
+		    	reservation.tripObject[incrementDay+ '*'] = reservation.tripObject[oldDay];
+				delete reservation.tripObject[oldDay];
+		        //console.log(oldTrip[i]);
+	        
 	    	}
-	    	console.log(incrementDay);
-	    	//replace with new day
-	    	reservation.tripObject[incrementDay] = reservation.tripObject[oldDay];
-	    	//delete old day
-			delete reservation.tripObject[oldDay];
-	        //console.log(oldTrip[i]);
 	    }
 	}
+	daysWithPrefix = Object.keys(reservation.tripObject);
+	//remove prefix
+	for (var i in oldTrip) {
+		if (daysWithPrefix.hasOwnProperty(i) && typeof(i) !== 'function') {
+		oldDay = daysWithPrefix[i];
+		var res = oldDay.replace("*", "");
+    	reservation.tripObject[res] = reservation.tripObject[oldDay];
+		delete reservation.tripObject[oldDay];
+		}
+	}
+	
+	
+	
+	//re-create html days
+	loadTrip(reservation,false);
+	//store results
+	cookieValue = JSON.stringify(reservation);
+	Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
+	var n = noty({text: 'date changée'});
 	
 	
 	
@@ -455,7 +494,7 @@ function setBudgetPer(min,max){
 function setReservationTerms(theme, lieu){
 	reservation.theme = theme;
 	reservation.lieu = lieu;
-	console.log('set terms');
+	//console.log('set terms');
 	//setCookie('reservation', JSON.stringify(reservation), 2);
 	cookieValue = JSON.stringify(reservation);
 	Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
@@ -512,8 +551,11 @@ function loadTrip($trip,gotoBookingPage){
 		$('#end').html(reservation.budgetPerMax);
 		$('#participants').val(reservation.participants );
 		$('#budget').val(reservation.budgetPerMin+'/'+reservation.budgetPerMax);
-		$("#lieu").select2("val", reservation.lieu);
-		$("#theme").select2("val", reservation.theme);
+		if( $("#lieu").length ){
+			$("#lieu").select2("val", reservation.lieu);
+			$("#theme").select2("val", reservation.theme);
+		}
+		
 		defineTripDates();
 		the_activites();
 
@@ -604,8 +646,8 @@ jQuery(function () {
     $("#slider-range").slider({
         range: true,
         min: 50,
-        max: 1500,
-        step: 1,
+        max: 600,
+        step: 10,
         values: [getBudgetMin, getBudgetMax],
         slide: function (event, ui) {
             $("#budget").val(ui.values[0] + "/" + ui.values[1]);
@@ -638,7 +680,14 @@ jQuery(function () {
             //$( "#departure" ).datepicker( "option", "minDate", maxDate );
             $("#departure").datepicker("setDate", maxDate);
             console.log(selectedDate);
-            changeDateRangeEvent(selectedDate);
+            arrival = moment(reservation.arrival, 'DD/MM/YYYY');
+            console.log(arrival);
+            if(moment(selectedDate, 'DD/MM/YYYY').isSame(arrival)){
+	            console.log('no date move');
+            } else {
+	            changeDateRangeEvent(selectedDate);
+            }
+            
             
         }
     });

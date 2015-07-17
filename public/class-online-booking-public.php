@@ -548,7 +548,7 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
                 }
                 
                 $posts .=  '<div class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
-                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.'euros</span></div>';
+                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
                 $posts .= '<div class="presta"><h3>la prestation comprend : </h3>';
                 $posts .= get_field("la_prestation_comprend").'</div>';
                 $posts .= get_the_post_thumbnail($postID, 'thumbnail');
@@ -578,6 +578,7 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 			'post_status'		=> 'publish',
         );
         $the_query = new WP_Query( $args );
+        $goToBookingPage = $onBookingPage ? 'true' : 'false';
         // The Loop
         if ( $the_query->have_posts() ) {
             $sejour = '<div id="sejour-content" class="blocks pure-g"><div class="slick-multi">';
@@ -653,7 +654,7 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 							};';
                 $sejour .= '</script>';
                 $sejour .= '<a href="'.get_permalink().'" class="seeit">Voir ce séjour</a>';
-                $sejour .= '<a href="javascript:void(0)" class="loadit" onclick="loadTrip(sejour'.$postID.',false);">Charger ce séjour</a></div></div>';
+                $sejour .= '<a href="javascript:void(0)" class="loadit" onclick="loadTrip(sejour'.$postID.','.$goToBookingPage.');">Charger ce séjour</a></div></div>';
                 
             }
             $sejour .= '</div></div>';
@@ -793,6 +794,37 @@ public function front_form_shortcode($booking_url) {
 	endif;
 	
 	return $front_form;
+}
+
+/*
+	add a login form to header.php
+*/
+public function header_form(){
+	global $current_user;
+    get_currentuserinfo();
+    
+	if ( !is_user_logged_in() ): 
+            $output = '<div id="logger">';
+	        $output .= '<a href="#login-popup" class="open-popup-link">';
+		    $output .=  __('Connexion','twentyfifteen'); 
+		    $output .= '</a>';
+	        $output .= '</div>';
+			$output .= '<div id="login-popup" class="white-popup mfp-hide">';
+        	$output .= do_shortcode('[userpro template=register type=particuliers]');
+			$output .= '</div>';
+    else:
+        	$output = '<div id="logger">';
+	        $output .= '<span class="user-name">';
+	        $output .= __('Bonjour','online-booking');
+	        $output .= $current_user->user_login;
+	        $output .= '</span>';
+	        $output .= '<a class="my-account" href="'.get_bloginfo('url').'/compte">'. __('Mon compte','online-booking').'</a>';
+	       $output .= '<a class="log-out" href="'.wp_logout_url( home_url() ).'">'.__('Déconnexion', 'online-booking').'</a>';
+	       	$output .= '</div>';
+     endif;
+
+	echo $output;
+
 }
 
 
