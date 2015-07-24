@@ -326,10 +326,10 @@ public function reservation_type() {
 public function theme() {
 
 	$labels = array(
-		'name'                       => _x( 'thèmes', 'Taxonomy General Name', 'twentyfifteen' ),
-		'singular_name'              => _x( 'thème', 'Taxonomy Singular Name', 'twentyfifteen' ),
-		'menu_name'                  => __( 'thèmes', 'twentyfifteen' ),
-		'all_items'                  => __( 'Tous les thèmes', 'twentyfifteen' ),
+		'name'                       => _x( 'Secteur d\'activité', 'Taxonomy General Name', 'twentyfifteen' ),
+		'singular_name'              => _x( 'Secteur d\'activité', 'Taxonomy Singular Name', 'twentyfifteen' ),
+		'menu_name'                  => __( 'Secteurs d\'activités', 'twentyfifteen' ),
+		'all_items'                  => __( 'Tous les Secteurs d\'activités', 'twentyfifteen' ),
 		'parent_item'                => __( 'Parent', 'twentyfifteen' ),
 		'parent_item_colon'          => __( 'Parent thème', 'twentyfifteen' ),
 		'new_item_name'              => __( 'Nouveau thème', 'twentyfifteen' ),
@@ -357,7 +357,40 @@ public function theme() {
 
 }
 
+// Register Custom Taxonomy
+public function theme_activity() {
 
+	$labels = array(
+		'name'                       => _x( 'Theme', 'Taxonomy General Name', 'twentyfifteen' ),
+		'singular_name'              => _x( 'Theme', 'Taxonomy Singular Name', 'twentyfifteen' ),
+		'menu_name'                  => __( 'Theme', 'twentyfifteen' ),
+		'all_items'                  => __( 'Tous les Themes', 'twentyfifteen' ),
+		'parent_item'                => __( 'Parent', 'twentyfifteen' ),
+		'parent_item_colon'          => __( 'Parent thème', 'twentyfifteen' ),
+		'new_item_name'              => __( 'Nouveau thème', 'twentyfifteen' ),
+		'add_new_item'               => __( 'Ajouter nouveau thème', 'twentyfifteen' ),
+		'edit_item'                  => __( 'Editer thème', 'twentyfifteen' ),
+		'update_item'                => __( 'Mettre à jout ', 'twentyfifteen' ),
+		'view_item'                  => __( 'Voir thème', 'twentyfifteen' ),
+		'separate_items_with_commas' => __( 'Separate items with commas', 'twentyfifteen' ),
+		'add_or_remove_items'        => __( 'Add or remove items', 'twentyfifteen' ),
+		'choose_from_most_used'      => __( 'Choose from the most used', 'twentyfifteen' ),
+		'popular_items'              => __( 'Popular Items', 'twentyfifteen' ),
+		'search_items'               => __( 'Search Items', 'twentyfifteen' ),
+		'not_found'                  => __( 'Not Found', 'twentyfifteen' ),
+	);
+	$args = array(
+		'labels'                     => $labels,
+		'hierarchical'               => true,
+		'public'                     => true,
+		'show_ui'                    => true,
+		'show_admin_column'          => true,
+		'show_in_nav_menus'          => true,
+		'show_tagcloud'              => true,
+	);
+	register_taxonomy( 'theme_activity', array( 'reservation' ), $args );
+
+}
 
 // Register Custom Post Type
 public function car_post_type() {
@@ -827,6 +860,29 @@ public function header_form(){
 
 }
 
+
+/*
+	
+*/
+
+/*
+	add a login form to header.php
+*/
+public function current_user_infos(){
+	global $current_user;
+    get_currentuserinfo();
+    //var_dump($current_user);
+	if ( is_user_logged_in() ): 
+            $output = '<div id="logged_in_info" style="display:none;">';
+			$output .= '<input id="user-logged-in-infos" data-id="'.$current_user->ID.'" />';
+	        $output .= '</div>';
+	 else:
+	 		$output = '';
+     endif;
+
+	echo $output;
+
+}
 
 public function remove_media_library_tab($tabs) {
 	if(!is_admin()):

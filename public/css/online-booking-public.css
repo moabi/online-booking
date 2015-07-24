@@ -383,6 +383,14 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
 #event-trip-planning .etp-days li{width:100%; display: block; clear:both;}
 #event-trip-planning .etp-days h3{font-size:14px;text-align:center;}
 #event-trip-planning .etp-days img{margin:auto; display:block;}
+.trip-budget-user{
+    max-width: 800px;
+    display: block;
+    margin: auto;
+    float: none;
+    clear: both;
+}
+
 @-webkit-keyframes anim-effect-boris {
 	0% {
 		-webkit-transform: scale3d(0.3, 0.3, 1);

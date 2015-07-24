@@ -136,7 +136,7 @@ get_header(); ?>
 </div>
 		
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-			<label for=""><span class="fs1" aria-hidden="true" data-icon=""></span>Budget/personne ( entre <span id="st">45</span> et <span id="end">300</span> Euros )
+			<label for=""><span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>Budget/personne ( entre <span id="st">45</span> et <span id="end">300</span> Euros )
 			</label>
 			<div id="slider-range"></div>
 			<input type="hidden" id="budget" value="45/300" class="bk-form form-control"  />
@@ -218,7 +218,11 @@ $terms = get_terms($taxonomies, $args);
 		?>
 </div>
 </div>
-
+<div class="pure-g">
+	Theme
+	<br />
+	Pertinence
+</div>
 
 	<?php
         $args = array(
@@ -295,6 +299,8 @@ $terms = get_terms($taxonomies, $args);
 		Sauvegarder votre voyage<div class="fs1" aria-hidden="true" data-icon=""></div>
 		</div>
 </div>
+<?php else: ?>
+Connectez-vous pour sauvegarder
 <?php endif; ?>
 
 

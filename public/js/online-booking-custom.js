@@ -1,7 +1,10 @@
 var $ = jQuery;
 var bookingPage = '/reservation-service/';
 var isBookingTpl = $('#booking-wrapper').length;
+var USERID = $('#user-logged-in-infos').attr("data-id");
+
 var reservation = {
+	user 	  : '',
 	name	  : '',
 	theme 	  : '',
 	lieu      : '',
@@ -221,12 +224,14 @@ function addActivity(id,activityname,price,type,img){
 			type  : type,
 			img   : encodeURIComponent(img)
 		}
-		reservation.currentBudget = parseInt( (reservation.currentBudget + price),10);
+		//console.log('obj price : ' + price);
+		reservation.currentBudget = parseInt(reservation.currentBudget,10) + parseInt(price,10);
 		tripImg = (img) ? '<img src="'+img+'" />' : '';
 		tripType = (type) ? type : 'notDefined';
 					
 		$('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content').append('<div data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
 
+		checkBudget();
 		var n = noty({text: 'Ajouté à votre séjour'});
 		cookieValue = JSON.stringify(reservation);
 		Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
@@ -246,7 +251,7 @@ function addActivity(id,activityname,price,type,img){
 *@param price : number	
 */
 function deleteActivity(day,id,price){
-	console.log(day);
+	//console.log(day);
 	$('.dayblock[data-date="'+day+'"]').find('.day-content div[data-id="'+ id +'"]').remove();
 	var target = $('.dayblock[data-date="'+day+'"]').find('.day-wrapper');
 	target.addClass('anim-effect-boris');
@@ -254,6 +259,7 @@ function deleteActivity(day,id,price){
 		target.removeClass('anim-effect-boris');
 	}, 300);
 	obj = reservation.tripObject[day];
+	//console.log('obj price : ' + price);
 	reservation.currentBudget = parseInt( (reservation.currentBudget - price),10);
 	delete obj[id];
 	cookieValue = JSON.stringify(reservation);
@@ -264,24 +270,92 @@ function deleteActivity(day,id,price){
 /**************
 	DAYS RELATED FUNCTIONS
 	**************/
+
+/*
+	check if arrival is before departure
+	check number of days
+*/	
+function checkIfDateOk(start,end){
+	
+	//console.log(moment(start).format("DD/MM/YYYY") + ' => initials dates  <= ' + moment(end).format("DD/MM/YYYY"));
+	
+	isReversedDate = moment(start).isAfter(end);
+	
+	if(isReversedDate === true ){
+		
+		console.warn('issue with departure date : ' + end);
+		console.log(reservation.arrival + ' is after ' + reservation.departure);
+		console.log(start + ' is after ' + end);
+		
+		//add One day to rebuild an event with 2 days, but empty :(
+		end = start.add(1,'days').format("DD/MM/YYYY");
+		reservation.departure = end;
+		reservation.days = 2;
+		var n = noty({
+			text: 'Erreur dans le calcul des jours...nous avons du tout reconstruire...désolé',
+			template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+		});
+	} else {
+		//console.log(reservation.arrival + ' is before ' + reservation.departure + ' so it is fine...');
+	}
+
+	
+	return isReversedDate;
+	
+}	
+/*
+	check number of days allowed
+*/
+function checkNumberOfDays(days){
+	if(days > 4 || isNaN(days) === true){
+		console.warn('number of days too high or wrong');
+		days = 4;
+	}
+	
+	return days;
+}	
+/*
+	check if there is same amount of days
+	in startToEnd and in tripObject
+*/
+function checkCoherence(start,end){
+	calcNumberOfDays = parseInt(end.diff(start , 'days'),10) + 1;
+	tripNbDays = Object.keys(reservation.tripObject).length;
+	//console.log(tripNbDays,calcNumberOfDays);
+	if(tripNbDays !== calcNumberOfDays){
+		console.warn('diff between tripObj and dates');
+	}
+}
 /*
 * define dates for the trip
 * check if object dates exists, calculate range, define nb of days
 * create html days list (without activites)
+* calc max number of days
 */
 function defineTripDates(){
 
 	if(!reservation.departure){
+		console.warn('departure did not exist');
 		reservation.departure = $('#departure').val();
 		reservation.arrival = $('#arrival').val();
 	}
 	
-	var start   = moment(reservation.arrival, "DD/MM/YYYY");
-	var end = moment(reservation.departure, "DD/MM/YYYY");
+	var start   = moment(reservation.arrival,"DD/MM/YYYY");
+	var end = moment(reservation.departure,"DD/MM/YYYY");
+	
+	checkIfDateOk(start,end);
+	checkCoherence(start,end);
 	//define range & modify html
+	momentstart = moment(start).format("DD/MM/YYYY");
+	//console.log(momentstart, endFormatted);
 	var range = moment().range(start,end);
+	//console.log(range);
 	//define number of days
-	reservation.days = range.diff('days') + 1;
+	//we need the exact nb starting from 1 - that's why we add one here
+	  calcNumberOfDays = parseInt(end.diff(start , 'days'),10) + 1;
+	  //console.log('calcNumberOfDays' + calcNumberOfDays);
+	  reservation.days = checkNumberOfDays(calcNumberOfDays);
+	  
 	i = 0;
 	//for each days, define an obj
 	range.by('days', function(momentTime) {
@@ -322,8 +396,10 @@ function addADay(){
 		
 	} else {
 		$('.fs1.rd').remove();
+		//define last day
 		lastDay = moment(reservation.departure, "DD/MM/YYYY");
 		reservation.departure = lastDay.add(1, 'days').format("DD/MM/YYYY");
+		//$( "#departure" ).datepicker( "setDate", reservation.departure );
 		var niceDayIs = lastDay.format("dddd DD MMMM ");
 		dayIs = reservation.departure;
 		reservation.days++;
@@ -357,16 +433,20 @@ function removeLastDay(){
 		lastDay = moment(reservation.departure, "DD/MM/YYYY");
 		reservation.days--;
 		lastDayString = lastDay.format("DD/MM/YYYY");
-		console.log(lastDayString);
+		//console.log(lastDayString);
 		delete reservation.tripObject[lastDayString];
 		$(".dayblock[data-date='"+ lastDayString +"']").remove();
 		newDeparture = lastDay.subtract(1, 'days').format("DD/MM/YYYY");
 		reservation.departure = newDeparture;
+		reservation.currentDay = reservation.arrival;
+		$(".dayblock[data-date='"+ reservation.currentDay +"']").addClass('current');
+		//$( "#departure" ).datepicker( "setDate", reservation.departure );
 		//add a del button
 		var spanBtn = '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q"></span>';
 		$(".dayblock:last-child").find('.day-wrapper').append(spanBtn);
 		//store the day added
-		console.log(reservation);
+		//console.log(reservation);
+		checkBudget();
 		cookieValue = JSON.stringify(reservation);
 		Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
 		var n = noty({text: 'Jour supprimé'});
@@ -417,13 +497,23 @@ function changeDateRangeEvent(selectedDate){
 	obj = reservation.tripObject;
 	oldTrip = Object.keys(reservation.tripObject);
 	
-
+	//console.log(oldTrip);
+	//number of days can't be negative or null
+	checkNumberOfDays(reservation.days);
+	//we set the new departure date
+	if(reservation.days === 1){
+		reservation.departure = selectedDate;
+	} 
+	
+	//iterate through dates
 	for (var i in oldTrip) {
     	if (oldTrip.hasOwnProperty(i) && typeof(i) !== 'function') {
 	    	oldDay = oldTrip[i];
 	    	//calculate days
 	    	formattDay = moment(oldDay, "DD/MM/YYYY");
-	    	if(i < 1){
+	    	//if = 0 this is Events arrival
+	    	if(parseInt(i,10) < 1){
+		    	//console.log('define first day');
 		    	incrementDay = selectedDate + '*';
 		    	reservation.arrival = selectedDate;
 		    	reservation.currentDay = selectedDate;
@@ -434,13 +524,14 @@ function changeDateRangeEvent(selectedDate){
 				delete reservation.tripObject[oldDay];
 		        //console.log(oldTrip[i]);
 		    	
-	    	} else{
+	    	} else {
+		    	//console.log('more than one day');
 		    	incrementDay = moment(selectedDate, "DD/MM/YYYY").add(i, 'days').format("DD/MM/YYYY");
-		        var dminys = parseInt((reservation.days),10) - 1;
+		        var dminys = parseInt((reservation.days),10);
 		        //console.log(i);
 			    //console.log('number of days = ',dminys);
 		    	if( parseInt(i,10)  ===  dminys){
-			    	//console.log('bingo');
+			    	//console.log('last event day');
 			    	reservation.departure = incrementDay;
 		    	}
 		    	reservation.tripObject[incrementDay+ '*'] = reservation.tripObject[oldDay];
@@ -454,15 +545,23 @@ function changeDateRangeEvent(selectedDate){
 	//remove prefix
 	for (var i in oldTrip) {
 		if (daysWithPrefix.hasOwnProperty(i) && typeof(i) !== 'function') {
+			
 		oldDay = daysWithPrefix[i];
 		var res = oldDay.replace("*", "");
     	reservation.tripObject[res] = reservation.tripObject[oldDay];
 		delete reservation.tripObject[oldDay];
+		//change last day
+		//console.log(i);
+			lastDay = parseInt(reservation.days,10) - 1;
+			if( parseInt(i,10)   === lastDay ){
+				//console.log('last day');
+				reservation.departure = res;
+			}
 		}
 	}
 	
 	
-	
+	//console.log(reservation);
 	//re-create html days
 	loadTrip(reservation,false);
 	//store results
@@ -486,6 +585,7 @@ function setBudgetPer(min,max){
 		reservation.budgetPerMin = min;
 		reservation.budgetPerMax = max; 
 		console.log('set budget');  
+		checkBudget();
 		//setCookie('reservation', JSON.stringify(reservation), 2);
 		cookieValue = JSON.stringify(reservation);
 		Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
@@ -502,6 +602,7 @@ function setReservationTerms(theme, lieu){
 
 function setNumberOfPersonns(personNb){
 	reservation.participants = personNb;
+	checkBudget();
 	console.log('set number of personns');
 	//setCookie('reservation', JSON.stringify(reservation), 2);
 	cookieValue = JSON.stringify(reservation);
@@ -531,6 +632,8 @@ function createdayTrip(id,day){
 function loadTrip($trip,gotoBookingPage){
 	reservation = {};
 	reservation = $trip;
+	reservation.user = USERID;
+	reservation.currentBudget = 0;
 	//either we need to go to the page or not
 	if(gotoBookingPage === true){
 		console.log('true');
@@ -544,13 +647,16 @@ function loadTrip($trip,gotoBookingPage){
 		$('#daysTrip').empty();
 		$('#tripName').val(reservation.name);
 		$( "#arrival" ).datepicker( "setDate", reservation.arrival );
-		$( "#departure" ).datepicker( "setDate", reservation.departure );
+		//$( "#departure" ).datepicker( "setDate", reservation.departure );
 		$( "#slider-range" ).slider( "option", "values", [ reservation.budgetPerMin, reservation.budgetPerMax ] );
 		$( "#budget" ).val( reservation.budgetPerMax + "/" + reservation.budgetPerMax );
 		$('#st').html(reservation.budgetPerMin);
 		$('#end').html(reservation.budgetPerMax);
 		$('#participants').val(reservation.participants );
 		$('#budget').val(reservation.budgetPerMin+'/'+reservation.budgetPerMax);
+		if(reservation.name){
+			$('#tripName').val(reservation.name);
+		}
 		if( $("#lieu").length ){
 			$("#lieu").select2("val", reservation.lieu);
 			$("#theme").select2("val", reservation.theme);
@@ -558,14 +664,26 @@ function loadTrip($trip,gotoBookingPage){
 		
 		defineTripDates();
 		the_activites();
+		checkBudget();
 
-		var n = noty({text: 'réussite du chargement de votre voyage'});
+		var n = noty({text: 'Chargement de votre voyage'});
 	}
 	
 
 }
 
-
+function checkBudget(){
+	globalBudget = parseInt(reservation.globalBudgetMax,10);
+	actualCost = parseInt(reservation.currentBudget,10) * parseInt(reservation.participants,10);
+	if( globalBudget < actualCost){
+		console.log('budget is too high');
+		$('#budget-icon').css('color','red');
+		
+	} else {
+		console.log('budget is ok');
+		$('#budget-icon').css('color','green');
+	}
+}
 
 /*
 * init trip if there is no previous data, based on dates inputs
@@ -577,7 +695,7 @@ function initTrip(){
 	//get global var from project
 	$participants = $('#participants').val();
 	$budgetRange = $('#budget').val().split('/');
-	
+	reservation.user = USERID;
 	reservation.participants = $participants;	
 	reservation.budgetPerMin = $budgetRange[0];
 	reservation.budgetPerMax = $budgetRange[1];
@@ -597,6 +715,8 @@ function initTrip(){
 * get activites from the obj
 * calculate days, iterate thrue them to get activites
 * build html list of activites in days html list
+* get price obj
+* add to global Budget
 */
 function the_activites(){
 	//console.log(reservation);
@@ -617,7 +737,12 @@ function the_activites(){
 					var type = reservation.tripObject[day][id]['type'];
 					tripImg = (img) ? '<img src="'+img+'" />' : '';
 					tripType = (type) ? type : 'notDefined';
+					//build html
 					$('.dayblock[data-date="'+ day +'"]').find('.day-content').append('<div data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+					//add to global budget
+					//console.log('obj price : '+price);
+					//console.log('Global : ' + reservation.currentBudget)
+					reservation.currentBudget += price;
 				}
 			}
 
@@ -678,13 +803,15 @@ jQuery(function () {
             var maxRange = moment(selectedDate, 'DD/MM/YYYY').add(2, 'days');
             var maxDate = maxRange.format('DD/MM/YYYY');
             //$( "#departure" ).datepicker( "option", "minDate", maxDate );
-            $("#departure").datepicker("setDate", maxDate);
-            console.log(selectedDate);
+            //$("#departure").datepicker("setDate", maxDate);
+            //console.log(selectedDate);
             arrival = moment(reservation.arrival, 'DD/MM/YYYY');
-            console.log(arrival);
+            //console.log(arrival);
+            //if date does not change we don't move, otherwise we calculate the new days
             if(moment(selectedDate, 'DD/MM/YYYY').isSame(arrival)){
 	            console.log('no date move');
             } else {
+	            console.log('date move');
 	            changeDateRangeEvent(selectedDate);
             }
             
@@ -703,7 +830,7 @@ jQuery(function () {
         inline: true,
         showOtherMonths: true,
         beforeShow: function (input, inst) {
-            $('#ui-datepicker-div').addClass('ll-skin-melon');
+            //$('#ui-datepicker-div').addClass('ll-skin-melon');
         },
         onClose: function (selectedDate) {
             //$("#arrival").datepicker("option", "maxDate", selectedDate);

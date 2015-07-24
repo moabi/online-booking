@@ -64,12 +64,81 @@ class online_booking_user  {
 					$bdate = $result->booking_date;
 					$tripID = $result->ID;
 					$tripName = $result->booking_ID;
+					$tripDate = $result->booking_date;
+					$newDate = date("d/m/y", strtotime($tripDate));
+					$newDateDevis = date("dmy", strtotime($tripDate));
 					
 					echo '<li id="ut-'.$tripID.'">';
 					echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
 					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')"></div>';
+					
 					echo '<a title="Voir votre event" onclick="loadTrip(trip'.$result->ID.',true)" href="#">'.$tripName.'</a>';
+					
 					echo '<div class="sharetrip">partager votre event : <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'</pre></div>';
+					echo '<span class="user-date-invoice"><a class="open-popup-link" href="#tu-'.$tripID.'">Devis n°ol'.$newDateDevis.$tripID.' ('.$newDate.')</a></span>';
+					
+					$budget = json_decode($booking, true);
+					$budgetMaxTotal = $budget['participants'] * $budget['budgetPerMax'];
+					//var_dump($budget);
+					echo '<div class="mfp-hide" id="tu-'.$tripID.'">';
+					echo '<div class="trip-budget-user">';
+					echo '<h3>Le budget de votre event</h3>';
+					echo '<div class="excerpt-user pure-g">';
+					echo '<div class="pure-u-1-3">'.$budget['days'].' jours</div>';
+					echo '<div class="pure-u-1-3">'.$budget['participants'].' participants </div>';
+					echo '<div class="pure-u-1-3">Buget Max Total : '.$budgetMaxTotal.' </div>';
+					
+					echo 'Budget Minimum par personne : '.$budget['budgetPerMin'].'<br />';
+					echo 'Budget Minimum : '.$budget['budgetPerMin'] * $budget['participants'].'<br />';
+					echo 'Budget Maximum par personne : '.$budget['budgetPerMax'].'<br />';
+					echo 'Budget Maximum : '.$budget['budgetPerMax'] * $budget['participants'].'<br />';
+					echo 'Budget global par personne : '.$budget['currentBudget'].'<br />';
+					echo '</div>';
+					echo 'Budget Total : '.$budget['currentBudget'] * $budget['participants'].'<br />';
+					echo '<h4>Détails de votre event : </h4>';
+					$trips = $budget['tripObject'];
+					$budgetSingle = array();
+					//var_dump(is_array($trips));
+					echo '<div class="activity-budget-user pure-g">';
+						        echo '<div class="pure-u-1-3">Activité</div>';
+						        //echo $value['type'].'<br />';
+					            echo '<div class="pure-u-1-3">prix/pers</div>';
+					            echo '<div class="pure-u-1-3">prix total</div>';
+					echo '</div>';
+					foreach ($trips as $trip) {
+					    //  Check type
+					    if (is_array($trip)){
+					        //  Scan through inner loop
+					        
+					        foreach ($trip as $value) {
+						        //calculate 
+						        array_push($budgetSingle, $value['price']);
+						        //html
+						        echo '<div class="activity-budget-user pure-g">';
+						        echo '<div class="pure-u-1-3">'.$value['name'].'</div>';
+						        //echo $value['type'].'<br />';
+					            echo '<div class="pure-u-1-3">'.$value['price'].'</div>';
+					            echo '<div class="pure-u-1-3">'.$value['price'] * $budget['participants'].'</div>';
+					            echo '</div>';
+					        }
+					    }else{
+					        // one, two, three
+					        echo $trip;
+					    }
+					}
+					$single_budg = array_sum($budgetSingle);
+					$global_budg = $single_budg * $budget['participants'];
+					echo '<div class="activity-budget-user pure-g">';
+						        echo '<div class="pure-u-1-3">Budget Total</div>';
+						        //echo $value['type'].'<br />';
+					            echo '<div class="pure-u-1-3">'.$single_budg.'</div>';
+					            echo '<div class="pure-u-1-3">'.$global_budg.'</div>';
+					echo '</div>';
+					
+
+					
+					echo '</div>';
+					echo '</div>';
 					
 					echo '</li>';
 				}

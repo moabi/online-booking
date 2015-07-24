@@ -181,6 +181,8 @@ class Online_Booking {
 		
 		$this->loader->add_action( 'init', $plugin_public, 'lieu',0 );
 		$this->loader->add_action( 'init', $plugin_public, 'theme',0 );
+		//$this->loader->add_action( 'init', $plugin_public, 'theme_activity',0 );
+		
 		$this->loader->add_action( 'init', $plugin_public, 'reservation_type',0 );
 		$this->loader->add_action( 'init', $plugin_public, 'car_post_type',0 );
 		$this->loader->add_action( 'init', $plugin_public, 'sejour_post_type',0 );
@@ -197,6 +199,8 @@ class Online_Booking {
 		$this->loader->add_filter( 'login_redirect',$plugin_public,'my_login_redirect', 10, 3 );
 		//filter head
 		$this->loader->add_action('wp_head',$plugin_public,'header_form');
+		$this->loader->add_action('wp_head',$plugin_public,'current_user_infos');
+		
 
 
 	}

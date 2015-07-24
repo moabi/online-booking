@@ -108,5 +108,55 @@ class Online_Booking_Admin {
 		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-admin-display.php';
 		include_once $admin_view;
 	}
+	
+	public static function get_users_booking($validation = '0'){
+			global $wpdb;
+			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID	
+			$sql = $wpdb->prepare(" 
+						SELECT *
+						FROM ".$wpdb->prefix."online_booking a	
+						WHERE a.validation = %d
+						",$validation); 
+					
+			$results = $wpdb->get_results($sql);
+			//var_dump($results);
+			echo '<table id="ut-onlinebook" class="wp-list-table widefat fixed striped posts">';
+			echo '<thead><tr>';
+			echo '<td>delete</td>';
+			echo '<td>User Name</td>';
+			echo '<td>Email</td>';
+			echo '<td>see trip</td>';
+			echo '<td>invoice date</td>';
+			echo '</tr></thead>';
+			foreach ( $results as $result ) 
+				{
+					$booking = $result->booking_object; 
+					$bdate = $result->booking_date;
+					$tripID = $result->ID;
+					$tripName = $result->booking_ID;
+					$tripDate = $result->booking_date;
+					$newDate = date("d/m/y", strtotime($tripDate));
+					$userID = $result->user_ID;
+					$user_info = get_userdata( $userID );
+					
+					echo '<tr>';
+					echo '<td><script>var trip'.$result->ID.' = '.$booking.'</script>';
+					echo '<span class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')"></span>';
+					echo '<input type="radio"" name="deleteSingleTrip" value="'.$result->ID.'">';
+					echo '</td>';
+					echo '<td>'.$user_info->user_login . "</td>";
+					echo '<td>'.$user_info->user_email . "</td>";
+					echo '<td><a title="Voir l\'event" onclick="loadTrip(trip'.$result->ID.',true)" href="#">'.$tripName.'</a></td>';
+					echo '<td><span class="user-date-invoice">'.$newDate.'</span></td>';
+					
+					echo '<tr>';
+				}
+				echo '</table><br />';
+				echo '<button>Effacer</button>';
+				echo '<button>Valider</button>';
+
+	}
+
+
 
 }
