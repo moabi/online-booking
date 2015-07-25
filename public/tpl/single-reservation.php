@@ -10,7 +10,7 @@
 get_header(); ?>
 
 <div class="pure-g inner-content">
-	<div id="primary-b" class="site-content single-animations pure-u-1 pure-u-md-18-24">
+	<div id="primary-b" class="site-content single-animations pure-u-1 ">
 		<div id="content" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
@@ -30,14 +30,34 @@ get_header(); ?>
 		<header class="entry-header">
 			
 			<h1 class="entry-title"><?php the_title(); ?></h1>
-			<span> <?php the_field('prix'); ?> euros/personne</span>
+			
 			
 			
 		</header><!-- .entry-header -->
 <div class="clearfix"></div>
 <div class="pure-g">
-	<div class="pure-u-1 pure-u-md-1-2">
-		<?php the_post_thumbnail(); ?>
+	<div class="pure-u-1 pure-u-md-5-8">
+			<?php
+		//CAROUSSEL
+	$images = get_field('gallerie');
+
+if( $images ): ?>
+<div class="clearfix"></div>
+        <ul class="slickReservation img-gallery">
+            <?php foreach( $images as $image ): ?>
+                <li>
+                	<a href="<?php echo $image['sizes']['full-size']; ?>" class="img-pop">
+                    <img src="<?php echo $image['sizes']['full-size']; ?>" alt="<?php echo $image['alt']; ?>" />
+                	</a>
+                    
+                </li>
+            <?php endforeach; ?>
+        </ul>
+
+
+<?php endif; ?>
+
+		
 		<?php
 				$postID = $post->ID;
                 $price = get_field('prix');
@@ -85,32 +105,31 @@ get_header(); ?>
 					
 			?>
 	</div>
-	<div class="pure-u-1 pure-u-md-1-2">
-			<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'twentytwelve' ) ); ?>
-		
+	<div class="pure-u-1 pure-u-md-3-8">
+		<div id="animation-excerpt">
+		<span> <?php the_field('prix'); ?> euros/personne</span>
+		<?php the_field('la_prestation_comprend'); ?>
 		</div>
+	</div>
 </div>
 <div class="clearfix"></div>
 <div class="comprend">
 	
 	<h2>La prestation comprend</h2>
-	<?php the_field('la_prestation_comprend'); ?>
-	<?php
-	$images = get_field('gallerie');
-
-if( $images ): ?>
-<div class="clearfix"></div>
-        <ul class="slick-multi">
-            <?php foreach( $images as $image ): ?>
-                <li>
-                    <img src="<?php echo $image['sizes']['thumbnail']; ?>" alt="<?php echo $image['alt']; ?>" />
-                    
-                </li>
-            <?php endforeach; ?>
-        </ul>
 
 
-<?php endif; ?>
+	
+	<div id="animation-text">
+				<?php 
+			$default_attr = array(
+	'class' => "alignleft"
+);
+			the_post_thumbnail('thumbnail',$default_attr); ?>
+		<?php the_content(); ?>
+	
+	</div>
+	
+
 </div>
 		
 
@@ -122,9 +141,11 @@ if( $images ): ?>
 
 		</div><!-- #content -->
 	</div><!-- #primary -->
+	<!--
 <div id="secondary" class="pure-u-1 pure-u-md-6-24">
 	<h2><?php _e("D'autres activités qui peuvent vous intéresser","twentyfifteen"); ?></h2>
 	
 </div>
+-->
 </div>
 <?php get_footer(); ?>

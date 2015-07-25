@@ -17,10 +17,10 @@ get_header(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 		<header class="entry-header">
-			
-			<h1 class="entry-title"><?php the_title(); ?></h1>
 			<?php $postid = get_the_ID(); ?> 
-		<?php Online_Booking_Public::the_sejour($postid); ?>
+			<h1 class="entry-title"><?php the_title(); ?> <?php Online_Booking_Public::the_sejour($postid); ?></h1>
+			
+		
 			
 		</header><!-- .entry-header -->
 <div class="clearfix"></div>
@@ -44,7 +44,7 @@ get_header(); ?>
 
 				// check for rows (parent repeater)
 				if( have_rows('votre_sejour') ): ?>
-					<ul id="event-trip-planning">
+					<div id="event-trip-planning" class="pure-g">
 					<?php 
 
 					// loop through rows (parent repeater)
@@ -53,10 +53,10 @@ get_header(); ?>
 					
 
 							<?php 
-								echo '<li><span class="etp-day">Jour '.$i.'</span>';
+								echo '<div class="pure-u-1"><span class="etp-day">Jour '.$i.'</span>';
 							// check for rows (sub repeater)
 							if( have_rows('activites') ): ?>
-								<ul class="etp-days">
+								<div class="etp-days pure-g">
 								<?php 
 
 								// loop through rows (sub repeater)
@@ -67,24 +67,54 @@ get_header(); ?>
 									<?php $postActivity = get_sub_field('activite'); ?>
 									<?php //var_dump($postActivity); ?>
 									<?php foreach($postActivity as $data){
-										echo '<li><h3>';
-										echo '<a href="'.get_permalink($data->ID).'">';
-										echo $data->post_title;
 										
+										$term_lieu = wp_get_post_terms($data->ID, 'lieu');
+										$term_reservation_type = wp_get_post_terms($data->ID, 'reservation_type');
+										$term_type = wp_get_post_terms($data->ID, 'theme');
+										
+										
+										echo '<div class="pure-u-1 single-activity-row">';
+										echo '<div class="pure-u-1 pure-u-md-3-24">';
+										echo '<a href="'.get_permalink($data->ID).'">';
 										echo get_the_post_thumbnail( $data->ID, 'thumbnail' );
 										echo '</a>';
-										echo '</li>';
+										echo '</div>';
+										echo '<div class="pure-u-1 pure-u-md-21-24">';
+											echo '<h3><a href="'.get_permalink($data->ID).'">';
+											echo $data->post_title;
+											echo '</a></h3>';
+											
+											echo '<div class="tags-s">';
+											
+											echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+											foreach($term_lieu as $key=>$value){
+											  echo '<span>'.$value->name.'</span> ';
+											}
+											echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+											foreach($term_type as $key=>$value){
+											  echo '<span>'.$value->name.'</span> ';
+											}
+											
+											foreach($term_reservation_type as $key=>$value){
+											  echo '<span class="dc '.$value->name.'">'.$value->name.'</span>';
+											}
+											echo '</div>';
+											
+											
+											
+										echo '</div><div class="clearfix"></div>';
+										echo '</div>';
 									} ?>
 								
 						
 									
 								<?php endwhile; ?>
-								</ul>
+								</div>
 							<?php endif; //if( get_sub_field('items') ): ?>
 						
 							<?php $i++; ?>
 					<?php endwhile; // while( has_sub_field('to-do_lists') ): ?>
-					</ul>
+					</div>
 				<?php endif; // if( get_field('to-do_lists') ): ?>
 
 			
@@ -96,10 +126,12 @@ get_header(); ?>
 
 if( $images ): ?>
 <div class="clearfix"></div>
-        <ul class="slick-multi">
+        <ul class="slickReservation img-gallery">
             <?php foreach( $images as $image ): ?>
                 <li>
-                    <img src="<?php echo $image['sizes']['thumbnail']; ?>" alt="<?php echo $image['alt']; ?>" />
+                	<a href="<?php echo $image['sizes']['full-size']; ?>" class="img-pop">
+                    <img src="<?php echo $image['sizes']['full-size']; ?>" alt="<?php echo $image['alt']; ?>" />
+                	</a>
                     
                 </li>
             <?php endforeach; ?>

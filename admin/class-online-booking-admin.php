@@ -101,7 +101,7 @@ class Online_Booking_Admin {
 	}
 	
 	public function online_booking_menu(){	
-		add_options_page( 'Online plugin Help', 'Online Booking Help', 'publish_pages', 'online-booking-admin-display', array( $this, 'helper' ) );
+		add_options_page( 'Online Booking', 'Online Booking', 'publish_pages', 'online-booking-admin-display', array( $this, 'helper' ) );
 	}
 	
 	public function helper(){

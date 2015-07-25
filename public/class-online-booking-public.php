@@ -283,7 +283,7 @@ public function lieu() {
 		'show_in_nav_menus'          => true,
 		'show_tagcloud'              => true,
 	);
-	register_taxonomy( 'lieu', array( 'reservation' ), $args );
+	register_taxonomy( 'lieu', array( 'reservation','sejour' ), $args );
 
 }
 
@@ -604,21 +604,36 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
 */
 
 public static function the_sejours($nb = 5,$onBookingPage = false){
-    
-        $args = array(
+    	
+    	
+    	$terms = get_terms( 'lieu', array(
+		    'orderby'    => 'count',
+		    'hide_empty' => 1,
+		    'parent'	=> 0,
+		) );
+		
+
+        $goToBookingPage = $onBookingPage ? 'true' : 'false';
+        // The Loop
+       
+	    	$args = array(
 	        'post_type' => 'sejour',
 			'posts_per_page' => $nb,
 			'post_status'		=> 'publish',
-        );
+			//'lieu' => $term->slug
+			);
         $the_query = new WP_Query( $args );
-        $goToBookingPage = $onBookingPage ? 'true' : 'false';
-        // The Loop
+         //echo'<h4>' . $term->name . '</h4>';
         if ( $the_query->have_posts() ) {
             $sejour = '<div id="sejour-content" class="blocks pure-g"><div class="slick-multi">';
             while ( $the_query->have_posts() ) {
                 $the_query->the_post();
                 global $post;
                 $postID = $the_query->post->ID;
+                $term_lieu = wp_get_post_terms($postID, 'lieu');
+                foreach($term_lieu as $key=>$value){
+				  //echo '<span>'.$value->name.'</span> ';
+				}
                 
                 $price = get_field('prix');
                 $personnes = get_field('personnes');
@@ -692,6 +707,7 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
             }
             $sejour .= '</div></div>';
          }
+         
          echo $sejour;
 
 }

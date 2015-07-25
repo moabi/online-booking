@@ -164,7 +164,7 @@ class online_booking_user  {
 			$table = $wpdb->prefix.'online_booking';
 			$userTrips = $wpdb->get_results( $wpdb->prepare("
 					SELECT * 
-					FROM event_wp_online_booking
+					FROM ".$wpdb->prefix."online_booking
 					WHERE user_ID = %d 
 					",
 					$userID

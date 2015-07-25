@@ -218,11 +218,7 @@ $terms = get_terms($taxonomies, $args);
 		?>
 </div>
 </div>
-<div class="pure-g">
-	Theme
-	<br />
-	Pertinence
-</div>
+
 
 	<?php
         $args = array(

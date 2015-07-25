@@ -229,7 +229,7 @@ function addActivity(id,activityname,price,type,img){
 		tripImg = (img) ? '<img src="'+img+'" />' : '';
 		tripType = (type) ? type : 'notDefined';
 					
-		$('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content').append('<div data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
+		$('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content').append('<div data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
 
 		checkBudget();
 		var n = noty({text: 'Ajouté à votre séjour'});
@@ -262,6 +262,7 @@ function deleteActivity(day,id,price){
 	//console.log('obj price : ' + price);
 	reservation.currentBudget = parseInt( (reservation.currentBudget - price),10);
 	delete obj[id];
+	checkBudget();
 	cookieValue = JSON.stringify(reservation);
 	Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
 	
@@ -673,8 +674,8 @@ function loadTrip($trip,gotoBookingPage){
 }
 
 function checkBudget(){
-	globalBudget = parseInt(reservation.globalBudgetMax,10);
-	actualCost = parseInt(reservation.currentBudget,10) * parseInt(reservation.participants,10);
+	globalBudget = parseInt(reservation.budgetPerMax,10);
+	actualCost = parseInt(reservation.currentBudget,10);
 	if( globalBudget < actualCost){
 		console.log('budget is too high');
 		$('#budget-icon').css('color','red');
@@ -738,7 +739,7 @@ function the_activites(){
 					tripImg = (img) ? '<img src="'+img+'" />' : '';
 					tripType = (type) ? type : 'notDefined';
 					//build html
-					$('.dayblock[data-date="'+ day +'"]').find('.day-content').append('<div data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+					$('.dayblock[data-date="'+ day +'"]').find('.day-content').append('<div data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
 					//add to global budget
 					//console.log('obj price : '+price);
 					//console.log('Global : ' + reservation.currentBudget)
@@ -924,6 +925,29 @@ jQuery(function () {
 	    console.warn('not booking page');
     }
     
+    
+//RESERVATION - SINGLE PAGE
+var slickReservation = $('.slickReservation')
+    if (slickReservation.length) {
+        slickReservation.slick({
+            autoplay: true,
+            dots: false,
+            infinie: true,
+            arrows: true,
+            prevArrow: '<div class="fs1 prevmulti" aria-hidden="true" data-icon="4"></div>',
+            nextArrow: '<div class="fs1 nextmulti" aria-hidden="true" data-icon="5"></div>',
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            adaptiveHeight: false
+        });
+    }
+$('.img-pop').magnificPopup({ 
+  type: 'image',
+  gallery:{
+    enabled:true
+  }
+	// other options
+});
 
 
 });
