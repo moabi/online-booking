@@ -288,18 +288,6 @@ $terms = get_terms($taxonomies, $args);
 
 <div id="sidebar-booking-b" class="pure-u-1 pure-u-md-6-24">
 	<div id="sidebar-sticky">
-	<?php  if ( is_user_logged_in() ): ?>
-<div class="pure-g" id="user-actions">
-	<div id="savetrip" onclick="saveTrip()">
-		<input maxlength="20" id="tripName" type="text" value="" placeholder="Nom de votre reservation" />
-		Sauvegarder votre voyage<div class="fs1" aria-hidden="true" data-icon=""></div>
-		</div>
-</div>
-<?php else: ?>
-Connectez-vous pour sauvegarder
-<?php endif; ?>
-
-
 <!-- JOURNEES -->
 	<h2 class="upptitle">Votre séjour</h2>
 	
@@ -315,6 +303,16 @@ Connectez-vous pour sauvegarder
 			        <input type="email" name="s" id="name" placeholder="Votre mail" value="" type="text"  />
 			        <br />
 			        <input type="submit" name="s" id="name" value="Envoyer" type="text"  />
+			        	<?php  if ( is_user_logged_in() ): ?>
+<div class="pure-g" id="user-actions">
+	<div id="savetrip" onclick="saveTrip()">
+		<input maxlength="20" id="tripName" type="text" value="" placeholder="Nom de votre reservation" />
+		Sauvegarder votre voyage<div class="fs1" aria-hidden="true" data-icon=""></div>
+		</div>
+</div>
+<?php else: ?>
+Connectez-vous pour sauvegarder
+<?php endif; ?>
 
 		</form>
 <!-- #formulaire send -->

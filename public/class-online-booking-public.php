@@ -868,15 +868,31 @@ public function header_form(){
 	        $output .= $current_user->user_login;
 	        $output .= '</span>';
 	        $output .= '<a class="my-account" href="'.get_bloginfo('url').'/compte">'. __('Mon compte','online-booking').'</a>';
-	       $output .= '<a class="log-out" href="'.wp_logout_url( home_url() ).'">'.__('Déconnexion', 'online-booking').'</a>';
+	       $output .= '<a class="log-out" href="'.wp_logout_url( home_url().'?log=ftl' ).'">'.__('Déconnexion', 'online-booking').'</a>';
 	       	$output .= '</div>';
      endif;
-
+	Online_Booking_Public::delete_cookies();
 	echo $output;
 
 }
 
+/*
+	Clear cookies when log out by user
+*/
+public function delete_cookies(){
 
+	$logged_out = isset($_GET['log']) ? $_GET['log'] : '';
+	if (isset($_SERVER['HTTP_COOKIE']) && $logged_out == 'ftl') {
+    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+    foreach($cookies as $cookie) {
+        $parts = explode('=', $cookie);
+        $name = trim($parts[0]);
+        setcookie($name, '', time()-1000);
+        setcookie($name, '', time()-1000, '/');
+    }
+}
+
+}
 /*
 	
 */

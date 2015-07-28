@@ -12,12 +12,8 @@
  * @subpackage Online_Booking/admin/partials
  */
 ?>
-
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-
+<?php add_thickbox(); ?>
 <h1>Online Booking - Devis</h1>
-
-<h2>Devis non validés</h2>
-<?php echo Online_Booking_Admin::get_users_booking(); ?>
-<h2>Devis validés</h2>
-<?php echo Online_Booking_Admin::get_users_booking(1); ?>
+<?php Online_Booking_Admin::list_table_page(); ?>

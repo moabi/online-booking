@@ -25,13 +25,20 @@ get_header(); ?>
  */
 ?>
 
+<?php
+	$term_lieu = wp_get_post_terms($post->ID, 'lieu');
+	$term_reservation_type = wp_get_post_terms($post->ID, 'reservation_type');
+	$term_type = wp_get_post_terms($post->ID, 'theme');
+	
+
+										?>
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 		<header class="entry-header">
 			
 			<h1 class="entry-title"><?php the_title(); ?></h1>
 			
-			
+		
 			
 		</header><!-- .entry-header -->
 <div class="clearfix"></div>
@@ -107,7 +114,26 @@ if( $images ): ?>
 	</div>
 	<div class="pure-u-1 pure-u-md-3-8">
 		<div id="animation-excerpt">
-		<span> <?php the_field('prix'); ?> euros/personne</span>
+			<?php
+	echo '<div class="tags-s">';
+	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+	foreach($term_lieu as $key=>$value){
+		$term_link = get_term_link( $value );
+	  echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
+	}
+	echo '<div class="clearfix"></div>';
+	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+	foreach($term_type as $key=>$value){
+		$term_link = get_term_link( $value );
+		echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
+	}
+	echo '<div class="clearfix"></div>';
+	//echo '<span>'.get_field('prix').'euros/personne</span>';
+	echo '</div>';
+	echo '<div class="clearfix"></div>';
+											
+											?>	
+		
 		<?php the_field('la_prestation_comprend'); ?>
 		</div>
 	</div>

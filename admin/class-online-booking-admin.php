@@ -156,6 +156,25 @@ class Online_Booking_Admin {
 				echo '<button>Valider</button>';
 
 	}
+	
+	/**
+     * Display the list table page
+     *
+     * @return Void
+     */
+    public function list_table_page()
+    {
+        $quotationTable = new Quotation_Table();
+        $quotationTable->prepare_items();
+        ?>
+            <div class="wrap">
+                <div id="icon-users" class="icon32"></div>
+                <h2><?php _e('Devis à valider','online-booking'); ?></h2>
+                <?php $quotationTable->display(); ?>
+            </div>
+        <?php
+    }
+    
 
 
 

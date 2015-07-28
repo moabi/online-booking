@@ -111,7 +111,10 @@ class Online_Booking {
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-online-booking-admin.php';
+		 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-quotation-table.php';
+		 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-online-booking-admin.php';
+		
+		
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing

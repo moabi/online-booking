@@ -128,6 +128,8 @@ h1.archive-title{padding-top:0}
 #activities-content.blocks .block .head{padding:0;text-align:center;top: -32px;position:absolute;/* background: rgba(255, 255, 255, 1); */left:0;right:0;opacity:1}
 #activities-content.blocks .block{background:#ededed;float:inherit;margin: 1% 1% 40px;border:1px solid rgba(153,153,153,0.22);width: 260px;float: left;position: relative;}
 #activities-content.blocks .block img{width: 260px;height: 260px;}
+
+.future-flying-img{border-radius: 50%;margin:-260px;z-index: 99;position: absolute;top:0;left: 0;}
 #front-form{background: rgba(0, 0, 0, 0.65);clear:both; min-height:80px;display:block;margin: 80px auto;max-width: 980px;padding: 20px;}
 #front-form.exists{color:#fff;text-align: center;font-size: 18px;max-width: 320px;line-height: 24px;min-height: 0;}
 #primary.booking #content{padding:0 2%}
@@ -198,8 +200,8 @@ hr.clearfix{display:block;}
   text-align: left;
 }
 #primary-b.booking #content{padding:0 2%}
-#sidebar-booking-b{margin-left:0;box-shadow: -4px 0px 4px rgba(174, 174, 174, 0.83);height: 100%;display: flex;}
-#sidebar-sticky{padding:0 0 0 1em;height: 100%;}
+#sidebar-booking-b{margin-left:0;box-shadow: -3px -3px 4px rgba(174, 174, 174, 0.83);height: auto;display: block;position: relative;}
+#sidebar-sticky{padding:0 0 0 1em;height: 100%;float: left;display: block;}
 #daysTrip{padding:20px 0;border:none;clear:both;width:100%;margin:10px 0}
 .dayblock.current,.dayblock:hover{color:#2eaadd;opacity: 1;}
 .dayblock.current .day-wrapper{
@@ -469,4 +471,41 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
 		-webkit-transform: scale3d(1.2, 1.2, 1);
 		transform: scale3d(1.2, 1.2, 1);
 	}
+}
+
+@-webkit-keyframes zoomOutRight {
+  40% {
+    opacity: 1;
+    -webkit-transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);
+    transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(.1) translate3d(2000px, 0, 0);
+    transform: scale(.1) translate3d(2000px, 0, 0);
+    -webkit-transform-origin: right center;
+    transform-origin: right center;
+  }
+}
+
+@keyframes zoomOutRight {
+  40% {
+    opacity: 1;
+    -webkit-transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);
+    transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(.1) translate3d(2000px, 0, 0);
+    transform: scale(.1) translate3d(2000px, 0, 0);
+    -webkit-transform-origin: right center;
+    transform-origin: right center;
+  }
+}
+
+.zoomOutRight {
+  -webkit-animation-name: zoomOutRight;
+  animation-name: zoomOutRight;
 }
