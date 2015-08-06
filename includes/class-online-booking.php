@@ -122,6 +122,7 @@ class Online_Booking {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-public.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-user.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-budget.php';
 
 		$this->loader = new Online_Booking_Loader();
 

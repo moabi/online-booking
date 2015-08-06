@@ -124,7 +124,7 @@ function read_cookie(cname) {
 
 function tripToCookie(reservation){
 	cookieValue = JSON.stringify(reservation);
-	Cookies.set('reservation', cookieValue, { expires: 2, path: '/' });
+	Cookies.set('reservation', cookieValue, { expires: 1, path: '/' });
 	
 }
 //ACTIONS

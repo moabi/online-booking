@@ -514,7 +514,17 @@ public function ajxfn(){
 
 
 public function ajax_get_latest_posts($theme,$lieu,$type){
+	
+	//order posts by terms ? => yes and use $i to add data-order attr to element
+	$terms = get_terms( 'reservation_type', array(
+		    'orderby'    => 'count',
+		    'hide_empty' => 1,
+		    'parent'	=> 0,
+		));
+	
 	if($type != null){
+		
+		//'reservation_type' => $term->slug
 		$typetoArray = $type;
 		$types = array(
 					'taxonomy' => 'reservation_type',
@@ -523,8 +533,11 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
 				);
 	} else {
 		$types = '';
+		
 	}
-	
+	foreach($terms as $term){
+		
+	}
      $args = array(
 	      'post_type' => 'reservation',
           'post_status' => 'publish',
@@ -584,7 +597,7 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
                 $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
                 $posts .= '<div class="presta"><h3>la prestation comprend : </h3>';
                 $posts .= get_field("la_prestation_comprend").'</div>';
-                $posts .= get_the_post_thumbnail($postID, 'thumbnail');
+                $posts .= get_the_post_thumbnail($postID, 'square');
                 $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 $posts.= '</div>';
@@ -611,21 +624,25 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 		    'hide_empty' => 1,
 		    'parent'	=> 0,
 		) );
-		
-
+		//var_dump($terms);
+		foreach( $terms as $term ) {
         $goToBookingPage = $onBookingPage ? 'true' : 'false';
+        $is_slider = $onBookingPage ? 'grid-style' : 'slick-multi';
         // The Loop
        
 	    	$args = array(
 	        'post_type' => 'sejour',
 			'posts_per_page' => $nb,
 			'post_status'		=> 'publish',
-			//'lieu' => $term->slug
+			'lieu' => $term->slug
 			);
+			
+			
         $the_query = new WP_Query( $args );
-         //echo'<h4>' . $term->name . '</h4>';
+
         if ( $the_query->have_posts() ) {
-            $sejour = '<div id="sejour-content" class="blocks pure-g"><div class="slick-multi">';
+            $sejour = '<div class="blocks sejour-content pure-g"><div class="'.$is_slider.'">';
+            echo'<h4><div class="fs1" aria-hidden="true" data-icon=""></div>' . $term->name . '</h4>';
             while ( $the_query->have_posts() ) {
                 $the_query->the_post();
                 global $post;
@@ -682,7 +699,7 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 
                 $sejour .= '<div id="post-'.$postID.'" class="block-trip pure-u-1 pure-u-md-1-4"><div class="block-trip">';
                 $sejour .= '<h2>'.get_the_title().'</h2>';
-                $sejour .= get_the_post_thumbnail($postID,'thumbnail');
+                $sejour .= get_the_post_thumbnail($postID,'square');
                 $sejour .= '<script>';
                 $sejour .= 'sejour'.$postID.' = {
 	                		"sejour" : "'.get_the_title().'",
@@ -705,10 +722,12 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
                 $sejour .= '<a href="javascript:void(0)" class="loadit" onclick="loadTrip(sejour'.$postID.','.$goToBookingPage.');">Charger ce séjour</a></div></div>';
                 
             }
+            wp_reset_postdata();
             $sejour .= '</div></div>';
          }
          
          echo $sejour;
+         }
 
 }
 
@@ -834,7 +853,22 @@ public function front_form_shortcode($booking_url) {
 		
 	if(!isset($_COOKIE['reservation'])):
 	
-		$front_form = '<div id="front-form" class="booking" data-url="'.get_bloginfo('url').'/'.$this->booking_url.'/">'.wp_dropdown_categories( $argsLieux ).' '.wp_dropdown_categories( $args ).'<input data-value="" value="'.date("d/m/Y").'" class="datepicker bk-form form-control" id="arrival"><input type="number" id="participants" value="5" class="bk-form form-control" /><input type="submit" value="GO" /><div class="clearfix"></div></div><div class="clearfix"></div>';
+		$front_form = '<div id="front-form" class="booking" data-url="'.get_bloginfo('url').'/'.$this->booking_url.'/">';
+		$front_form .= '<div class="pure-g">';
+		$front_form .= '<div class="pure-u-1 pure-u-sm-5-24">';
+		$front_form .= wp_dropdown_categories( $argsLieux );
+		$front_form .= '</div><div class="pure-u-1 pure-u-sm-5-24">';
+		$front_form .= wp_dropdown_categories( $args );
+		$front_form .= '</div><div class="pure-u-1 pure-u-sm-5-24">';
+		$front_form .= '<div class="date-wrapper"><input data-value="" value="'.date("d/m/Y").'" class="datepicker bk-form form-control" id="arrival">';
+		$front_form .= '<div class="fs1" aria-hidden="true" data-icon=""></div></div>';
+		$front_form .= '</div><div class="pure-u-1 pure-u-sm-3-24">';
+		$front_form .= '<div class="people-wrapper"><input type="number" id="participants" value="5" class="bk-form form-control" />';
+		$front_form .= '<div class="fs1" aria-hidden="true" data-icon=""></div></div>';
+		$front_form .= '</div><div class="pure-u-1 pure-u-sm-6-24">';
+		$front_form .= '<input type="submit" value="GO" />';
+		$front_form .= '</div></div></div>';
+		$front_form .= '<div class="clearfix"></div>';
 	
 	else: 
 	

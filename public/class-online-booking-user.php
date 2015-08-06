@@ -46,6 +46,7 @@ class online_booking_user  {
 		retrieve trips
 	*/
 	public static function get_user_booking(){
+
 			global $wpdb;
 			$userID = get_current_user_id();
 			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID	
@@ -70,80 +71,118 @@ class online_booking_user  {
 					
 					echo '<li id="ut-'.$tripID.'">';
 					echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
-					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')"></div>';
 					
-					echo '<a title="Voir votre event" onclick="loadTrip(trip'.$result->ID.',true)" href="#">'.$tripName.'</a>';
 					
-					echo '<div class="sharetrip">partager votre event : <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'</pre></div>';
-					echo '<span class="user-date-invoice"><a class="open-popup-link" href="#tu-'.$tripID.'">Devis n°ol'.$newDateDevis.$tripID.' ('.$newDate.')</a></span>';
+					echo '<a title="Voir votre event" onclick="loadTrip(trip'.$result->ID.',true)" href="#">';
+					echo '<div class="fs1" aria-hidden="true" data-icon="j"></div>';
+					echo $tripName;
+					echo '</a>';
 					
-					$budget = json_decode($booking, true);
-					$budgetMaxTotal = $budget['participants'] * $budget['budgetPerMax'];
-					//var_dump($budget);
-					echo '<div class="mfp-hide" id="tu-'.$tripID.'">';
-					echo '<div class="trip-budget-user">';
-					echo '<h3>Le budget de votre event</h3>';
-					echo '<div class="excerpt-user pure-g">';
-					echo '<div class="pure-u-1-3">'.$budget['days'].' jours</div>';
-					echo '<div class="pure-u-1-3">'.$budget['participants'].' participants </div>';
-					echo '<div class="pure-u-1-3">Buget Max Total : '.$budgetMaxTotal.' </div>';
+					echo '<div class="sharetrip">partager votre event : <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><div class="fs1" aria-hidden="true" data-icon=""></div></a></pre></div>';
 					
-					echo 'Budget Minimum par personne : '.$budget['budgetPerMin'].'<br />';
-					echo 'Budget Minimum : '.$budget['budgetPerMin'] * $budget['participants'].'<br />';
-					echo 'Budget Maximum par personne : '.$budget['budgetPerMax'].'<br />';
-					echo 'Budget Maximum : '.$budget['budgetPerMax'] * $budget['participants'].'<br />';
-					echo 'Budget global par personne : '.$budget['currentBudget'].'<br />';
-					echo '</div>';
-					echo 'Budget Total : '.$budget['currentBudget'] * $budget['participants'].'<br />';
-					echo '<h4>Détails de votre event : </h4>';
-					$trips = $budget['tripObject'];
-					$budgetSingle = array();
-					//var_dump(is_array($trips));
-					echo '<div class="activity-budget-user pure-g">';
-						        echo '<div class="pure-u-1-3">Activité</div>';
-						        //echo $value['type'].'<br />';
-					            echo '<div class="pure-u-1-3">prix/pers</div>';
-					            echo '<div class="pure-u-1-3">prix total</div>';
-					echo '</div>';
-					foreach ($trips as $trip) {
-					    //  Check type
-					    if (is_array($trip)){
-					        //  Scan through inner loop
-					        
-					        foreach ($trip as $value) {
-						        //calculate 
-						        array_push($budgetSingle, $value['price']);
-						        //html
-						        echo '<div class="activity-budget-user pure-g">';
-						        echo '<div class="pure-u-1-3">'.$value['name'].'</div>';
-						        //echo $value['type'].'<br />';
-					            echo '<div class="pure-u-1-3">'.$value['price'].'</div>';
-					            echo '<div class="pure-u-1-3">'.$value['price'] * $budget['participants'].'</div>';
-					            echo '</div>';
-					        }
-					    }else{
-					        // one, two, three
-					        echo $trip;
-					    }
-					}
-					$single_budg = array_sum($budgetSingle);
-					$global_budg = $single_budg * $budget['participants'];
-					echo '<div class="activity-budget-user pure-g">';
-						        echo '<div class="pure-u-1-3">Budget Total</div>';
-						        //echo $value['type'].'<br />';
-					            echo '<div class="pure-u-1-3">'.$single_budg.'</div>';
-					            echo '<div class="pure-u-1-3">'.$global_budg.'</div>';
-					echo '</div>';
+					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer</div>';
 					
-
-					
-					echo '</div>';
-					echo '</div>';
-					
+					//BUDGET
+					online_booking_user::the_budget($tripID, $booking,$tripDate);
 					echo '</li>';
 				}
 			echo '</ul>';
 	}
+	
+	private static function the_budget($tripID , $item, $tripDate){
+		
+
+		$budget = json_decode($item, true);
+		$budgetMaxTotal = $budget['participants'] * $budget['budgetPerMax'];
+		
+		$newDate = date("d/m/y", strtotime($tripDate));
+		$newDateDevis = date("dmy", strtotime($tripDate));
+		
+		//VISIBLE LINK
+		echo '<span class="user-date-invoice"><a class="open-popup-link" href="#tu-'.$tripID.'">Devis n°ol'.$newDateDevis.$tripID.' ('.$newDate.')</a></span>';
+		
+		
+		//var_dump($budget);
+		echo '<div class="mfp-hide" id="tu-'.$tripID.'">';
+		echo '<div class="trip-budget-user">';
+		echo '<h3>Le budget de votre event</h3>';
+		echo '<div class="excerpt-user pure-g">';
+		echo '<div class="pure-u-1-3">'.$budget['days'].' jours</div>';
+		echo '<div class="pure-u-1-3">'.$budget['participants'].' participants </div>';
+		echo '<div class="pure-u-1-3">Buget Max Total : '.$budgetMaxTotal.' </div>';
+		
+		//echo 'Budget Minimum par personne : '.$budget['budgetPerMin'].'<br />';
+		//echo 'Budget Minimum : '.$budget['budgetPerMin'] * $budget['participants'].'<br />';
+		//echo 'Budget Maximum par personne : '.$budget['budgetPerMax'].'<br />';
+		//echo 'Budget Maximum : '.$budget['budgetPerMax'] * $budget['participants'].'<br />';
+		echo '<div class="pure-u-1-3">Budget par personne : '.$budget['currentBudget'].'</div>';
+		echo '<div class="pure-u-1-3">Budget Total : '.$budget['currentBudget'] * $budget['participants'].'</div>';
+		echo '</div>';
+
+		echo '<h4>Détails de votre event : </h4>';
+		$trips = $budget['tripObject'];
+		$budgetSingle = array();
+		//var_dump(is_array($trips));
+		echo '<div class="activity-budget-user pure-g">';
+			        echo '<div class="pure-u-1-3">Activité</div>';
+			        //echo $value['type'].'<br />';
+		            echo '<div class="pure-u-1-3">prix/pers</div>';
+		            echo '<div class="pure-u-1-3">prix total '.$budget['participants'].' personnes</div>';
+		echo '</div>';
+		
+		$trip_dates =  array_keys($trips);
+		$days_count = 0;
+		foreach ($trips as $trip) {
+			echo '<div class="pure-g budget-day">'.$trip_dates[$days_count].'</div>';
+		    //  Check type
+		    if (is_array($trip)){
+		        //  Scan through inner loop
+		        //var_dump($trip);
+		        $trip_id =  array_keys($trip);
+		        $i = 0;
+		        foreach ($trip as $value) {
+			        //calculate 
+			        
+			        array_push($budgetSingle, $value['price']);
+			        //html
+			        echo '<div data-id="'.$trip_id[$i].'" class="activity-budget-user pure-g">';
+			        echo '<div class="pure-u-1-3">';
+			        echo '<a href="'.get_permalink($trip_id[$i]).'" target="_blank">';
+			        echo '<span class="bdg '.$value['type'].'"></span>'.$value['name'].'</div>';
+			        echo "</a>";
+		            echo '<div class="pure-u-1-3">'.$value['price'].'</div>';
+		            echo '<div class="pure-u-1-3">'.$value['price'] * $budget['participants'].'</div>';
+		            echo '</div>';
+		            $i++;
+		        }
+		        $days_count++;
+		    }else{
+		        // one, two, three
+		        echo $trip;
+		    }
+		}
+		//ADD A BILLING PRICE 
+		//array_push($budgetSingle, 300);
+		$frais_de_mes = 300;
+		$single_budg = array_sum($budgetSingle);
+		$global_budg = $single_budg * $budget['participants'] + $frais_de_mes;
+		echo '<div class="activity-budget-user pure-g">';
+			        echo '<div class="pure-u-1-3">Frais de dossier</div>';
+		            echo '<div class="pure-u-1-3"></div>';
+		            echo '<div class="pure-u-1-3">300</div>';
+		echo '</div>';
+		
+		echo '<div class="activity-budget-user pure-g total-line">';
+			        echo '<div class="pure-u-1-3">Budget Total</div>';
+		            echo '<div class="pure-u-1-3">'.$single_budg.'</div>';
+		            echo '<div class="pure-u-1-3">'.$global_budg.'</div>';
+		echo '</div>';
+		
+		echo '</div>';
+		echo '</div>';
+
+	}
+	
 	
 	/*
 		save user's trip to DB
@@ -155,9 +194,15 @@ class online_booking_user  {
 		
 		if(!empty($userID) &&  is_user_logged_in() ):
 			$date =  current_time('mysql', 1);
-			if(!empty($_COOKIE['reservation'])):
-				$bookink_obj = stripslashes( $_COOKIE['reservation'] );
-				$data = json_decode($bookink_obj, true);
+			if(!empty($_COOKIE['reservation'])): 
+				$session_id = session_id(); 
+				$bookink_json = stripslashes( $_COOKIE['reservation'] );
+				$data = json_decode($bookink_json, true);
+				 $session_id_trip = 'tid_'.$userID.'_'.$session_id;
+				 $data['eventid'] = $session_id_trip;
+				$trip_name = $data['name'];
+				$bookink_obj = json_encode($data);
+				
 			else: 
 				$bookink_obj = 'nothing was recorded';
 			endif;
@@ -171,26 +216,30 @@ class online_booking_user  {
 					) );
 			$trips = array();
 			foreach ($userTrips as $userTrip) { 
-				array_push($trips, $userTrip->booking_ID);       
+				array_push($trips, $userTrip->trip_id);       
 			}
 			
-			if (in_array($tripName, $trips) && count($trips) < 11 ) {
-			    online_booking_user::updateTrip($bookink_obj,$tripName);
+			if (in_array($session_id_trip, $trips) && count($trips) < 11 ) {
+			    online_booking_user::updateTrip($bookink_obj,$session_id_trip,$trip_name);
+			    return 'updated';
 			    
-			} elseif (!in_array($tripName, $trips) && count($trips) < 11 ) {
-				//online_booking_user::storeTrip($bookink_obj,$tripName);
+			} elseif (!in_array($session_id_trip, $trips) && count($trips) < 11 ) {
+
 				$date =  current_time('mysql', 1);
 				$table = $wpdb->prefix.'online_booking';
 				$wpdb->insert( 
 					$table, 
 					array( 
 						'user_ID' => $userID, 
+						'trip_id' => $session_id_trip,
 						'booking_date' => $date,
 						'booking_object' => $bookink_obj,
-						'booking_ID' => $tripName,	
+						'booking_ID' => $trip_name,	
+							
 					), 
 					array( 
 						'%d', 
+						'%s',
 						'%s',
 						'%s',
 						'%s' 
@@ -234,42 +283,26 @@ class online_booking_user  {
 		
 	}
 
-
-
-
-
-	/*
-		store DATA
-		@param obj 
-	*/
-	private static function storeTrip ($bookink_obj,$tripName){
-		global $wpdb;
-		$userID = get_current_user_id();
-		$date =  current_time('mysql', 1);
-		$data = array( 
-			'user_ID' => $userID, 
-			'booking_date' => $date,
-			'booking_object' => $bookink_obj,
-			'booking_ID' => $tripName,	
-		);
-		$table = $wpdb->prefix.'online_booking';
-		$wpdb->insert($table, $data);
-
-		return 'done';
-	}
 	
-	private static function updateTrip($bookink_obj,$tripName){
+	private static function updateTrip($bookink_obj,$session_id_trip,$trip_name){
+		
 		global $wpdb;
-		$userID = get_current_user_id();
 		$date =  current_time('mysql', 1);
-		$data = array( 
-			'user_ID' => $userID, 
-			'booking_date' => $date,
-			'booking_object' => $bookink_obj,
-			'booking_ID' => $tripName	
+
+		$wpdb->update( 
+			$wpdb->prefix.'online_booking', 
+			array( 
+				'booking_object' => $bookink_obj,	// string
+				'booking_date' => $date,
+				'booking_ID' => $trip_name,	
+
+			), 
+			array( 'trip_id' => $session_id_trip ), 
+			array( 
+				'%s',
+			), 
+			array( '%s','$s','$s', ) 
 		);
-		$wpdb->insert( 
-		$wpdb->prefix.'online_booking', $data);
 		
 		return 'updated';
 	}

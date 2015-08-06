@@ -17,8 +17,16 @@ get_header(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 		<header class="entry-header">
-			<?php $postid = get_the_ID(); ?> 
-			<h1 class="entry-title"><?php the_title(); ?> <?php Online_Booking_Public::the_sejour($postid); ?></h1>
+			<?php $postid = get_the_ID(); 
+$term_lieu = wp_get_post_terms($postid, 'lieu');
+			?> 
+			<h1 class="entry-title"><?php the_title(); ?> <?php Online_Booking_Public::the_sejour($postid); ?>
+			<span class="locate-place"><?php 
+											echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+											foreach($term_lieu as $key=>$value){
+											  echo '<span>'.$value->name.'</span> ';
+											} ?></span>
+			</h1>
 			
 		
 			
@@ -80,24 +88,26 @@ get_header(); ?>
 										echo '</a>';
 										echo '</div>';
 										echo '<div class="pure-u-1 pure-u-md-21-24">';
-											echo '<h3><a href="'.get_permalink($data->ID).'">';
+											echo '<h3>';
+											foreach($term_reservation_type as $key=>$value){
+											  echo '<span class="dcicons '.$value->slug.'"></span>';
+											}
+											echo '<a href="'.get_permalink($data->ID).'">';
 											echo $data->post_title;
 											echo '</a></h3>';
 											
 											echo '<div class="tags-s">';
-											
+											/*
 											echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
 											foreach($term_lieu as $key=>$value){
 											  echo '<span>'.$value->name.'</span> ';
-											}
+											}*/
 											echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
 											foreach($term_type as $key=>$value){
 											  echo '<span>'.$value->name.'</span> ';
 											}
 											
-											foreach($term_reservation_type as $key=>$value){
-											  echo '<span class="dc '.$value->name.'">'.$value->name.'</span>';
-											}
+											
 											echo '</div>';
 											
 											

@@ -95,6 +95,19 @@ margin-left: 20px;
 	content: "\e016";
 }
 
+
+.bdg:before{    font-family: Flaticon;
+    font-size: 24px;
+    font-style: normal;
+    margin-left: 20px;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    color: rgb(44, 168, 215);
+    margin: auto;
+    float: none;
+    text-align: center;left: 0;    top: -3px;font-size:20px;}
+
 /**
  * All of the CSS for your public-facing functionality should be
  * included in this file.
@@ -109,6 +122,18 @@ margin-left: 20px;
 * html .clearfix{zoom:1}
 :first-child+html .clearfix{zoom:1}
 .pure-g{display:block;clear:both;text-rendering: optimizespeed;      display: -webkit-flex;   -webkit-flex-flow: row wrap;   display: -ms-flexbox;   -ms-flex-flow: row wrap;   -ms-align-content: flex-start;   -webkit-align-content: flex-start;   align-content: flex-start;}
+
+
+h4 {
+    font-size: 22px;
+    float: left;
+    clear: both;
+    display: block;
+    margin: 10px 0 5px;
+    color: #36AADA;
+    font-weight: 300;
+}
+h4 .fs1{float: left;}
 .archive-header{height:40px;position:relative}
 .ui-slider .ui-slider-range{background:#2aacde}
 .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default{background:#fff;border-radius:50%;box-shadow:none}
@@ -130,7 +155,33 @@ h1.archive-title{padding-top:0}
 #activities-content.blocks .block img{width: 260px;height: 260px;}
 
 .future-flying-img{border-radius: 50%;margin:-260px;z-index: 99;position: absolute;top:0;left: 0;}
-#front-form{background: rgba(0, 0, 0, 0.65);clear:both; min-height:80px;display:block;margin: 80px auto;max-width: 980px;padding: 20px;}
+#front-form .date-wrapper,#front-form .people-wrapper{position:relative;}
+#front-form .date-wrapper .fs1{
+    color: #25A0E8;
+    position: absolute;
+    top: 0;
+    right: 10%;
+}
+#front-form .people-wrapper .fs1{
+    color: #25A0E8;
+    position: absolute;
+    top: 0;
+    right: 10%;
+}
+#front-form .fs1{color:#fff;font-size:20px; margin: 0; display:block; float: left;padding: 0px 0 0 6px;}
+#front-form input[type=number]{ text-align: left; padding: 1px 0 1px 10px;margin: auto;display: block; width: 86%; float: none;}
+#front-form input{line-height: 25px;font-size: 14px;padding: 1px 8px;max-width: 78%;margin: auto;float: none;display: block;border: none;}
+#front-form input[type=submit]{
+    line-height: 30px;
+    font-size: 18px;
+    float: right;
+    display: block;
+    padding: 0;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 96%;
+}
+#front-form{background: rgba(0, 0, 0, 0.65);clear:both; min-height: 20px;display:block;margin: 100px auto 50px;max-width: 980px;padding: 20px;}
 #front-form.exists{color:#fff;text-align: center;font-size: 18px;max-width: 320px;line-height: 24px;min-height: 0;}
 #primary.booking #content{padding:0 2%}
 #add_success,#add_duplicate,#add_trip_success{position:fixed;left: 0;background: rgba(149, 202, 40, 1);padding: 5px 15px;color:rgba(255,255,255,0.92);border-radius: 2px;/* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.11); */transition:all .4s ease;margin:auto;width: auto;text-align:center;line-height:20px;font-size: 16px;min-width: 80px;min-height: 20px;font-weight: 500;right: 0;}
@@ -319,6 +370,11 @@ hr.clearfix{display:block;}
     margin: 0 20px 0 0;
 }
 img{max-width: 100%; }
+.sejour-content .block-trip{
+    width: 260px;
+    height: 260px;
+}
+.sejour-content .block-trip img{width:260px; height:260px; clear:both;}
 .block-trip{position:relative;width:150px;display:block;height:150px;margin:2%}
 .block-trip .seeit,.block-trip .loadit{background:rgba(0,0,0,0.62);font-size:9px;text-transform:uppercase;text-decoration:none;width: 100%;position:absolute;left:0;bottom: 20px;line-height:12px;text-align:center;margin:0;padding:8px 0;color:#fff}
 .block-trip .loadit{bottom: 0;border-left:1px solid rgba(255,255,255,0.43)}
@@ -327,6 +383,7 @@ img{max-width: 100%; }
 img{max-width:100%%; display:block; height:auto;}
 html.no-js{padding: 110px 0 0;}
 #primary-b .entry-title{text-align:left; font-size:22px;padding:0;border-bottom: 1px solid #36AADA;color: rgb(54, 171, 218);max-width: 96%;margin: 20px 0 30px;padding: 0 0 5px;font-weight: 300;}
+#primary-b .entry-title span.locate-place{font-size:14px;margin: 0 0 0 1em;}
 img.alignleft {float:left;padding:0 1em 1em 0}
 #animation-excerpt{margin: 1em auto;display:block; padding:1em;box-shadow: 1px 2px 0px #EFE9E9;max-width: 70%;}
 #animation-excerpt ul{list-style:none;}
@@ -353,6 +410,7 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
     font-size: 14px;
     display: block;
 }
+#userTrips .sharetrip pre .fs1{color:#fff;}
 #userTrips .sharetrip pre{
     background-color: rgb(46, 170, 221);
     border-radius: 4px;
@@ -370,6 +428,17 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
 #userTrips li .fs1{
     float: left;
     margin: 0 10px 0 0;
+}
+#userTrips li .fs1.js-delete-user-trip::before{margin:0 5px 0 0;}
+#userTrips li .fs1.js-delete-user-trip:hover{background:rgba(199, 34, 69, 0.71);color:#fafafa;padding:0 8px;box-shadow: 0px 1px 1px #8C1D1D;}
+#userTrips li .fs1.js-delete-user-trip{
+	transition:all .5s ease;
+    float: right;
+    font-size: 11px;
+    color: rgba(199, 34, 69, 0.71);
+    padding: 0;
+    margin: 12px 0 0;
+    cursor: pointer;
 }
 #userTrips li:nth-child(odd){
     background-color: #ededed;
@@ -407,8 +476,21 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
 }
 #event-trip-planning .single-activity-row img{width: 60px;height:auto; display:block;}
 #event-trip-planning .etp-day{ background: none; text-align: left; color: #575757;line-height:30px; width: 90%;display:block; margin: 0 auto 20px; text-transform: uppercase; padding: 0 0 0 2em; border-bottom: 1px solid #333;}
-.tags-s{}
+.tags-s{
+    position: relative;
+}
 .tags-s span.fs1{background:none;}
+.dcicons{font-family: Flaticon;
+    font-size: 18px;
+    font-style: normal;
+    margin-left: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: rgb(44, 168, 215);
+    margin: auto;
+    float: none;
+    text-align: center;}
 .tags-s span{
     background-color: rgba(228, 228, 167, 0.52);
     color: #949494;
@@ -421,8 +503,16 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
 #event-trip-planning .etp-days{clear:both;display: block;width: 100%;float: left;}
 .single-activity-row{}
 #event-trip-planning .etp-days li{width:100%; display: block; clear:both;}
-#event-trip-planning .etp-days h3{font-size:14px;text-align: left;color: black;}
+#event-trip-planning .etp-days h3{font-size: 16px;text-align: left;color: black;position: relative;padding: 0 0 0 27px;}
 #event-trip-planning .etp-days img{margin:auto; display:block;}
+.activity-budget-user.total-line{color: #191919;font-weight: bold;}
+.bdg{position:relative;width: 20px;display: block;float: left;height: 20px;margin: 0 10px 0 4px;}
+.activity-budget-user{
+    background-color: #FFF;
+    color: #353535;
+    margin: 10px 0;
+}
+.budget-day{background:#ededed;padding:2px 8px; margin:8px 0 4px}
 .trip-budget-user{
     max-width: 800px;
     display: block;
@@ -430,6 +520,7 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
     float: none;
     clear: both;
 }
+#sejour-content{clear:both; display:block;float: left;width: 100%;margin: 30px 0 0;padding: 0;}
 /*SLIDER*/
 .single h2{text-align:left;padding: 0 0 10px;font-size: 24px;color: rgba(68, 68, 68, 0.78);font-weight: 300;margin: 30px 0 10px;}
 .slickReservation img{display:block;max-width: 100%;max-height: 400px;margin: auto;}
