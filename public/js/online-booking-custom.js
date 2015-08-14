@@ -55,8 +55,12 @@ $.noty.defaults = {
 
 
 function doAjaxRequest( theme , geo, type ){
+	console.log(type);
      jQuery.ajax({
           url: '/wp-admin/admin-ajax.php',
+          settings:{
+	          cache : true
+          },
           data:{
                'action':'do_ajax',
                'theme':theme,
@@ -72,10 +76,15 @@ function doAjaxRequest( theme , geo, type ){
 		            //console.log(data);
                              },
           error: function(errorThrown){
-               alert('error');
+               console.warn('error');
                console.log(errorThrown);
+               var n = noty({
+		               text: 'Echec du filtre de recherche :(',
+		               template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+		               });
           }
      });
+     
  
 }
 
@@ -235,7 +244,7 @@ function addActivityAnimation(id){
 	
 	
 }
-function addActivity(id,activityname,price,type,img){
+function addActivity(id,activityname,price,type,img,order){
 
 	getLength = reservation.tripObject[reservation.currentDay][id];
 	if(!getLength){
@@ -243,14 +252,20 @@ function addActivity(id,activityname,price,type,img){
 			name  : activityname,
 			price : price,
 			type  : type,
-			img   : encodeURIComponent(img)
+			img   : encodeURIComponent(img),
+			order : order
 		}
 		//console.log('obj price : ' + price);
 		reservation.currentBudget = parseInt(reservation.currentBudget,10) + parseInt(price,10);
 		tripImg = (img) ? '<img src="'+img+'" />' : '';
 		tripType = (type) ? type : 'notDefined';
-					
-		$('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content').append('<div data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
+		$htmlDay = $('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content');		
+		$htmlDay.append('<div data-order="'+order+'" data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
+		
+		$htmlDay.find('div.dc').sort(function (a, b) {
+		    return +a.getAttribute('data-order') - +b.getAttribute('data-order');
+		})
+		.appendTo( $htmlDay );
 
 		checkBudget();
 		addActivityAnimation(id);
@@ -736,14 +751,22 @@ function the_activites(){
 			if(activities > 0){
 				for (var id in daysObj[day]){
 					//console.log(id);
-					var activityname = reservation.tripObject[day][id]['name'];
-					var price = reservation.tripObject[day][id]['price'];
-					var img = decodeURIComponent(reservation.tripObject[day][id]['img']);
-					var type = reservation.tripObject[day][id]['type'];
+					var activityname = reservation.tripObject[day][id]['name'],
+						price = reservation.tripObject[day][id]['price'],
+						order = reservation.tripObject[day][id]['order'],
+						img = decodeURIComponent(reservation.tripObject[day][id]['img']),
+						type = reservation.tripObject[day][id]['type'];
+						
 					tripImg = (img) ? '<img src="'+img+'" />' : '';
 					tripType = (type) ? type : 'notDefined';
+					$htmlDay = $('.dayblock[data-date="'+ day +'"]').find('.day-content')
 					//build html
-					$('.dayblock[data-date="'+ day +'"]').find('.day-content').append('<div data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+					$htmlDay.append('<div data-order="'+order+'" data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+					$htmlDay.find('div.dc').sort(function (a, b) {
+					    return +a.getAttribute('data-order') - +b.getAttribute('data-order');
+					})
+					.appendTo( $htmlDay );
+		
 					//add to global budget
 					//console.log('obj price : '+price);
 					//console.log('Global : ' + reservation.currentBudget)

@@ -19,7 +19,7 @@ get_header(); ?>
 
 
 	<div id="primary-b" class="booking pure-u-1 pure-u-md-18-24">
-		
+	
 		<div class="padd-l">
 		
 <! -- SETTINGS -->
@@ -194,7 +194,7 @@ $terms = get_terms($taxonomies, $args);
      foreach ( $terms as $term ) {
 	 	//var_dump($term);
 	 	echo '<li>';
-       echo '<span><input type="checkbox" name="typeactivite" value="'.$term->name.'" />' . $term->name.'</span>';
+       echo '<span><input type="checkbox" name="typeactivite" value="'.$term->term_id.'" />' . $term->name.'</span>';
        	     $args = array(
 		    'hide_empty'        => true, 
 		    'child_of'          => $term->term_id,
@@ -205,7 +205,7 @@ $terms = get_terms($taxonomies, $args);
 		 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
 			 echo '<ul class="sub">';
 		foreach ( $childTerms as $childterm ) {
-			echo '<li><span><input type="checkbox" name="typeactivite" value="'.$childterm->name.'" />' . $childterm->name.'</span></li>';
+			echo '<li><span><input type="checkbox" name="typeactivite" value="'.$childterm->term_id.'" />' . $childterm->name.'</span></li>';
 		}
 		echo '</ul>';
 		}
@@ -219,18 +219,39 @@ $terms = get_terms($taxonomies, $args);
 </div>
 </div>
 
-
+<?php //echo do_shortcode('[wpdreams_ajaxsearchpro id=1]'); ?>
 	<?php
+		//START POST LISTING
+		 echo '<div id="activities-content" class="blocks">';
+		//order posts by terms ? => yes and use $i to add data-order attr to element
+	$terms_array_order = get_terms( 'reservation_type', array(
+			    'orderby'    => 'count',
+			    'hide_empty' => 0,
+			    'parent'	=> 0,
+	)); 
+
+	foreach($terms_array_order as $term_item):
+		
+		$data_order = Online_Booking_Public::get_term_order($term_item->slug);
+		if(!$data_order):
+			$data_order = 0;
+		endif;
+		
+		echo '<div class="clearfix"></div><h4>'.$term_item->slug.'</h4><div class="clearfix"></div>';
+		
+		
         $args = array(
 	        'post_type' => 'reservation',
 			'posts_per_page' => -1,
 			'post_status'		=> 'publish',
+			'reservation_type' => $term_item->slug
         );
+        
         $the_query = new WP_Query( $args );
         // The Loop
-        if ( $the_query->have_posts() ) {
-            echo '<div id="activities-content" class="blocks">';
-            while ( $the_query->have_posts() ) {
+        if ( $the_query->have_posts() ):
+           
+            while ( $the_query->have_posts() ):
                 $the_query->the_post();
                 global $post;
                 $postID = $the_query->post->ID;
@@ -268,14 +289,15 @@ $terms = get_terms($taxonomies, $args);
                 the_post_thumbnail('thumbnail');
                 echo '<div class="presta"><h3>la prestation comprend : </h3>';
                 echo get_field("la_prestation_comprend").'</div>';
-                echo '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',"'.$typearray.'",'.$url.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                echo '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\''.$url.'\','.$data_order.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 echo '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 echo '</div>';
                 
-            }
-            echo '</div>';
-         }
-		
+            endwhile;
+            
+         endif;
+	endforeach;
+	echo '</div>';
 		?>
 
 		<h2 class="upptitle">Vous aimerez également...</h2>
@@ -294,8 +316,10 @@ $terms = get_terms($taxonomies, $args);
 		<div id="daysTrip"></div>
 <!-- #JOURNEES -->	
 
+<?php  if ( !is_user_logged_in() ): ?>
 <!-- FORMUAIRE SEND -->	
 	<h2 class="upptitle">Votre devis sur mesure</h2>
+	
 		<form action="tpl-booking.php" method="" accept-charset="utf-8">
 			        <input type="text" name="s" id="name" placeholder="Votre nom" value="" type="text"  /> <br />
 			        <input type="tel" name="s" id="name" placeholder="Téléphone" value="" type="text"  />
@@ -303,19 +327,36 @@ $terms = get_terms($taxonomies, $args);
 			        <input type="email" name="s" id="name" placeholder="Votre mail" value="" type="text"  />
 			        <br />
 			        <input type="submit" name="s" id="name" value="Envoyer" type="text"  />
-			        	<?php  if ( is_user_logged_in() ): ?>
+			        	
+		</form>
+<!-- #formulaire send -->
+<?php endif; ?>
+
+<?php  if ( is_user_logged_in() ): ?>
+<h2 class="upptitle">Votre devis sur mesure</h2>
 <div class="pure-g" id="user-actions">
-	<div id="savetrip" onclick="saveTrip()">
-		<input maxlength="20" id="tripName" type="text" value="" placeholder="Nom de votre reservation" />
-		Sauvegarder votre voyage<div class="fs1" aria-hidden="true" data-icon=""></div>
+	<div id="savetrip" >
+		<div class="pure-u-1">
+			<input maxlength="20" id="tripName" type="text" value="" placeholder="Nom de votre reservation" />
+		</div>
+		
+		<div class="pure-u-1">
+			<a href="#" onclick="saveTrip()" class="btn btn-reg">
+			Enregistrer<span class="fs1" aria-hidden="true" data-icon=""></span>
+			</a>
+		</div>
+		<div class="pure-u-1">
+			<a href="#"  class="btn btn-reg">
+			Demande de devis
+			</a>
+		</div>
 		</div>
 </div>
 <?php else: ?>
 Connectez-vous pour sauvegarder
 <?php endif; ?>
 
-		</form>
-<!-- #formulaire send -->
+
 	
 </div>
 </div>

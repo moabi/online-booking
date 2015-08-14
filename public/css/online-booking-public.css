@@ -1,6 +1,11 @@
 /*
 	Online-booking plugin
 */
+/* new clearfix */
+.clearfix:after {visibility: hidden;display: block;font-size: 0;content: " ";clear: both;height: 0;}
+* html .clearfix   { zoom: 1; } /* IE6 */
+*:first-child+html .clearfix { zoom: 1; } /* IE7 */
+
 @font-face {
 	font-family: "Flaticon";
 	src: url("flaticon.eot");
@@ -191,6 +196,12 @@ h1.archive-title{padding-top:0}
 #user-actions{padding: 20px 0 0;   position: relative;   width: 96%;   margin: auto;   display: block;}
 
 input.required{color: red !important;border-color: red !important;background-color: rgba(255, 255, 0, 0.3);}
+#savetrip a{
+    margin: 10px auto;
+    position: relative;
+    line-height: 40px;
+}
+#savetrip input{}
 #savetrip{
     color: rgb(45, 169, 220);
     width: 100%;
@@ -201,8 +212,8 @@ input.required{color: red !important;border-color: red !important;background-col
     margin: 0;
     line-height: 24px;
 }
-#savetrip input[type=text]{line-height: 24px;height: 24px;font-size: 12px;float: left;width: 50%;}
-#savetrip .fs1{float:right;}
+#savetrip input[type=text]{line-height: 30px;height: 30px;font-size: 14px;float: none;width: 70%;margin: auto;text-align: left;}
+#savetrip .fs1{position: absolute;right: 10px;top: 1px;}
 #booking-wrapper{position:relative;width: 96%;margin: auto;display: block;}
 hr.clearfix{display:block;}
 .padd-l{padding: 0 0em 0 1em;margin: 0;}
@@ -380,9 +391,9 @@ img{max-width: 100%; }
 .block-trip .loadit{bottom: 0;border-left:1px solid rgba(255,255,255,0.43)}
 .block-trip h2{position:absolute;background:rgba(255,255,255,0.7);font-weight:300;font-size:10px;text-align:center;width:100%;line-height:20px;padding: 0;top: 0;margin: 0;}
 .day-wrapper.anim-effect-boris::after{background:rgba(111,148,182,0.1);content:'';position:absolute;top:22px;left:22px;margin:-35px 0 0 -35px;width:110%;height:110%;opacity:0;pointer-events:none;animation:anim-effect-boris .3s forwards;-webkit-animation:anim-effect-boris .3s forwards}
-img{max-width:100%%; display:block; height:auto;}
+img{max-width:100%; display:block; height:auto;}
 html.no-js{padding: 110px 0 0;}
-#primary-b .entry-title{text-align:left; font-size:22px;padding:0;border-bottom: 1px solid #36AADA;color: rgb(54, 171, 218);max-width: 96%;margin: 20px 0 30px;padding: 0 0 5px;font-weight: 300;}
+#primary-b .entry-title{text-align: center; font-size:22px;padding:0;border-bottom: none;color: rgb(255, 255, 255);max-width: 96%;margin: 20px 0 30px;padding: 0 0 5px;font-weight: 300;}
 #primary-b .entry-title span.locate-place{font-size:14px;margin: 0 0 0 1em;}
 img.alignleft {float:left;padding:0 1em 1em 0}
 #animation-excerpt{margin: 1em auto;display:block; padding:1em;box-shadow: 1px 2px 0px #EFE9E9;max-width: 70%;}
@@ -525,11 +536,22 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
 .single h2{text-align:left;padding: 0 0 10px;font-size: 24px;color: rgba(68, 68, 68, 0.78);font-weight: 300;margin: 30px 0 10px;}
 .slickReservation img{display:block;max-width: 100%;max-height: 400px;margin: auto;}
 .slickReservation .fs1.prevmulti,.slickReservation .fs1.nextmulti{cursor:pointer;position: absolute;font-size: 90px;top: 20%;left: 0;width: auto;color: #35AADC;}
-.slickReservation{
-    margin: 1em;
-    background-color: rgba(237, 237, 237, 0.38);
-    padding: 15px;
+#activity-gallery{position:relative;}
+#single-top-information {position:absolute; bottom:0;background: rgba(255, 255, 255, 0.65);left:0; width:100%; line-height:48px;color: #000;font-size: 24px;z-index: 9;padding: 20px;}
+#crp_related{}
+#crp_related ul{}
+#crp_related ul li {
+    float: left;
+    margin: 0 5px 40px;
+    text-align: center;
 }
+#primary-b #activity-gallery h1{position: relative;z-index:1;left: 0;width: 100%;margin: 0;top: 20%;font-size: 28px;text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.69);text-align: left;color: rgba(0, 0, 0, 0.86);font-weight: bold;padding: 0;}
+.slickReservation{
+    margin: 0;
+    background-color: rgba(237, 237, 237, 0.38);
+    padding: 0;
+}
+.slickReservation li{width:100%; height: 400px;background-size: cover !important;background-position: 50% 50% !important;}
 .slickReservation .fs1.nextmulti{
     right: 0;
     left: inherit;

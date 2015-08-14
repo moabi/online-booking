@@ -34,28 +34,40 @@ get_header(); ?>
 										?>
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
-		<header class="entry-header">
-			
-			<h1 class="entry-title"><?php the_title(); ?></h1>
-			
-		
-			
-		</header><!-- .entry-header -->
 <div class="clearfix"></div>
 <div class="pure-g">
-	<div class="pure-u-1 pure-u-md-5-8">
-			<?php
+	<div id="activity-gallery" class="pure-u-1">
+		
+		<div id="single-top-information">
+			<div class="pure-g">
+				<h1 class="entry-title"><?php the_title(); ?></h1>
+			</div>
+			<div class="pure-g">
+				<div class="pure-u-1-3">
+					<?php the_field('prix'); ?>€ / pers
+				</div>	
+				<div class="pure-u-1-3">
+					Durée <?php the_field('duree'); ?>h
+				</div>	
+				<div class="pure-u-1-3">
+					Jusqu’à <?php the_field('nombre_de_personnes'); ?> personnes
+				</div>	
+			</div>
+			
+		</div>
+		
+		
+<?php
 		//CAROUSSEL
 	$images = get_field('gallerie');
-
 if( $images ): ?>
 <div class="clearfix"></div>
         <ul class="slickReservation img-gallery">
             <?php foreach( $images as $image ): ?>
-                <li>
-                	<a href="<?php echo $image['sizes']['full-size']; ?>" class="img-pop">
+                <li style="background: url(<?php echo $image['sizes']['full-size']; ?>);">
+                	<!--<a href="<?php echo $image['sizes']['full-size']; ?>" class="img-pop">
                     <img src="<?php echo $image['sizes']['full-size']; ?>" alt="<?php echo $image['alt']; ?>" />
-                	</a>
+                	</a>-->
                     
                 </li>
             <?php endforeach; ?>
@@ -64,8 +76,153 @@ if( $images ): ?>
 
 <?php endif; ?>
 
+	</div>
+<div class="pure-u-1 pure-u-md-1-2">
+				<?php
+	echo '<div class="tags-s pure-g">';
+	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+	foreach($term_lieu as $key=>$value){
+		$term_link = get_term_link( $value );
+	  echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
+	}
+	echo '<div class="clearfix"></div>';
+	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+	foreach($term_type as $key=>$value){
+		$term_link = get_term_link( $value );
+		echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
+	}
+	echo '<div class="clearfix"></div>';
+	//echo '<span>'.get_field('prix').'euros/personne</span>';
+	echo '</div>';
+	echo '<div class="clearfix"></div>';
+											
+											?>	
+											
+</div>	
+
+<div class="pure-u-1 pure-u-md-1-2">
+	<style>
+	.crunchify-link {
+    padding: 5px 10px;
+    color: white;
+    font-size: 12px;
+}
+ 
+.crunchify-link:hover,.crunchify-link:active {
+    color: white;
+}
+ 
+.crunchify-twitter {
+    background: #41B7D8;
+}
+ 
+.crunchify-twitter:hover,.crunchify-twitter:active {
+    background: #279ebf;
+}
+ 
+.crunchify-facebook {
+    background: #3B5997;
+}
+ 
+.crunchify-facebook:hover,.crunchify-facebook:active {
+    background: #2d4372;
+}
+ 
+.crunchify-googleplus {
+    background: #D64937;
+}
+ 
+.crunchify-googleplus:hover,.crunchify-googleplus:active {
+    background: #b53525;
+}
+ 
+.crunchify-buffer {
+    background: #444;
+}
+ 
+.crunchify-buffer:hover,.crunchify-buffer:active {
+    background: #222;
+}
+ 
+.crunchify-social {
+    margin: 20px 0px 25px 0px;
+    -webkit-font-smoothing: antialiased;
+    font-size: 12px;
+}
+</style>
+
+<?php
+		// Get current page URL
+		$shortURL = get_permalink();
 		
+		// Get current page title
+		$shortTitle = get_the_title();
+		
+		// Construct sharing URL without using any script
+		$twitterURL = 'https://twitter.com/intent/tweet?text='.$shortTitle.'&amp;url='.$shortURL.'&amp;via=onlyoo';
+		$facebookURL = 'https://www.facebook.com/sharer/sharer.php?u='.$shortURL;
+		$googleURL = 'https://plus.google.com/share?url='.$shortURL;
+		$bufferURL = 'https://bufferapp.com/add?url='.$shortURL.'&amp;text='.$shortTitle;
+	
+		// Add sharing button at the end of page/page content
+		$content = '<div class="crunchify-social">';
+		$content .= '<a class="crunchify-link crunchify-twitter" href="'. $twitterURL .'" target="_blank">Twitter</a>';
+		$content .= '<a class="crunchify-link crunchify-facebook" href="'.$facebookURL.'" target="_blank">Facebook</a>';
+		$content .= '<a class="crunchify-link crunchify-googleplus" href="'.$googleURL.'" target="_blank">Google+</a>';
+		$content .= '<a class="crunchify-link crunchify-buffer" href="'.$bufferURL.'" target="_blank">Buffer</a>';
+		$content .= '</div>';
+		echo $content;
+		?>
+</div>
+</div>
+
+<div class="comprend">
+	
+	<h2>Description</h2>
+	<div id="animation-text">
+				<?php 
+			$default_attr = array(
+	'class' => "alignleft"
+);
+			the_post_thumbnail('thumbnail',$default_attr); ?>
+		<?php the_content(); ?>
+	
+	</div>
+</div>
+
+<div class="pure-g">
+		<div class="pure-u-1 pure-u-md-1-2">
+		<h2>Informations pratiques</h2>
+		<?php the_field('infos_pratiques'); ?>
+	</div>
+	<div class="pure-u-1 pure-u-md-1-2">
+		<div id="animation-excerpt">		
+		<?php the_field('la_prestation_comprend'); ?>
+		</div>
+	</div>
+</div>
+		
+<?php if ( function_exists( 'echo_ald_crp' ) ) echo_ald_crp(); ?>
+
+	</article><!-- #post -->
+
+			<?php endwhile; // end of the loop. ?>
+
+		</div><!-- #content -->
+	</div><!-- #primary -->
+	<!--
+<div id="secondary" class="pure-u-1 pure-u-md-6-24">
+	<h2><?php _e("D'autres activités qui peuvent vous intéresser","twentyfifteen"); ?></h2>
+	
+</div>
+-->
+</div>
+<?php get_footer(); ?>
+
+
+
 		<?php
+			/*
 				$postID = $post->ID;
                 $price = get_field('prix');
                 $personnes = get_field('personnes');
@@ -107,71 +264,8 @@ if( $images ): ?>
 							$activityObj++;
 					    endwhile;
 					endif;
-					$dayTrip .= '}';
+					$dayTrip .= '}';*/
 
 					
 			?>
-	</div>
-	<div class="pure-u-1 pure-u-md-3-8">
-		<div id="animation-excerpt">
-			<?php
-	echo '<div class="tags-s">';
-	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-	foreach($term_lieu as $key=>$value){
-		$term_link = get_term_link( $value );
-	  echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
-	}
-	echo '<div class="clearfix"></div>';
-	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-	foreach($term_type as $key=>$value){
-		$term_link = get_term_link( $value );
-		echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
-	}
-	echo '<div class="clearfix"></div>';
-	//echo '<span>'.get_field('prix').'euros/personne</span>';
-	echo '</div>';
-	echo '<div class="clearfix"></div>';
-											
-											?>	
-		
-		<?php the_field('la_prestation_comprend'); ?>
-		</div>
-	</div>
-</div>
-<div class="clearfix"></div>
-<div class="comprend">
-	
-	<h2>La prestation comprend</h2>
-
-
-	
-	<div id="animation-text">
-				<?php 
-			$default_attr = array(
-	'class' => "alignleft"
-);
-			the_post_thumbnail('thumbnail',$default_attr); ?>
-		<?php the_content(); ?>
-	
-	</div>
-	
-
-</div>
-		
-
-
-
-	</article><!-- #post -->
-
-			<?php endwhile; // end of the loop. ?>
-
-		</div><!-- #content -->
-	</div><!-- #primary -->
-	<!--
-<div id="secondary" class="pure-u-1 pure-u-md-6-24">
-	<h2><?php _e("D'autres activités qui peuvent vous intéresser","twentyfifteen"); ?></h2>
-	
-</div>
--->
-</div>
-<?php get_footer(); ?>
+			

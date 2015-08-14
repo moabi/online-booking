@@ -508,61 +508,136 @@ public function ajxfn(){
 	die;
 }
 
+/*
+	//@param $term_resa : string - slug
+	//use : get_term_order('repas-soiree');
+*/
+	public static function get_term_order($term_resa){
+				$terms_array_order = get_terms( 'reservation_type', array(
+			    'orderby'    => 'count',
+			    'hide_empty' => 0,
+			    'parent'	=> 0,
+				)); 
+		
+				$i = 0;
+				foreach($terms_array_order as $term){
+					$i++;
+					$slug_term = $term->slug;
+					if($term_resa == $slug_term):
+						return $i;
+					endif;
+				}
+				
+	}
+		
+		
 
-
-
+/*
+	ajax_get_latest_posts function
+	filter by term according to user choice
+	$theme && $lieu should be mandatory
+	order by term : reservation type
+	@param $theme : integer - single term only
+	@param $lieu  : integer - single term only
+	@param $type  : array multiple choice, !$type == all $type elements
+	
+*/
 
 
 public function ajax_get_latest_posts($theme,$lieu,$type){
 	
 	//order posts by terms ? => yes and use $i to add data-order attr to element
-	$terms = get_terms( 'reservation_type', array(
-		    'orderby'    => 'count',
-		    'hide_empty' => 1,
-		    'parent'	=> 0,
-		));
+	$terms_array_order = get_terms( 'reservation_type', array(
+			    'orderby'    => 'count',
+			    'hide_empty' => 0,
+			    'parent'	=> 0,
+	)); 
 	
-	if($type != null){
+	$global_theme = intval($theme);
+	$global_lieu = intval($lieu);
+	
+	if(is_array($type)):
+		$errors = array_filter($type);
+	else:
+		$errors = "no array";
+	endif;
+	//iterate through all terms or selected ones
+	if($type == null | empty($errors) ):
+		$array_custom_term = $terms_array_order; 
+	else: 
+		$array_custom_term = $type;
+	endif;
+
+	$posts = '<div id="filtered">';
+	$i = 0;
+
+	foreach($array_custom_term as $term_item){
+
 		
-		//'reservation_type' => $term->slug
-		$typetoArray = $type;
-		$types = array(
-					'taxonomy' => 'reservation_type',
-					'field'    => 'name',
-					'terms'    => $type,
-				);
-	} else {
-		$types = '';
+		if(!is_int($term_item) && is_object($term_item) ):
+			//no filter, take all top terms
+			$filter_type = "filter-top-term";
+			$reservation_type_name = $term_item->name;
+			$reservation_type_ID   = $term_item->term_id;
+			$reservation_type_slug = $term_item->slug;
+			
+		else:
+			//we are filtering, we get term by id
+			$filter_type = "filter-user";
+			$reservation_type_obj = get_term_by('id', $term_item, 'reservation_type');
+			$reservation_type_name = $reservation_type_obj->name;
+			$reservation_type_ID   = $reservation_type_obj->term_id;
+			$reservation_type_slug = $reservation_type_obj->slug;
+		endif;
 		
-	}
-	foreach($terms as $term){
+		$data_order = Online_Booking_Public::get_term_order($reservation_type_slug);
 		
-	}
-     $args = array(
-	      'post_type' => 'reservation',
-          'post_status' => 'publish',
-		  'posts_per_page' => 20,
-		  'tax_query' => array(
-				'relation' => 'AND',
-				array(
-					'taxonomy' => 'theme',
-					'field'    => 'term_id',
-					'terms'    => array($theme),
+		
+		//var_dump($term_reservation);
+		$i++;
+		
+		$posts .= '<div class="term_wrapper" data-place="'.$global_lieu.'" data-theme="'.$global_theme.'" data-id="'.$reservation_type_ID.'-'.$reservation_type_slug.'-- '.$filter_type.'">';
+		
+
+		
+		$args = array(
+		      'post_type' => 'reservation',
+	          'post_status' => 'publish',
+			  'posts_per_page' => 20,
+			  'tax_query' => array(
+					'relation' => 'AND',
+					array(
+						'taxonomy' => 'theme',
+						'field'    => 'term_id',
+						'terms'    => $global_theme,
+					),
+					array(
+						'taxonomy' => 'lieu',
+						'field'    => 'term_id',
+						'terms'    => $global_lieu,
+					),
+					array(
+						'taxonomy' => 'reservation_type',
+						'field'    => 'term_id',
+						'terms'    => $reservation_type_ID,
+					),
+					
 				),
-				array(
-					'taxonomy' => 'lieu',
-					'field'    => 'term_id',
-					'terms'    => array($lieu),
-				),
-				$types
-				
-			),
-        );
+	        );      
+
+
         $the_query = new WP_Query( $args );
         // The Loop
         if ( $the_query->have_posts() ) {
-            $posts = '<div id="activities-content" class="blocks">';
+	        
+	        $count_post = 0;
+            
             while ( $the_query->have_posts() ) {
+	            if($count_post == 0): 
+		            $posts .= '<h4 class="ajx-fetch">';
+					$posts .= $reservation_type_name;
+					$posts .= '</h4><div class="clearfix"></div>';
+	            endif;
                 $the_query->the_post();
                 global $post;
                 $postID = $the_query->post->ID;
@@ -593,22 +668,31 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
 	               $typearray .= ' '.$singleType['slug'];
                 }
                 
-                $posts .=  '<div class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
+                $posts .=  '<div data-type="'.$reservation_type_slug.'" class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
                 $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
                 $posts .= '<div class="presta"><h3>la prestation comprend : </h3>';
                 $posts .= get_field("la_prestation_comprend").'</div>';
                 $posts .= get_the_post_thumbnail($postID, 'square');
-                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 $posts.= '</div>';
                 
+                $count_post++;
+                
             }
-            $posts .= '</div>';
+            
+            
          } else {
-	         $posts = 'Nous sommes désolé, il n\'y a aucun résultat dans ce lieu pour votre recherche';
+	         
          }
+         $posts.= '</div>';
+		 //wp_reset_postdata();
+	}
+	
 
-     return $posts;
+	$posts .= '</div>';
+	
+    return $posts;
 }
 
 
