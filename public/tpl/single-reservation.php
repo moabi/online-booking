@@ -37,7 +37,6 @@ get_header(); ?>
 <div class="clearfix"></div>
 <div class="pure-g">
 	<div id="activity-gallery" class="pure-u-1">
-		
 		<div id="single-top-information">
 			<div class="pure-g">
 				<h1 class="entry-title"><?php the_title(); ?></h1>
@@ -54,9 +53,7 @@ get_header(); ?>
 				</div>	
 			</div>
 			
-		</div>
-		
-		
+		</div>	
 <?php
 		//CAROUSSEL
 	$images = get_field('gallerie');
@@ -77,6 +74,7 @@ if( $images ): ?>
 <?php endif; ?>
 
 	</div>
+		</div>
 <div class="pure-u-1 pure-u-md-1-2">
 				<?php
 	echo '<div class="tags-s pure-g">';
@@ -145,9 +143,10 @@ if( $images ): ?>
 }
  
 .crunchify-social {
-    margin: 20px 0px 25px 0px;
+    margin: 0px 0px 25px 0px;
     -webkit-font-smoothing: antialiased;
     font-size: 12px;
+    float: right;
 }
 </style>
 
@@ -176,31 +175,103 @@ if( $images ): ?>
 </div>
 </div>
 
-<div class="comprend">
-	
-	<h2>Description</h2>
-	<div id="animation-text">
-				<?php 
-			$default_attr = array(
-	'class' => "alignleft"
-);
-			the_post_thumbnail('thumbnail',$default_attr); ?>
-		<?php the_content(); ?>
-	
+
+<div class="pure-g">
+	<div class="pure-u-md-4-5">
+<!-- NAVIGATION -->
+<div class="pure-g" id="single-tabber">
+	<div class="pure-u-1-3 active">
+		<a href="#" class="tabsto" data-target="0">Description</a>
+	</div>
+	<div class="pure-u-1-3">
+		<a href="#" class="tabsto" data-target="1">Informations pratiques</a>
+	</div>
+	<div class="pure-u-1-3">
+		<a href="#" class="tabsto" data-target="2">Lieu</a>
 	</div>
 </div>
 
-<div class="pure-g">
-		<div class="pure-u-1 pure-u-md-1-2">
-		<h2>Informations pratiques</h2>
-		<?php the_field('infos_pratiques'); ?>
-	</div>
-	<div class="pure-u-1 pure-u-md-1-2">
-		<div id="animation-excerpt">		
-		<?php the_field('la_prestation_comprend'); ?>
+<!-- TABS -->
+<div class="slick-single">
+	
+	<div class="single-el">
+		<div class="comprend">
+			<div id="animation-text">
+						<?php 
+					$default_attr = array(
+			'class' => "alignleft"
+		);
+					the_post_thumbnail('thumbnail',$default_attr); ?>
+				<?php the_content(); ?>
+			
+			</div>
 		</div>
 	</div>
+	
+	<div class="single-el">
+		<?php the_field('infos_pratiques'); ?>
+	</div>
+	
+	<div class="single-el">
+		<?php the_field('lieu'); ?>
+	</div>
+	
 </div>
+
+<script type="text/javascript">
+	jQuery(function(){
+		var $ = jQuery;
+		$('.slick-single').slick({
+		  dots: false,
+		  arrows: false,
+		  infinite: true,
+		  speed: 500,
+		   slidesToShow: 1,
+		  slidesToScroll: 1
+		});
+				
+		$('.tabsto').on('click', function() {
+			$target = $(this).attr('data-target');
+			$(this).parent().addClass('active').siblings().removeClass('active');
+			$('.slick-single').slick('slickGoTo',$target);
+});
+	})
+</script>	
+<!-- #tabs -->
+	</div>
+<!-- resumee & add -->
+<div class="resume pure-u-md-1-5">
+	<div class="l-box">
+	<div class="pure-u-1">
+		<a class="btn btn-reg" href="<?php echo site_url(); ?>/reservation-service/?addId=<?php the_ID(); ?>">Ajouter cette activité</a>
+		<div class="pure-g">
+				<div class="pure-u-1">
+					<?php
+						echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+	foreach($term_lieu as $key=>$value){
+		$term_link = get_term_link( $value );
+	  echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
+	}
+	?>
+				</div>
+				<div class="pure-u-1">
+					<?php the_field('prix'); ?>€ / pers
+				</div>	
+				<div class="pure-u-1">
+					Durée <?php the_field('duree'); ?>h
+				</div>	
+				<div class="pure-u-1">
+					Jusqu’à <?php the_field('nombre_de_personnes'); ?> personnes
+				</div>	
+				<a href="<?php echo site_url(); ?>/nos-sejours/">Voir toutes nos activités</a>
+			</div>
+		
+	</div>
+	</div>
+</div>
+<!-- #resumee & add -->
+</div>
+	
 		
 <?php if ( function_exists( 'echo_ald_crp' ) ) echo_ald_crp(); ?>
 

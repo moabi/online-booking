@@ -481,7 +481,7 @@ public function sejour_post_type() {
 
 
 /*
-	FUNCTIONS
+	ajax FUNCTIONS
 */
 public function ajxfn(){
 
@@ -531,7 +531,107 @@ public function ajxfn(){
 	}
 		
 		
+/*
+	display selected post in the thumbnail way
+	@param
+	
+*/
 
+public static function wp_query_thumbnail_posts(){
+	
+	if(isset($_GET['addId'])){
+		wp_reset_query();
+         wp_reset_postdata(); 
+		$post_ID = intval($_GET['addId']);
+	
+	$filter_type = "filter-user";
+	$reservation_type_obj = wp_get_post_terms( $post_ID, 'reservation_type' );
+	//var_dump($reservation_type_obj);
+	$reservation_type_name = $reservation_type_obj[0]->name;
+	$reservation_type_ID   = $reservation_type_obj[0]->term_id;
+	$reservation_type_slug = $reservation_type_obj[0]->slug;
+	$data_order = Online_Booking_Public::get_term_order($reservation_type_slug);
+			
+	$args = array(
+		      'post_type' => 'reservation',
+	          'post_status' => 'publish',
+			  'posts_per_page' => 1,
+			  'p' => $post_ID
+			 
+	        ); 
+	        
+	$the_query = new WP_Query( $args );
+	if ( $the_query->have_posts()) {
+	        
+	        $count_post = 0;
+            $posts = '<div id="selectedOne" class="blocks selectedOne animated shake">';
+            while ( $the_query->have_posts() ) {
+	            if($count_post == 0 && !isset($_GET['addId'])): 
+		            $posts .= '<h4 class="ajx-fetch">';
+					$posts .= $reservation_type_name;
+					$posts .= '</h4><div class="clearfix"></div>';
+	            endif;
+                $the_query->the_post();
+                global $post;
+                $postID = $the_query->post->ID;
+                $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
+                $term_list = wp_get_post_terms($post->ID, 'reservation_type');
+                $type = json_decode(json_encode($term_list), true);
+                //var_dump($type);
+                $termstheme = wp_get_post_terms($postID,'theme');
+                $terms = wp_get_post_terms($postID,'lieu');
+                
+                $price = get_field('prix');
+                $termsarray = json_decode(json_encode($terms), true);
+                $themearray = json_decode(json_encode($termstheme), true);
+                //var_dump($termsarray);
+                $lieu = 'data-lieux="';
+                foreach($termsarray as $activity){
+	                $lieu .= $activity['slug'].', ';
+                }
+                $lieu .= '"';
+                
+                $themes = 'data-themes="';
+                foreach($themearray as $activity){
+	                $themes .= $activity['slug'].', ';
+                }
+                $themes .= '"';
+                $typearray = '';
+                foreach($type as $singleType){
+	               $typearray .= ' '.$singleType['slug'];
+                }
+                
+                $posts .=  '<div data-type="'.$reservation_type_slug.'" class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
+                
+                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
+                
+                $posts .= '<div class="presta"><h3>la prestation comprend : </h3>';
+                $posts .= get_field("la_prestation_comprend").'</div>';
+                
+                $posts .= get_the_post_thumbnail($postID, 'square');
+                
+                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                
+                $posts .= '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
+                
+                $posts.= '</div>';
+                
+                $count_post++;
+                
+            }
+            
+            
+         } else {
+	         $posts = "";
+         }
+         $posts .= '</div>';
+         wp_reset_query();
+         wp_reset_postdata(); 
+	return $posts;
+
+	
+	}
+}
 /*
 	ajax_get_latest_posts function
 	filter by term according to user choice
@@ -691,6 +791,8 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
 	
 
 	$posts .= '</div>';
+	wp_reset_query();
+         wp_reset_postdata(); 
 	
     return $posts;
 }

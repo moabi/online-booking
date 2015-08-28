@@ -219,7 +219,7 @@ $terms = get_terms($taxonomies, $args);
 </div>
 </div>
 
-<?php //echo do_shortcode('[wpdreams_ajaxsearchpro id=1]'); ?>
+<?php echo Online_Booking_Public::wp_query_thumbnail_posts(); ?>
 	<?php
 		//START POST LISTING
 		 echo '<div id="activities-content" class="blocks">';
