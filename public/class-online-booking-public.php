@@ -872,7 +872,22 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 									$term_list = wp_get_post_terms($data->ID, 'reservation_type');
 									$type = json_decode(json_encode($term_list), true);
 									$comma = ($i == $len - 1) ? '' : ',';
-						        	$dayTrip .= '"'.$data->ID.'": { "name" : "'.$data->post_title.'","price": '.$field.',"type": "'.$type[0]['slug'].'","img": "'.$url.'"}'.$comma;
+						        	$dayTrip .= '"'.$data->ID.'":';
+						        	$dayTrip .= '{ "name" : "'.$data->post_title.'","';
+						        	if(!empty($field)):
+						        		$dayTrip .= 'price": '.$field.',';
+						        	else:
+						        		$dayTrip .= 'price": 0,';
+						        	endif;
+						        	
+						        	if(isset($type[0])):
+						        		$type_slug = $type[0]['slug'];
+						        		$dayTrip .= '"type": "'.$type[0]['slug'].'","';
+						        	else:
+										$type_slug = (isset($type_slug)) ? $type_slug : "undefined var";
+						        		$dayTrip .= '"type": "'.$type_slug.'","';
+						        	endif;
+						        	$dayTrip .= 'img": "'.$url.'"}'.$comma;
 						        	$i++;
 					        	}
 					        endwhile;
@@ -911,6 +926,9 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
             wp_reset_postdata();
             $sejour .= '</div></div>';
          }
+        else {
+	        $sejour = "";
+        }
          
          echo $sejour;
          }
@@ -953,7 +971,24 @@ public static function the_sejour($postid){
 									$type = json_decode(json_encode($term_list), true);
 								
 									$comma = ($i == $len - 1) ? '' : ',';
-						        	$dayTrip .= '"'.$data->ID.'": { "name" : "'.$data->post_title.'","price": '.$field.',"type": "'.$type[0]['slug'].'","img": "'.$url.'"}'.$comma;
+						        	$dayTrip .= '"'.$data->ID.'":';
+						        	$dayTrip .= '{ "name" : "'.$data->post_title.'","';
+						        	if(!empty($field)):
+						        		$dayTrip .= 'price": '.$field.',';
+						        	else:
+						        		$dayTrip .= 'price": 0,';
+						        	endif;
+						        	
+						        	if(isset($type[0])):
+						        		$type_slug = $type[0]['slug'];
+						        		$dayTrip .= '"type": "'.$type[0]['slug'].'","';
+						        	else:
+										$type_slug = (isset($type_slug)) ? $type_slug : "undefined var";
+						        		$dayTrip .= '"type": "'.$type_slug.'","';
+						        	endif;
+						        	$dayTrip .= 'img": "'.$url.'"}'.$comma;
+						        	
+						        	//var_dump($type[0]);
 						        	$i++;
 					        	}
 					        endwhile;

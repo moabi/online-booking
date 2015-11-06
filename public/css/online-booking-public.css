@@ -16,14 +16,13 @@
 	font-weight: normal;
 	font-style: normal;
 }
-.day-content .dc::before{   
+.day-content .dc::before{
 	font-family: Flaticon;
-        
 	font-size: 24px;
-font-style: normal;
-margin-left: 20px;
+	font-style: normal;
+	margin-left: 20px;
 	position: absolute;
-	top: 12px;
+	top: 19px;
 	left: 12px;
 	color: rgb(44, 168, 215);
 	margin: auto;
@@ -150,14 +149,14 @@ h1.archive-title{padding-top:0}
 .addThis{position:absolute;color:#fff;right:0;background:#2EAADD;text-decoration:none;width:50%;text-align:center;border-radius:0;padding:8px 0;bottom:0;top:inherit;left:inherit;font-size:10px;text-transform:uppercase}
 #activities-content.blocks{margin:0}
 #selectedOne{margin: 0; padding: 0; clear: both;width: 100%}
-#activities-content.blocks .block h2, #selectedOne h2{line-height:30px;float:left;padding:0 2%;font-weight:400;font-size: 12px;margin: 0;color: rgba(153, 153, 153, 0.87);clear: both;}
+#activities-content.blocks .block h2, #selectedOne h2{line-height:30px;float:left;padding:0 2%;font-weight:400;font-size: 10px;margin: 0;color: rgba(153, 153, 153, 0.87);clear: both;height: 30px;overflow: hidden;}
 #activities-content.blocks .block span.price-u, #selectedOne .price-u{float:right;width:20%;background:#fff;line-height:30px;font-size: 11px;display: block;color: #868686;}
 #activities-content.blocks .presta h3,#selectedOne h3{font-weight:400;font-size: 14px;}
 #activities-content.blocks .presta ul li,#selectedOne .presta ul li{font-size:12px;margin:3% 2%;border-bottom:1px solid #ededed;padding:2%;list-style: none;}
 #activities-content.blocks .block:hover .presta, #selectedOne .block:hover .presta{opacity:.9}
 #activities-content.blocks .presta,#selectedOne .presta{opacity:0;transition:all .4s ease;position:absolute;top: 0;background:#fff;width:90%;padding:5%;font-weight:400}
 #activities-content.blocks .block .head,#selectedOne .head{padding:0;text-align:center;top: -32px;position:absolute;/* background: rgba(255, 255, 255, 1); */left:0;right:0;opacity:1}
-#activities-content.blocks .block,#selectedOne .block{background:#ededed;float:inherit;margin: 1% 1% 40px;border:1px solid rgba(153,153,153,0.22);width: 260px;float: left;position: relative;}
+#activities-content.blocks .block,#selectedOne .block{background:#ededed;float:inherit;margin: 30px 1% 40px;border:1px solid rgba(153,153,153,0.22);width: 260px;float: left;position: relative;}
 #activities-content.blocks .block img,#selectedOne .block img{width: 260px;height: 260px;}
 
 #selectedOne .block{float:right;box-shadow: 0px 2px 8px #C7C7C7;margin: 30px 50px;}
@@ -291,8 +290,8 @@ hr.clearfix{display:block;}
     color: rgb(37, 160, 232);
 }
 .day-content > div:nth-child(even){background:#fcfcfc}
-.day-content .dc .dp{position:absolute; /* background:#fff; */font-size: 10px;right: 28px; top: 12px;padding: 0 1em;line-height: 16px;/* border-left: 1px solid #ededed; *//* border-top: 1px solid #ededed; */}
-.day-content .dc{line-height: 17px;text-align:left;padding: 11px 0% 0 20%;color:rgba(0,0,0,0.7);font-weight:300;font-size: 14px;position:relative;overflow: visible;text-overflow:ellipsis;display:block;float: left;width: 80%;height: 30px;overflow: visible;}
+.day-content .dc .dp{position:absolute; font-size: 10px;right: 15px; top: 12px;padding: 0 1em 0 0;line-height: 16px;}
+.day-content .dc{line-height: 17px;text-align:left;padding: 11px 20% 0 20%;color:rgba(0,0,0,0.7);font-weight:300;font-size: 14px;position:relative;overflow: visible;text-overflow:ellipsis;display:block;float: left;width: 60%;height: 40px;overflow: visible;}
 .day-content .dc .popit{display:none;position:absolute;width: 175px;background-color: #fff;left: -206px;border: 1px solid #2DA9DC;padding: 10px;}
 .dc .popit:after, .dc .popit:before {
 	left: 100%;
@@ -339,19 +338,21 @@ hr.clearfix{display:block;}
     padding: 0;
 }
 #typeterms{
-    float: left;
-    width: 100%;
-    padding: 10px 0;
+    float: none;
+    width: 90%;
+    padding: 10px;
     clear: both;
     display: block;
     background-color: rgba(237, 237, 237, 0.37);
     margin: 20px 0 40px;
     list-style: none;
+    height: 35px;
 }
 #typeterms li{
     float: left;
     position:relative;
     background-color: rgb(247, 247, 247);
+    line-height: 35px;
 }
 #typeterms li:hover > ul.sub{display:block;}
 #typeterms li > ul{
@@ -361,9 +362,9 @@ hr.clearfix{display:block;}
     list-style: none;
     display:none;
     /* position:absolute; */
-    /* top: 30px; */
+    top: 35px;
     background-color: rgb(247, 247, 247);
-    /* left: -10px; */
+    left: -10px;
     width: 100%;
     width: calc( 100% + 5px );
     z-index: 99;
@@ -372,11 +373,12 @@ hr.clearfix{display:block;}
 #typeterms li > ul li{
     font-size: 14px;
     margin: 0 0 0 10px;
-    line-height: 20px;
+    line-height: 35px;
     padding: 0 0 5px;
     background-color: rgb(247, 247, 247);
+    font-style: italic;
 }
-#typeterms span input{float:left;width:auto;margin: 5px 8px 0 0;}
+#typeterms span input{float:left;width:auto;margin: 12px 8px 0 0;}
 #typeterms span{
     float: left;
     width: auto;
@@ -397,6 +399,10 @@ img{max-width: 100%; }
 .day-wrapper.anim-effect-boris::after{background:rgba(111,148,182,0.1);content:'';position:absolute;top:22px;left:22px;margin:-35px 0 0 -35px;width:110%;height:110%;opacity:0;pointer-events:none;animation:anim-effect-boris .3s forwards;-webkit-animation:anim-effect-boris .3s forwards}
 img{max-width:100%; display:block; height:auto;}
 html.no-js{padding: 110px 0 0;}
+.single #primary-b .entry-title{
+    color: #2EAADD;
+    text-align: left;
+}
 #primary-b .entry-title{text-align: center; font-size:22px;padding:0;border-bottom: none;color: rgb(255, 255, 255);max-width: 96%;margin: 20px 0 30px;padding: 0 0 5px;font-weight: 300;}
 #primary-b .entry-title span.locate-place{font-size:14px;margin: 0 0 0 1em;}
 img.alignleft {float:left;padding:0 1em 1em 0}
@@ -489,7 +495,7 @@ a#CTA{background: rgb(46, 170, 221);color: #fff;border-radius: 4px;line-height: 
     display: block;
     clear: both;
 }
-#event-trip-planning .single-activity-row img{width: 60px;height:auto; display:block;}
+#event-trip-planning .single-activity-row img{width: 90px;height:auto; display:block;}
 #event-trip-planning .etp-day{ background: none; text-align: left; color: #575757;line-height:30px; width: 90%;display:block; margin: 0 auto 20px; text-transform: uppercase; padding: 0 0 0 2em; border-bottom: 1px solid #333;}
 .tags-s{
     position: relative;

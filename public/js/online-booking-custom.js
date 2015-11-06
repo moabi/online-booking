@@ -55,7 +55,7 @@ $.noty.defaults = {
 
 
 function doAjaxRequest( theme , geo, type ){
-	console.log(type);
+	//console.log(type);
      jQuery.ajax({
           url: '/wp-admin/admin-ajax.php',
           settings:{
@@ -105,7 +105,7 @@ function getCookie(cname) {
     for(var i=0; i<ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+        if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
     }
     return "";
 }
@@ -254,13 +254,13 @@ function addActivity(id,activityname,price,type,img,order){
 			type  : type,
 			img   : encodeURIComponent(img),
 			order : order
-		}
+		};
 		//console.log('obj price : ' + price);
 		reservation.currentBudget = parseInt(reservation.currentBudget,10) + parseInt(price,10);
 		tripImg = (img) ? '<img src="'+img+'" />' : '';
 		tripType = (type) ? type : 'notDefined';
 		$htmlDay = $('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content');		
-		$htmlDay.append('<div data-order="'+order+'" data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
+		$htmlDay.append('<div data-order="'+order+'" data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' € </span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
 		
 		$htmlDay.find('div.dc').sort(function (a, b) {
 		    return +a.getAttribute('data-order') - +b.getAttribute('data-order');
@@ -664,6 +664,7 @@ function loadTrip($trip,gotoBookingPage){
 	}else {
 		$getBudgetMin = ( reservation.budgetPerMin ) ? reservation.budgetPerMin : 100;
 		$getBudgetMax = ( reservation.budgetPerMax ) ? reservation.budgetPerMax : 300;
+		
 		$('#daysTrip').empty();
 		$('#tripName').val(reservation.name);
 		$( "#arrival" ).datepicker( "setDate", reservation.arrival );
@@ -746,10 +747,12 @@ function the_activites(){
 	if(days !== 0){
 		//iterate thrue days
 		for (var day in daysObj){
+			if (daysObj.hasOwnProperty(day)) {
 			activities = Object.keys(daysObj[day]).length;
 			//if have activites, iterate thrue them
 			if(activities > 0){
 				for (var id in daysObj[day]){
+					if (daysObj[day].hasOwnProperty(id)) {
 					//console.log(id);
 					var activityname = reservation.tripObject[day][id]['name'],
 						price = reservation.tripObject[day][id]['price'],
@@ -759,9 +762,9 @@ function the_activites(){
 						
 					tripImg = (img) ? '<img src="'+img+'" />' : '';
 					tripType = (type) ? type : 'notDefined';
-					$htmlDay = $('.dayblock[data-date="'+ day +'"]').find('.day-content')
+					$htmlDay = $('.dayblock[data-date="'+ day +'"]').find('.day-content');
 					//build html
-					$htmlDay.append('<div data-order="'+order+'" data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' euros</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+					$htmlDay.append('<div data-order="'+order+'" data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' €</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
 					$htmlDay.find('div.dc').sort(function (a, b) {
 					    return +a.getAttribute('data-order') - +b.getAttribute('data-order');
 					})
@@ -772,8 +775,9 @@ function the_activites(){
 					//console.log('Global : ' + reservation.currentBudget)
 					reservation.currentBudget += price;
 				}
+				}
 			}
-
+}
 		}
 	}
 }
@@ -792,8 +796,9 @@ jQuery(function () {
 });
 
     //SLIDER RANGE SETTINGS
-    var getBudgetMin = (reservation.budgetPerMin === "") ? reservation.budgetPerMin : 100;
-    var getBudgetMax = (reservation.budgetPerMax === "") ? reservation.budgetPerMax : 300;
+    var getBudgetMin = (reservation.budgetPerMin && reservation.budgetPerMin > 0) ? reservation.budgetPerMin : 100;
+    var getBudgetMax = (reservation.budgetPerMax && reservation.budgetPerMax > 0) ? reservation.budgetPerMax : 300;
+
     $("#slider-range").slider({
         range: true,
         min: 50,
@@ -872,6 +877,12 @@ jQuery(function () {
     $('.terms-change').change(function () {
         var theme = $('#theme').val();
         var lieu = $('#lieu').val();
+        console.log(lieu);
+        if(lieu === null){
+        	lieu = $('select#lieu option:first-child').attr('value');
+        	$("select#lieu").val(lieu).trigger("change");
+        }
+         console.log(lieu);
         setReservationTerms(theme, lieu);
         doAjaxRequest(theme, lieu);
     });
@@ -952,7 +963,7 @@ jQuery(function () {
     
     
 //RESERVATION - SINGLE PAGE
-var slickReservation = $('.slickReservation')
+var slickReservation = $('.slickReservation');
     if (slickReservation.length) {
         slickReservation.slick({
             autoplay: true,

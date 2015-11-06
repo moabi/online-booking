@@ -17,25 +17,53 @@ get_header(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 		<header class="entry-header">
-			<?php $postid = get_the_ID(); 
-$term_lieu = wp_get_post_terms($postid, 'lieu');
+			<?php 
+				$postid = get_the_ID(); 
+				$term_lieu = wp_get_post_terms($postid, 'lieu');
 			?> 
-			<h1 class="entry-title"><?php the_title(); ?> <?php Online_Booking_Public::the_sejour($postid); ?>
-			<span class="locate-place"><?php 
-											echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-											foreach($term_lieu as $key=>$value){
-											  echo '<span>'.$value->name.'</span> ';
-											} ?></span>
+			<h1 class="entry-title">
+				<?php the_title(); ?> 
+				<?php Online_Booking_Public::the_sejour($postid); ?>
+				<span class="locate-place">
+			<?php 
+				echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+				foreach($term_lieu as $key=>$value){
+				  echo '<span>'.$value->name.'</span> ';
+				} 
+			?>
+				</span>
 			</h1>
-			
-		
-			
 		</header><!-- .entry-header -->
+		
+		
 <div class="clearfix"></div>
 <div class="pure-g">
 	<div class="pure-u-1 pure-u-md-1-2">
 		<div class="padd-l">
-		<?php the_post_thumbnail(); ?>
+	<div class="sej">
+			<?php
+	$images = get_field('gallerie');
+
+if( $images ): ?>
+<div class="clearfix"></div>
+        <ul class="slickReservation img-gallery">
+            <?php foreach( $images as $image ): ?>
+                <li>
+                	<a href="<?php echo $image['sizes']['full-size']; ?>" class="img-pop">
+                    <img src="<?php echo $image['sizes']['full-size']; ?>" alt="<?php echo $image['alt']; ?>" />
+                	</a>
+                    
+                </li>
+            <?php endforeach; ?>
+        </ul>
+<?php else: ?>
+<?php the_post_thumbnail(); ?>
+
+<?php endif; ?>
+		
+	</div>	
+	
+		
 		</div>
 	</div>
 	<div class="pure-u-1 pure-u-md-1-2">
@@ -76,6 +104,9 @@ $term_lieu = wp_get_post_terms($postid, 'lieu');
 									<?php //var_dump($postActivity); ?>
 									<?php foreach($postActivity as $data){
 										
+										$post_status = get_post_status( $data->ID );
+										
+										if($post_status == "publish"):
 										$term_lieu = wp_get_post_terms($data->ID, 'lieu');
 										$term_reservation_type = wp_get_post_terms($data->ID, 'reservation_type');
 										$term_type = wp_get_post_terms($data->ID, 'theme');
@@ -84,7 +115,7 @@ $term_lieu = wp_get_post_terms($postid, 'lieu');
 										echo '<div class="pure-u-1 single-activity-row">';
 										echo '<div class="pure-u-1 pure-u-md-3-24">';
 										echo '<a href="'.get_permalink($data->ID).'">';
-										echo get_the_post_thumbnail( $data->ID, 'thumbnail' );
+										echo get_the_post_thumbnail( $data->ID, 'square' );
 										echo '</a>';
 										echo '</div>';
 										echo '<div class="pure-u-1 pure-u-md-21-24">';
@@ -114,6 +145,7 @@ $term_lieu = wp_get_post_terms($postid, 'lieu');
 											
 										echo '</div><div class="clearfix"></div>';
 										echo '</div>';
+										endif;
 									} ?>
 								
 						
@@ -129,28 +161,7 @@ $term_lieu = wp_get_post_terms($postid, 'lieu');
 
 			
 			
-<h2>Photos de l'event</h2>
-	<div class="sej">
-			<?php
-	$images = get_field('gallerie');
 
-if( $images ): ?>
-<div class="clearfix"></div>
-        <ul class="slickReservation img-gallery">
-            <?php foreach( $images as $image ): ?>
-                <li>
-                	<a href="<?php echo $image['sizes']['full-size']; ?>" class="img-pop">
-                    <img src="<?php echo $image['sizes']['full-size']; ?>" alt="<?php echo $image['alt']; ?>" />
-                	</a>
-                    
-                </li>
-            <?php endforeach; ?>
-        </ul>
-
-
-<?php endif; ?>
-		
-	</div>	
 
 
 

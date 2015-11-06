@@ -60,7 +60,7 @@ get_header(); ?>
 			'child_of'           => 0,
 			'exclude'            => '',
 			'echo'               => 1,
-			'selected'           => 0,
+			'selected'           => false,
 			'hierarchical'       => 1, 
 			'name'               => 'categories',
 			'id'                 => 'lieu',

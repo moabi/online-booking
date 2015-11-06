@@ -273,7 +273,7 @@ if( $images ): ?>
 </div>
 	
 		
-<?php if ( function_exists( 'echo_ald_crp' ) ) echo_ald_crp(); ?>
+<?php if ( function_exists( 'echo_crp' ) ) echo_crp(); ?>
 
 	</article><!-- #post -->
 
