@@ -8,7 +8,7 @@
  */
 
 get_header(); ?>
-
+<!-- SINGLE RESERVATION -->
 <div class="pure-g inner-content">
 	<div id="primary-b" class="site-content single-animations pure-u-1 ">
 		<div id="content" role="main">
@@ -29,149 +29,70 @@ get_header(); ?>
 	$term_lieu = wp_get_post_terms($post->ID, 'lieu');
 	$term_reservation_type = wp_get_post_terms($post->ID, 'reservation_type');
 	$term_type = wp_get_post_terms($post->ID, 'theme');
+	$ux = new online_booking_ux;
 	
 
 										?>
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-
+<h1 class="entry-title"><?php the_title(); ?></h1>
 <div class="clearfix"></div>
 <div class="pure-g">
-	<div id="activity-gallery" class="pure-u-1">
-		<div id="single-top-information">
-			<div class="pure-g">
-				<h1 class="entry-title"><?php the_title(); ?></h1>
-			</div>
-			<div class="pure-g">
-				<div class="pure-u-1-3">
+
+<!-- SLIDER -->
+	<div id="activity-gallery" class="pure-u-1 pure-u-md-7-12">
+		<?php echo $ux->slider(); ?>
+	</div><!-- #activity -->
+<!-- #SLIDER -->
+
+		<div id="single-top-information" class="pure-u-1 pure-u-md-5-12">
+			<!-- DETAILS -->
+			<div class="box-price">
+				<?php echo $ux->get_place($post->ID); ?>
+				<?php if(get_field('prix')): ?>
+				
+				<div class="pure-u-1">
 					<?php the_field('prix'); ?>€ / pers
 				</div>	
-				<div class="pure-u-1-3">
+				<?php endif; ?>
+				<?php if(get_field('duree')): ?>
+				<div class="pure-u-1">
 					Durée <?php the_field('duree'); ?>h
 				</div>	
-				<div class="pure-u-1-3">
+				<?php endif; ?>
+				<?php if(get_field('nombre_de_personnes')): ?>
+				<div class="pure-u-1">
 					Jusqu’à <?php the_field('nombre_de_personnes'); ?> personnes
 				</div>	
-			</div>
-			
-		</div>	
-<?php
-		//CAROUSSEL
-	$images = get_field('gallerie');
-if( $images ): ?>
-<div class="clearfix"></div>
-        <ul class="slickReservation img-gallery">
-            <?php foreach( $images as $image ): ?>
-                <li style="background: url(<?php echo $image['sizes']['full-size']; ?>);">
-                	<!--<a href="<?php echo $image['sizes']['full-size']; ?>" class="img-pop">
-                    <img src="<?php echo $image['sizes']['full-size']; ?>" alt="<?php echo $image['alt']; ?>" />
-                	</a>-->
-                    
-                </li>
-            <?php endforeach; ?>
-        </ul>
-
-
-<?php endif; ?>
-
-	</div>
-		</div>
-<div class="pure-u-1 pure-u-md-1-2">
-				<?php
+				<?php endif; ?>
+				<a class="btn btn-reg" href="<?php echo site_url(); ?>/reservation-service/?addId=<?php the_ID(); ?>">Ajouter cette activité</a>
+				<a href="<?php echo site_url(); ?>/nos-sejours/">Voir toutes nos activités</a>
+				
+								<?php
 	echo '<div class="tags-s pure-g">';
-	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-	foreach($term_lieu as $key=>$value){
-		$term_link = get_term_link( $value );
-	  echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
-	}
-	echo '<div class="clearfix"></div>';
 	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
 	foreach($term_type as $key=>$value){
 		$term_link = get_term_link( $value );
 		echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
 	}
-	echo '<div class="clearfix"></div>';
-	//echo '<span>'.get_field('prix').'euros/personne</span>';
 	echo '</div>';
-	echo '<div class="clearfix"></div>';
-											
-											?>	
-											
-</div>	
+?>	
+
+			</div>
+			<!-- #DETAILS -->
+			
+		</div>	
+		
+
+	
+		</div><!-- pure -->
+		
+		
+
 
 <div class="pure-u-1 pure-u-md-1-2">
-	<style>
-	.crunchify-link {
-    padding: 5px 10px;
-    color: white;
-    font-size: 12px;
-}
- 
-.crunchify-link:hover,.crunchify-link:active {
-    color: white;
-}
- 
-.crunchify-twitter {
-    background: #41B7D8;
-}
- 
-.crunchify-twitter:hover,.crunchify-twitter:active {
-    background: #279ebf;
-}
- 
-.crunchify-facebook {
-    background: #3B5997;
-}
- 
-.crunchify-facebook:hover,.crunchify-facebook:active {
-    background: #2d4372;
-}
- 
-.crunchify-googleplus {
-    background: #D64937;
-}
- 
-.crunchify-googleplus:hover,.crunchify-googleplus:active {
-    background: #b53525;
-}
- 
-.crunchify-buffer {
-    background: #444;
-}
- 
-.crunchify-buffer:hover,.crunchify-buffer:active {
-    background: #222;
-}
- 
-.crunchify-social {
-    margin: 0px 0px 25px 0px;
-    -webkit-font-smoothing: antialiased;
-    font-size: 12px;
-    float: right;
-}
-</style>
 
-<?php
-		// Get current page URL
-		$shortURL = get_permalink();
-		
-		// Get current page title
-		$shortTitle = get_the_title();
-		
-		// Construct sharing URL without using any script
-		$twitterURL = 'https://twitter.com/intent/tweet?text='.$shortTitle.'&amp;url='.$shortURL.'&amp;via=onlyoo';
-		$facebookURL = 'https://www.facebook.com/sharer/sharer.php?u='.$shortURL;
-		$googleURL = 'https://plus.google.com/share?url='.$shortURL;
-		$bufferURL = 'https://bufferapp.com/add?url='.$shortURL.'&amp;text='.$shortTitle;
-	
-		// Add sharing button at the end of page/page content
-		$content = '<div class="crunchify-social">';
-		$content .= '<a class="crunchify-link crunchify-twitter" href="'. $twitterURL .'" target="_blank">Twitter</a>';
-		$content .= '<a class="crunchify-link crunchify-facebook" href="'.$facebookURL.'" target="_blank">Facebook</a>';
-		$content .= '<a class="crunchify-link crunchify-googleplus" href="'.$googleURL.'" target="_blank">Google+</a>';
-		$content .= '<a class="crunchify-link crunchify-buffer" href="'.$bufferURL.'" target="_blank">Buffer</a>';
-		$content .= '</div>';
-		echo $content;
-		?>
+
+<?php echo $ux->socialShare(); ?>
 </div>
 </div>
 
@@ -241,33 +162,7 @@ if( $images ): ?>
 	</div>
 <!-- resumee & add -->
 <div class="resume pure-u-md-1-5">
-	<div class="l-box">
-	<div class="pure-u-1">
-		<a class="btn btn-reg" href="<?php echo site_url(); ?>/reservation-service/?addId=<?php the_ID(); ?>">Ajouter cette activité</a>
-		<div class="pure-g">
-				<div class="pure-u-1">
-					<?php
-						echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-	foreach($term_lieu as $key=>$value){
-		$term_link = get_term_link( $value );
-	  echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
-	}
-	?>
-				</div>
-				<div class="pure-u-1">
-					<?php the_field('prix'); ?>€ / pers
-				</div>	
-				<div class="pure-u-1">
-					Durée <?php the_field('duree'); ?>h
-				</div>	
-				<div class="pure-u-1">
-					Jusqu’à <?php the_field('nombre_de_personnes'); ?> personnes
-				</div>	
-				<a href="<?php echo site_url(); ?>/nos-sejours/">Voir toutes nos activités</a>
-			</div>
-		
-	</div>
-	</div>
+
 </div>
 <!-- #resumee & add -->
 </div>

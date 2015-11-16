@@ -41,6 +41,8 @@ class Online_Booking_Public {
 	private $version;
 	
 	private $booking_url = "reservation-service";
+	private $booking_confirmation_url = "validation-devis";
+	
 
 	/**
 	 * Initialize the class and set its properties.
@@ -56,7 +58,14 @@ class Online_Booking_Public {
 
 	}
 	
-	
+	public function get_plugin_utilities($name){
+		$utility = '';
+		if($name == 'thumb'):
+			$utility = plugin_dir_url( __FILE__ ) ."img/default.jpg";
+		endif;
+		
+		echo $utility;
+	}
 
 	/**
 	 * Register the stylesheets for the public-facing side of the site.
@@ -78,6 +87,7 @@ class Online_Booking_Public {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/online-booking-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name.'plugins', plugin_dir_url( __FILE__ ) . 'css/onlyoo-plugins.css', array(), $this->version, 'all' );
 		wp_enqueue_style($this->plugin_name.'jquery-ui', plugin_dir_url( __FILE__ ) . 'js/jquery-ui/jquery-ui.min.css',array(), $this->version, 'all');
 
 	}
@@ -177,7 +187,22 @@ public function create_booking_pages() {
 		);
 
 	// Otherwise, we'll stop
-	} elseif( null == get_page_by_title( 'Réservation' ) ) {
+	} elseif( null == get_page_by_title( 'Validation demande de devis' ) ) {
+
+		// Set the post ID so that we know the post was created successfully
+		$post_id = wp_insert_post(
+			array(
+				'comment_status'	=>	'closed',
+				'ping_status'		=>	'closed',
+				'post_author'		=>	$author_id,
+				'post_name'			=>	$this->$booking_confirmation_url,
+				'post_title'		=>	__('Validation demande de devis','onlyoo'),
+				'post_status'		=>	'publish',
+				'post_type'			=>	'page',
+			)
+		);
+	
+	}elseif( null == get_page_by_title( 'Réservation' ) ) {
 
 		// Set the post ID so that we know the post was created successfully
 		$post_id = wp_insert_post(
@@ -551,6 +576,7 @@ public static function wp_query_thumbnail_posts(){
 	$reservation_type_ID   = $reservation_type_obj[0]->term_id;
 	$reservation_type_slug = $reservation_type_obj[0]->slug;
 	$data_order = Online_Booking_Public::get_term_order($reservation_type_slug);
+	$data_order_val = (!empty($data_order)) ? $data_order : 0;
 			
 	$args = array(
 		      'post_type' => 'reservation',
@@ -580,8 +606,8 @@ public static function wp_query_thumbnail_posts(){
                 //var_dump($type);
                 $termstheme = wp_get_post_terms($postID,'theme');
                 $terms = wp_get_post_terms($postID,'lieu');
-                
-                $price = get_field('prix');
+                $acf_price = get_field('prix');
+                $price = (!empty($acf_price)) ? $acf_price : '0' ;
                 $termsarray = json_decode(json_encode($terms), true);
                 $themearray = json_decode(json_encode($termstheme), true);
                 //var_dump($termsarray);
@@ -610,7 +636,7 @@ public static function wp_query_thumbnail_posts(){
                 
                 $posts .= get_the_post_thumbnail($postID, 'square');
                 
-                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order_val.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 
@@ -1024,7 +1050,11 @@ public static function the_sejour($postid){
 
 
 
-// Add Shortcode
+/*
+* front_form_shortcode
+* add a form to set default values to trip on another page
+* @param string ($booking_url) the booking url to go to
+*/
 public function front_form_shortcode($booking_url) {
 	// Code
 			$args = array(
@@ -1102,11 +1132,13 @@ public function front_form_shortcode($booking_url) {
 
 /*
 	add a login form to header.php
+	If user is logged : display account link and booked trips
+	if user is not logged : display a login form
 */
 public function header_form(){
 	global $current_user;
     get_currentuserinfo();
-    
+    //var_dump($current_user);
 	if ( !is_user_logged_in() ): 
             $output = '<div id="logger">';
 	        $output .= '<a href="#login-popup" class="open-popup-link">';
@@ -1171,6 +1203,10 @@ public function current_user_infos(){
 
 }
 
+/*
+	Deprecated
+	remove for front use the tabs library...
+*/
 public function remove_media_library_tab($tabs) {
 	if(!is_admin()):
     unset($tabs['library']);

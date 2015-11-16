@@ -68,6 +68,7 @@ function doAjaxRequest( theme , geo, type ){
                'type' : type,
                'count':1
                },
+          //JSON can cause issues on Chrome ? use text instead ?
           dataType: 'JSON',
           success:function(data){    
 		            jQuery('#activities-content').empty().append(jQuery('<div>', {
@@ -167,7 +168,14 @@ function deleteUserTrip(tripID){
 /*
 	Global functions
 */
-function saveTrip(){
+
+/*
+	saveTrip
+	save trip to DB, ajax request
+	trip name is mandatory
+	@param string (existingTripId) unique ID if exist, will perform an update of the trip
+*/
+function saveTrip(existingTripId){
 		tripName = $('#tripName').val();
 		if(tripName === ''){
 			$('#tripName').addClass('required').attr('placeholder','champs obligatoire');
@@ -176,13 +184,18 @@ function saveTrip(){
 			//set name and store it in reservation object
 			reservation.name = tripName;
 			tripToCookie(reservation);
+			//default value for existing Trip
+			if(!existingTripId){
+				existingTripId = 0;
+			}
 			//request the ajax store fn
 			$.ajax({
 	          url: '/wp-admin/admin-ajax.php',
 	          data:{
 	               'action':'do_ajax',
 	               'reservation' : 1,
-	               'bookinkTrip': tripName
+	               'bookinkTrip': tripName,
+	               'existingTripId' : existingTripId
 	               },
 	          dataType: 'JSON',
 	          success:function(data){    
@@ -877,12 +890,10 @@ jQuery(function () {
     $('.terms-change').change(function () {
         var theme = $('#theme').val();
         var lieu = $('#lieu').val();
-        console.log(lieu);
         if(lieu === null){
         	lieu = $('select#lieu option:first-child').attr('value');
         	$("select#lieu").val(lieu).trigger("change");
         }
-         console.log(lieu);
         setReservationTerms(theme, lieu);
         doAjaxRequest(theme, lieu);
     });

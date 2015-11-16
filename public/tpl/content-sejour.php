@@ -7,7 +7,7 @@
  * @since Twenty Twelve 1.0
  */
 ?>
-
+<!-- CONTENT SEJOUR -->
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 		<header class="entry-header">

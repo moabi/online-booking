@@ -96,6 +96,16 @@ get_header(); ?>
 	</div>
 	
 
+<div class="pure-u-1 pure-u-md-8-24 on-field">
+	<div class="pure-u-1 pure-u-md-12-24">	
+		<label class="floating-label" for="arrival"><span class="fs1" aria-hidden="true" data-icon=""></span> Arrivée sur place</label>	
+	</div>
+	<div class="pure-u-1 pure-u-md-12-24">					
+		<input data-value="" value="<?php echo date("d/m/Y"); ?>" class="datepicker bk-form form-control" id="arrival">
+	</div>
+</div>
+
+
 							
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
 		<div class="pure-u-1 pure-u-md-8-24">
@@ -107,14 +117,7 @@ get_header(); ?>
 	</div>
 
 
-<div class="pure-u-1 pure-u-md-8-24 on-field">
-	<div class="pure-u-1 pure-u-md-12-24">	
-		<label class="floating-label" for="arrival"><span class="fs1" aria-hidden="true" data-icon=""></span> Arrivée sur place</label>	
-	</div>
-	<div class="pure-u-1 pure-u-md-12-24">					
-		<input data-value="" value="<?php echo date("d/m/Y"); ?>" class="datepicker bk-form form-control" id="arrival">
-	</div>
-</div>
+
 
 
 <div class="pure-u-1 pure-u-md-8-24 on-field hidden">							
@@ -124,23 +127,27 @@ get_header(); ?>
 	</div>
 </div>
 
-<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-md-12-24">
-		<label class="floating-label" for="days"><span class="fs1" aria-hidden="true" data-icon=""></span> Nombre de jours</label>	
-		</div>
-		<div id="days-modifier" class="pure-u-1 pure-u-md-12-24">
-			<button onclick="addADay();">+</button>
-			<button onclick="removeLastDay();">-</button>
-		</div>
-	
-</div>
-		
+<!-- budget -->		
 <div class="pure-u-1 pure-u-md-8-24 on-field">
 			<label for=""><span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>Budget/personne ( entre <span id="st">45</span> et <span id="end">300</span> Euros )
 			</label>
 			<div id="slider-range"></div>
 			<input type="hidden" id="budget" value="45/300" class="bk-form form-control"  />
 </div>
+<!-- #budget -->
+
+<!-- Number of days -->
+<div class="pure-u-1 pure-u-md-8-24 on-field">
+		<div class="pure-u-1 pure-u-md-12-24">
+		<label class="floating-label" for="days"><span class="fs1" aria-hidden="true" data-icon=""></span> Nombre de jours</label>	
+		</div>
+		<div id="days-modifier" class="pure-u-1 pure-u-md-12-24">
+			<button onclick="removeLastDay();">-</button>
+			<button onclick="addADay();">+</button>	
+		</div>
+	
+</div>
+<!-- #Number of days -->
 
 </div>
 
@@ -285,12 +292,18 @@ $terms = get_terms($taxonomies, $args);
 
                 echo '<div class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
                 echo '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
+                if(has_post_thumbnail()){
+	                the_post_thumbnail('thumbnail');
+                } else{
+	                
+	                echo '<img width="150" height="150" src="" class="attachment-thumbnail wp-post-image" alt="missing-image-onlyoo">';
+                }
                
-                the_post_thumbnail('thumbnail');
+                
                 echo '<div class="presta"><h3>la prestation comprend : </h3>';
                 echo get_field("la_prestation_comprend").'</div>';
                 echo '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\''.$url.'\','.$data_order.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
-                echo '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
+                echo '<a class="booking-details" href="'.get_permalink().'">Details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 echo '</div>';
                 
             endwhile;
@@ -307,9 +320,16 @@ $terms = get_terms($taxonomies, $args);
 		</div><!-- #content -->
 
 
-
+<!-- SIDEBAR -->
 <div id="sidebar-booking-b" class="pure-u-1 pure-u-md-6-24">
 	<div id="sidebar-sticky">
+		
+		 <?php if ( is_active_sidebar( 'right_sidebar' ) ) : ?>
+    <div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+      <?php dynamic_sidebar( 'right_sidebar' ); ?>
+    </div><!-- #primary-sidebar -->
+  <?php endif; ?>
+  
 <!-- JOURNEES -->
 	<h2 class="upptitle">Votre séjour</h2>
 	
@@ -341,9 +361,27 @@ $terms = get_terms($taxonomies, $args);
 		</div>
 		
 		<div class="pure-u-1">
-			<a href="#" onclick="saveTrip()" class="btn btn-reg">
-			Enregistrer<span class="fs1" aria-hidden="true" data-icon=""></span>
-			</a>
+		<?php 
+			$eventid = 0;
+			$btn_Name = __('Enregistrer','onlyoo');
+					
+			if(isset($_COOKIE['reservation'])):
+				$bookink_json = stripslashes( $_COOKIE['reservation'] );
+				$data = json_decode($bookink_json, true);
+				
+				if(!empty($data['eventid'])):
+					$eventid = $data['eventid'];
+					$btn_Name = __('Mettre à jour','onlyoo');
+					
+				endif;
+			endif;
+			
+			
+			echo '<a href="#" onclick="saveTrip(\''.$eventid.'\')" class="btn btn-reg">';
+			echo $btn_Name;
+			echo '<span class="fs1" aria-hidden="true" data-icon=""></span></a>';
+			?>
+
 		</div>
 		<div class="pure-u-1">
 			<a href="#"  class="btn btn-reg">
@@ -360,6 +398,7 @@ Connectez-vous pour sauvegarder
 	
 </div>
 </div>
+<!-- #SIDEBAR -->
 </div><!-- pure-g -->
 
 <?php get_footer(); ?>

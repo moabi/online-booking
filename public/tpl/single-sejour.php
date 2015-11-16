@@ -8,6 +8,7 @@
  */
 
 get_header(); ?>
+<!-- SINGLE SEJOUR -->
 <div class="pure-g inner-content">
 	<div id="primary-b" class="site-content single-animations pure-u-1 pure-u-md-24-24">
 		<div id="content" role="main">
