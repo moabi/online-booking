@@ -8,6 +8,11 @@
  */
 
 get_header(); ?>
+
+<?php 
+	$postid = get_the_ID(); 
+	$ux = new online_booking_ux;
+?>
 <!-- SINGLE SEJOUR -->
 <div class="pure-g inner-content">
 	<div id="primary-b" class="site-content single-animations pure-u-1 pure-u-md-24-24">
@@ -18,20 +23,10 @@ get_header(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 		<header class="entry-header">
-			<?php 
-				$postid = get_the_ID(); 
-				$term_lieu = wp_get_post_terms($postid, 'lieu');
-			?> 
 			<h1 class="entry-title">
 				<?php the_title(); ?> 
-				<?php Online_Booking_Public::the_sejour($postid); ?>
 				<span class="locate-place">
-			<?php 
-				echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-				foreach($term_lieu as $key=>$value){
-				  echo '<span>'.$value->name.'</span> ';
-				} 
-			?>
+			<?php echo $ux->get_place($postid); ?>
 				</span>
 			</h1>
 		</header><!-- .entry-header -->
@@ -39,49 +34,33 @@ get_header(); ?>
 		
 <div class="clearfix"></div>
 <div class="pure-g">
-	<div class="pure-u-1 pure-u-md-1-2">
+	<div class="pure-u-1 pure-u-md-7-12">
 		<div class="padd-l">
 	<div class="sej">
-			<?php
-	$images = get_field('gallerie');
-
-if( $images ): ?>
-<div class="clearfix"></div>
-        <ul class="slickReservation img-gallery">
-            <?php foreach( $images as $image ): ?>
-                <li>
-                	<a href="<?php echo $image['sizes']['full-size']; ?>" class="img-pop">
-                    <img src="<?php echo $image['sizes']['full-size']; ?>" alt="<?php echo $image['alt']; ?>" />
-                	</a>
-                    
-                </li>
-            <?php endforeach; ?>
-        </ul>
-<?php else: ?>
-<?php the_post_thumbnail(); ?>
-
-<?php endif; ?>
+<?php echo $ux->slider(); ?>
 		
 	</div>	
 	
 		
 		</div>
 	</div>
-	<div class="pure-u-1 pure-u-md-1-2">
-		<div class="padd-l">
+	<div class="pure-u-1 pure-u-md-5-12">
+		<div class="box-price">
+			
 			<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'twentytwelve' ) ); ?>
+			<?php Online_Booking_Public::the_sejour_btn($postid); ?>
 		</div>
 		
 		</div>
 </div>
-
+<?php echo $ux->socialShare(); ?>
 <h2>Activités de l'event</h2>
 
 <?php 
 
 				// check for rows (parent repeater)
 				if( have_rows('votre_sejour') ): ?>
-					<div id="event-trip-planning" class="pure-g">
+					<div id="event-trip-planning">
 					<?php 
 
 					// loop through rows (parent repeater)
@@ -90,7 +69,7 @@ if( $images ): ?>
 					
 
 							<?php 
-								echo '<div class="pure-u-1"><span class="etp-day">Jour '.$i.'</span>';
+								echo '<div class="event-day"><span class="etp-day">'.__('Journée','online-bookine').' '.$i.'</span>';
 							// check for rows (sub repeater)
 							if( have_rows('activites') ): ?>
 								<div class="etp-days pure-g">
@@ -108,17 +87,17 @@ if( $images ): ?>
 										$post_status = get_post_status( $data->ID );
 										
 										if($post_status == "publish"):
-										$term_lieu = wp_get_post_terms($data->ID, 'lieu');
+
 										$term_reservation_type = wp_get_post_terms($data->ID, 'reservation_type');
-										$term_type = wp_get_post_terms($data->ID, 'theme');
-										
-										
+
 										echo '<div class="pure-u-1 single-activity-row">';
+										
 										echo '<div class="pure-u-1 pure-u-md-3-24">';
 										echo '<a href="'.get_permalink($data->ID).'">';
 										echo get_the_post_thumbnail( $data->ID, 'square' );
 										echo '</a>';
 										echo '</div>';
+										
 										echo '<div class="pure-u-1 pure-u-md-21-24">';
 											echo '<h3>';
 											foreach($term_reservation_type as $key=>$value){
@@ -127,24 +106,12 @@ if( $images ): ?>
 											echo '<a href="'.get_permalink($data->ID).'">';
 											echo $data->post_title;
 											echo '</a></h3>';
-											
+											echo get_field('la_prestation_comprend', $data->ID);
 											echo '<div class="tags-s">';
-											/*
-											echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-											foreach($term_lieu as $key=>$value){
-											  echo '<span>'.$value->name.'</span> ';
-											}*/
-											echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-											foreach($term_type as $key=>$value){
-											  echo '<span>'.$value->name.'</span> ';
-											}
-											
-											
+											echo $ux->get_theme_terms($data->ID);
 											echo '</div>';
-											
-											
-											
-										echo '</div><div class="clearfix"></div>';
+										echo '</div>';
+										
 										echo '</div>';
 										endif;
 									} ?>
@@ -154,7 +121,7 @@ if( $images ): ?>
 								<?php endwhile; ?>
 								</div>
 							<?php endif; //if( get_sub_field('items') ): ?>
-						
+						</div>
 							<?php $i++; ?>
 					<?php endwhile; // while( has_sub_field('to-do_lists') ): ?>
 					</div>

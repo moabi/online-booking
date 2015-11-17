@@ -34,6 +34,7 @@ class online_booking_ux  {
 	
 		// Add sharing button at the end of page/page content
 		$content = '<div class="crunchify-social">';
+		$content .= '<span class="cr-txt">Partager</span>';
 		$content .= '<a class="crunchify-link crunchify-twitter" href="'. $twitterURL .'" target="_blank"><div class="fs1" aria-hidden="true" data-icon=""></div></a>';
 		$content .= '<a class="crunchify-link crunchify-facebook" href="'.$facebookURL.'" target="_blank"><div class="fs1" aria-hidden="true" data-icon=""></div></a>';
 		$content .= '<a class="crunchify-link crunchify-googleplus" href="'.$googleURL.'" target="_blank"><div class="fs1" aria-hidden="true" data-icon=""></div></a>';
@@ -52,18 +53,31 @@ class online_booking_ux  {
 		$term_lieu = wp_get_post_terms($ID, 'lieu');
 		$place = '';
 		if(!empty($term_lieu) && $ID):
-			$place .= '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+			$place .= '<span class="fs1" aria-hidden="true" data-icon=""></span>';
 			foreach($term_lieu as $key=>$value){
 				$term_link = get_term_link( $value );
-				$place .= '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
+				$place .= '<span>Lieu : <a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
 			}
 		endif;
 		
 		return $place;
 	}
-	
-	public function get_terms(){
+	/*
 		
+	*/
+	public function get_theme_terms($ID){
+		$term_type = wp_get_post_terms($ID, 'theme');
+		$themes = '';
+		if(!empty($ID)){
+			$themes .= '<div class="tags-s pure-g">';
+			$themes .= '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+			foreach($term_type as $key=>$value){
+				$term_link = get_term_link( $value );
+				$themes .= '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
+			}
+			$themes .= '</div>';
+		}
+		return $themes;	
 	}
 
 }

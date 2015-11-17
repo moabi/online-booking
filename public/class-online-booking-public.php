@@ -42,6 +42,7 @@ class Online_Booking_Public {
 	
 	private $booking_url = "reservation-service";
 	private $booking_confirmation_url = "validation-devis";
+	private $booking_sejour_url = 'nos-sejours';
 	
 
 	/**
@@ -141,7 +142,7 @@ public function booking_page_template( $page_template )
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-booking.php';
         
     }
-    elseif ( is_page( 'nos-sejours' ) ) {
+    elseif ( is_page( $this->booking_sejour_url ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/archive-sejours.php';
         
     }
@@ -179,7 +180,7 @@ public function create_booking_pages() {
 				'comment_status'	=>	'closed',
 				'ping_status'		=>	'closed',
 				'post_author'		=>	$author_id,
-				'post_name'		=>	'nos-sejours',
+				'post_name'		=>	$this->booking_sejour_url,
 				'post_title'		=>	'Nos séjours',
 				'post_status'		=>	'publish',
 				'post_type'		=>	'page'
@@ -946,7 +947,7 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 							};';
                 $sejour .= '</script>';
                 $sejour .= '<a href="'.get_permalink().'" class="seeit">Voir ce séjour</a>';
-                $sejour .= '<a href="javascript:void(0)" class="loadit" onclick="loadTrip(sejour'.$postID.','.$goToBookingPage.');">Charger ce séjour</a></div></div>';
+                $sejour .= '<a href="javascript:void(0)" class="loadit" onclick="loadTrip(sejour'.$postID.','.$goToBookingPage.');">'.__('Sélectionnez cet évènement','online-booking').'</a></div></div>';
                 
             }
             wp_reset_postdata();
@@ -961,8 +962,13 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 
 }
 
-public static function the_sejour($postid){
+/*
+	the_sejour
+	@param obj ($postid) display 2 buttons, add to trip && back to sejours
+*/
+public static function the_sejour_btn($postid){
                 $postID = $postid;
+                $sejours_url = 'nos-sejours';
                 $price = get_field('prix');
                 $personnes = get_field('personnes');
                 $budget_min = get_field('budget_min');
@@ -1043,7 +1049,8 @@ public static function the_sejour($postid){
 							"tripObject": '.$dayTrip.'
 							};';
                 $sejour .= '</script>';
-                $sejour .= '<a id="CTA" href="javascript:void(0)" class="loadit" onclick="loadTrip(Uniquesejour'.$postID.',true);">Charger ce séjour</a>';
+                $sejour .= '<a id="CTA" href="javascript:void(0)" class="loadit" onclick="loadTrip(Uniquesejour'.$postID.',true);">'.__('Sélectionnez cet évènement','online-booking').'</a>';
+                $sejour .= '<a class="btn btn-reg grey" href="'.get_site_url().'/'.$sejours_url.'">'.__('Voir Toutes nos activités','online-booking').'</a>';
          echo $sejour;
 
 }

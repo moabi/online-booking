@@ -8,6 +8,15 @@
  */
 
 get_header(); ?>
+
+<?php
+	$ux = new online_booking_ux;
+?>
+<?php if (has_post_thumbnail( $post->ID ) ): ?>
+<?php $image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ) ); ?>
+<div id="custom-bg" style="background-image: url('<?php echo $image[0]; ?>')">
+</div>
+<?php endif; ?>
 <!-- SINGLE RESERVATION -->
 <div class="pure-g inner-content">
 	<div id="primary-b" class="site-content single-animations pure-u-1 ">
@@ -15,24 +24,6 @@ get_header(); ?>
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
-				<?php
-/**
- * The default template for displaying content. Used for both single and index/archive/search.
- *
- * @package WordPress
- * @subpackage Twenty_Twelve
- * @since Twenty Twelve 1.0
- */
-?>
-
-<?php
-	$term_lieu = wp_get_post_terms($post->ID, 'lieu');
-	$term_reservation_type = wp_get_post_terms($post->ID, 'reservation_type');
-	$term_type = wp_get_post_terms($post->ID, 'theme');
-	$ux = new online_booking_ux;
-	
-
-										?>
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 <h1 class="entry-title"><?php the_title(); ?></h1>
 <div class="clearfix"></div>
@@ -48,57 +39,44 @@ get_header(); ?>
 			<!-- DETAILS -->
 			<div class="box-price">
 				<?php echo $ux->get_place($post->ID); ?>
-				<?php if(get_field('prix')): ?>
 				
-				<div class="pure-u-1">
-					<?php the_field('prix'); ?>€ / pers
-				</div>	
-				<?php endif; ?>
 				<?php if(get_field('duree')): ?>
 				<div class="pure-u-1">
-					Durée <?php the_field('duree'); ?>h
+					<div class="fs1" aria-hidden="true" data-icon="}"></div>
+					Durée : <strong><?php the_field('duree'); ?>h</strong>
 				</div>	
 				<?php endif; ?>
 				<?php if(get_field('nombre_de_personnes')): ?>
 				<div class="pure-u-1">
-					Jusqu’à <?php the_field('nombre_de_personnes'); ?> personnes
+					<div class="fs1" aria-hidden="true" data-icon=""></div>
+					Jusqu’à : <strong><?php the_field('nombre_de_personnes'); ?> personnes</strong>
 				</div>	
 				<?php endif; ?>
-				<a class="btn btn-reg" href="<?php echo site_url(); ?>/reservation-service/?addId=<?php the_ID(); ?>">Ajouter cette activité</a>
-				<a href="<?php echo site_url(); ?>/nos-sejours/">Voir toutes nos activités</a>
 				
-								<?php
-	echo '<div class="tags-s pure-g">';
-	echo '<span class="fs1" aria-hidden="true" data-icon=""></span>';
-	foreach($term_type as $key=>$value){
-		$term_link = get_term_link( $value );
-		echo '<span><a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
-	}
-	echo '</div>';
-?>	
-
+				<?php if(get_field('prix')): ?>
+				<div class="pure-u-1">
+					<div class="fs1" aria-hidden="true" data-icon=""></div>
+					Tarif : <strong><?php the_field('prix'); ?>€ / pers</strong>
+				</div>	
+				<?php endif; ?>
+				
+				<a id="CTA" class="btn btn-reg" href="<?php echo site_url(); ?>/reservation-service/?addId=<?php the_ID(); ?>">Ajouter cette activité</a>
+				<a class="btn btn-reg grey" href="<?php echo site_url(); ?>/nos-sejours/">Voir toutes nos activités</a>
+				<?php //echo $ux->get_theme_terms($post->ID); ?>	
 			</div>
 			<!-- #DETAILS -->
-			
 		</div>	
 		
 
 	
 		</div><!-- pure -->
 		
-		
-
-
-<div class="pure-u-1 pure-u-md-1-2">
-
-
-<?php echo $ux->socialShare(); ?>
-</div>
 </div>
 
-
-<div class="pure-g">
-	<div class="pure-u-md-4-5">
+<div id="main-content">
+	 
+<div id="middle-bar" class="pure-g">
+	<div class="pure-u-md-15-24">
 <!-- NAVIGATION -->
 <div class="pure-g" id="single-tabber">
 	<div class="pure-u-1-3 active">
@@ -112,8 +90,13 @@ get_header(); ?>
 	</div>
 </div>
 
+</div>
+<div class="pure-u-md-9-24">
+	<?php echo $ux->socialShare(); ?>
+</div>
+</div>
 <!-- TABS -->
-<div class="slick-single">
+<div id="tabs-single" class="slick-single">
 	
 	<div class="single-el">
 		<div class="comprend">
@@ -123,18 +106,37 @@ get_header(); ?>
 			'class' => "alignleft"
 		);
 					the_post_thumbnail('thumbnail',$default_attr); ?>
-				<?php the_content(); ?>
+				<?php 
+					if(get_the_content()){
+						the_content(); 
+					}else{
+						_e('Contenu non disponible','online-booking');
+					}
+					
+					?>
 			
 			</div>
 		</div>
 	</div>
 	
 	<div class="single-el">
-		<?php the_field('infos_pratiques'); ?>
+		<?php 
+			if(get_field('infos_pratiques')){
+				the_field('infos_pratiques');
+			}else{
+				_e('Contenu non disponible','online-booking');
+			}
+			 ?>
 	</div>
 	
 	<div class="single-el">
-		<?php the_field('lieu'); ?>
+		<?php 
+			if(get_field('lieu')){
+				the_field('lieu');
+			}else{
+				_e('Contenu non disponible','online-booking');
+			}
+			?>
 	</div>
 	
 </div>
@@ -159,14 +161,8 @@ get_header(); ?>
 	})
 </script>	
 <!-- #tabs -->
+</div>
 	</div>
-<!-- resumee & add -->
-<div class="resume pure-u-md-1-5">
-
-</div>
-<!-- #resumee & add -->
-</div>
-	
 		
 <?php if ( function_exists( 'echo_crp' ) ) echo_crp(); ?>
 
@@ -176,62 +172,5 @@ get_header(); ?>
 
 		</div><!-- #content -->
 	</div><!-- #primary -->
-	<!--
-<div id="secondary" class="pure-u-1 pure-u-md-6-24">
-	<h2><?php _e("D'autres activités qui peuvent vous intéresser","twentyfifteen"); ?></h2>
-	
-</div>
--->
 </div>
 <?php get_footer(); ?>
-
-
-
-		<?php
-			/*
-				$postID = $post->ID;
-                $price = get_field('prix');
-                $personnes = get_field('personnes');
-                $budget_min = get_field('budget_min');
-                $budget_max = get_field('budget_max');
-                $budgMin = $budget_min * $personnes;
-                $budgMax = $budget_max * $personnes;
-                $theme = get_field('theme');
-                $lieu = get_field('lieu');
-                $rows = get_field('votre_sejour');
-                $row_count = count($rows);
-                $lastDay = 86400 * $row_count;
-                $departure_date = date("d/m/Y", time()+$lastDay); 
-
-                $arrival_date = date("d/m/Y", time()+86400); 
-                
-					
-					$activityObj = 1;
-					$dayTrip = '{';
-					if( have_rows('votre_sejour') ):
-					    while ( have_rows('votre_sejour') ) : the_row();
-					    	$calcDay = 86400 * $activityObj;
-					    	$actual_date = date("d/m/Y", time()+$calcDay); 
-					    	$dayTrip .= '"'.$actual_date.'" : {';
-							if( have_rows('activites') ):
-					        while ( have_rows('activites') ) : the_row();
-					        	$activityArr = get_sub_field('activite');
-					        	$i = 0;
-								$len = count($activityArr);
-					        	foreach($activityArr as $data){
-									$field = get_field('prix', $data->ID);
-									$comma = ($i == $len - 1) ? '' : ',';
-						        	$dayTrip .= '"'.$data->ID.'": { "name" : "'.$data->post_title.'","price": '.$field.'}'.$comma;
-						        	$i++;
-					        	}
-					        endwhile;
-					        endif;
-							$dayTrip .= '},';
-							$activityObj++;
-					    endwhile;
-					endif;
-					$dayTrip .= '}';*/
-
-					
-			?>
-			

@@ -113,7 +113,8 @@ img.alignleft{float:left;padding:0 1em 1em 0}
 #animation-excerpt{margin:1em auto;display:block;padding:1em;box-shadow:1px 2px 0 #EFE9E9;max-width:70%}
 #animation-excerpt ul{list-style:none}
 #animation-excerpt ul li{border-bottom:1px solid #ededed;padding:5px 5px 5px 0;line-height:20px}
-a#CTA{background:#2eaadd;color:#fff;border-radius:4px;line-height:35px;display:block;float:right;padding:0 20px;font-size:14px}
+a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float: none;padding: 1em 0px;font-size: 16px;text-transform: uppercase;clear: both;margin: 1em auto;text-align: center;max-width: 320px;width: 100%;}
+.btn.grey{background: #E4DEDE;color: #9F9D9E;text-transform: uppercase;padding: 1em 0;max-width: 320px;margin: auto;width: 100%;}
 #secondary h2{text-align:center;font-size:18px}
 .home #page-wrapper{padding:0}
 .home .post-onepage.notFullWidth{width:100%;max-width:100%}
@@ -134,7 +135,8 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;line-height:35px;display:b
 #on-settings{background-color: #F5F5F5;margin:0 0 0 -1em;padding:2em 0 0 1em;box-shadow: 2px 0px 2px #000;}
 #on-settings .on-field{padding:0 0 20px}
 .hidden{display:none!important;visibility:hidden}
-#event-trip-planning{list-style:none;display:block;padding:30px 0;width:100%;float:left;clear:both}
+#event-trip-planning{list-style:none;display:block;padding:30px 0;width:100%;float:left;clear:both;}
+#event-trip-planning .event-day{border:1px solid #ccc;clear: both;display: block;float: left;width: 100%;margin: 1em 0;padding: 1em 0;}
 #event-trip-planning li{float:left;margin:0 2%;width:25%}
 #event-trip-planning .single-activity-row{border-bottom:1px solid #ededed;padding:1em;width:80%;margin:auto;float:none;display:block;clear:both}
 #event-trip-planning .single-activity-row img{width:90px;height:auto;display:block}
@@ -157,13 +159,38 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;line-height:35px;display:b
 .slickReservation img{display:block;max-width:100%;max-height:400px;margin:auto}
 .slickReservation .fs1.prevmulti,.slickReservation .fs1.nextmulti{cursor:pointer;position:absolute;font-size:90px;top:20%;left:0;width:auto;color:#35AADC}
 #activity-gallery{position:relative;overflow:hidden;}
-#single-top-information{background:rgba(255,255,255,0.65);line-height:48px;color:#000;font-size:24px;z-index:9;padding: 0;overflow:hidden}
-.box-price{padding:2%;border:1px solid #ccc;margin:auto; display:block;width: 90%;float: right;height: 100%;display: block;}
+#single-top-information{line-height:48px;color:#000;font-size:24px;z-index:9;padding: 0;overflow:hidden}
+#main-content{background:#fff;z-index:1;position:relative;}
+#primary-b{position:relative;z-index:1;}
+#custom-bg{
+    position: absolute;
+    top: 120px;
+    left: 0;
+    width: 100%;
+    height: 400px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: 0;
+    -webkit-filter: blur(20px);
+    -moz-filter: blur(20px);
+    -o-filter: blur(20px);
+    -ms-filter: blur(20px);
+    filter: blur(20px);
+    border-top: 1px solid #ccc;
+    overflow: hidden;
+}
+.box-price{padding:2%;border:1px solid #ccc;margin:auto; display:block;width: 90%;float: right;height: 100%;display: block;color: rgba(0, 0, 0, 0.54);font-size: 14px;z-index: 1;background: #fff;}
+.box-price .fs1{float:left;margin:0 1em 0 0;font-size:18px;color:#F18F11}
+.box-price p{font-size:14px;}
 #crp_related ul li{float:left;margin:0 5px 40px;text-align:center}
 #primary-b #activity-gallery h1{position:relative;z-index:1;left:0;width:100%;margin:0;top:20%;font-size:28px;text-shadow:0 1px 0 rgba(255,255,255,0.69);text-align:left;color:rgba(0,0,0,0.86);font-weight:700;padding:0}
 .slick-single{padding:30px}
-#single-tabber .active a{background-color:#36ABDA;color:#fff}
-#single-tabber a{font-size:16px;text-transform:uppercase;color:#505050;display:block;background-color:#EAEAEA;text-align:center;line-height:38px;padding:0;margin:0}
+#single-tabber{
+    overflow: hidden;
+}
+#tabs-single{background:#F5F5F5}
+#single-tabber .active a{background-color: #F5F5F5;color: #404040;margin: 0;border-bottom: 1px solid #F5F5F5;}
+#single-tabber a{font-size:16px;text-transform: none;color:#505050;display:block;background-color: #fff;text-align:center;line-height: 64px;padding:0;margin:0;border-right: 1px solid #ccc;border-bottom: 1px solid #ccc;}
 .slickReservation{margin:0;background-color:rgba(237,237,237,0.38);padding:0}
 .slickReservation li{width:100%;height:400px;background-size:cover!important;background-position:50% 50%!important}
 .slickReservation .fs1.nextmulti{right:0;left:inherit}
@@ -172,15 +199,15 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;line-height:35px;display:b
 .crunchify-link {
     padding: 0;
     color: white;
-    font-size: 24px;
-    width: 54px;
-    height: 54px;
+    font-size: 18px;
+    width: 44px;
+    height: 44px;
     display: block;
-    line-height: 58px;
     text-align: center;
     border-radius: 50%;
     float: left;
-    margin: 0 .2em;
+    margin: 8px .2em 0;
+    line-height: 48px;
 }
  
 .crunchify-link:hover,.crunchify-link:active {
@@ -222,9 +249,14 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;line-height:35px;display:b
 .crunchify-social {
     -webkit-font-smoothing: antialiased;
     float: none;
-    margin: auto;
     display: block;
+    height: 64px;
+    margin: auto;
+    width: 250px;
+    overflow: hidden;
+    line-height: 64px;
 }
+.crunchify-social .cr-txt{float:left;font-size:18px;margin:0 1em 0 0;}
 /*Animation*/
 @-webkit-keyframes anim-effect-boris {
 	0% {
