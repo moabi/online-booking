@@ -20,6 +20,10 @@
  * @subpackage Online_Booking/public
  * @author     little-dream.fr <david@loading-data.com>
  */
+ 	define('BOOKING_URL','reservation-service');
+	define('CONFIRMATION_URL','validation-devis');
+	define('SEJOUR_URL','nos-sejours');
+	
 class Online_Booking_Public {
 
 	/**
@@ -38,12 +42,7 @@ class Online_Booking_Public {
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
-	private $version;
-	
-	private $booking_url = "reservation-service";
-	private $booking_confirmation_url = "validation-devis";
-	private $booking_sejour_url = 'nos-sejours';
-	
+	private $version;	
 
 	/**
 	 * Initialize the class and set its properties.
@@ -138,11 +137,11 @@ public function get_custom_post_type_template($single_template) {
 */
 public function booking_page_template( $page_template )
 {
-    if ( is_page( $this->booking_url ) ) {
+    if ( is_page( BOOKING_URL ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-booking.php';
         
     }
-    elseif ( is_page( $this->booking_sejour_url ) ) {
+    elseif ( is_page( SEJOUR_URL ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/archive-sejours.php';
         
     }
@@ -180,7 +179,7 @@ public function create_booking_pages() {
 				'comment_status'	=>	'closed',
 				'ping_status'		=>	'closed',
 				'post_author'		=>	$author_id,
-				'post_name'		=>	$this->booking_sejour_url,
+				'post_name'		=>	SEJOUR_URL,
 				'post_title'		=>	'Nos séjours',
 				'post_status'		=>	'publish',
 				'post_type'		=>	'page'
@@ -196,7 +195,7 @@ public function create_booking_pages() {
 				'comment_status'	=>	'closed',
 				'ping_status'		=>	'closed',
 				'post_author'		=>	$author_id,
-				'post_name'			=>	$this->$booking_confirmation_url,
+				'post_name'			=>	CONFIRMATION_URL,
 				'post_title'		=>	__('Validation demande de devis','onlyoo'),
 				'post_status'		=>	'publish',
 				'post_type'			=>	'page',
@@ -211,7 +210,7 @@ public function create_booking_pages() {
 				'comment_status'	=>	'closed',
 				'ping_status'		=>	'closed',
 				'post_author'		=>	$author_id,
-				'post_name'		=>	$this->booking_url,
+				'post_name'		=>	BOOKING_URL,
 				'post_title'		=>	'Réservation',
 				'post_status'		=>	'publish',
 				'post_type'		=>	'page'
@@ -1111,7 +1110,7 @@ public function front_form_shortcode($booking_url) {
 		
 	if(!isset($_COOKIE['reservation'])):
 	
-		$front_form = '<div id="front-form" class="booking" data-url="'.get_bloginfo('url').'/'.$this->booking_url.'/">';
+		$front_form = '<div id="front-form" class="booking" data-url="'.get_bloginfo('url').'/'.BOOKING_URL.'/">';
 		$front_form .= '<div class="pure-g">';
 		$front_form .= '<div class="pure-u-1 pure-u-sm-5-24">';
 		$front_form .= wp_dropdown_categories( $argsLieux );
@@ -1130,7 +1129,7 @@ public function front_form_shortcode($booking_url) {
 	
 	else: 
 	
-		$front_form = '<div id="front-form" class="booking exists"><a href="'.get_bloginfo('url').'/'.$this->booking_url.'/" title="'.__('Voir votre réservation','twentyfifteen').'">'.__('Voir votre réservation','twentyfifteen').'</a></div>';
+		$front_form = '<div id="front-form" class="booking exists"><a href="'.get_bloginfo('url').'/'.BOOKING_URL.'/" title="'.__('Voir votre réservation','twentyfifteen').'">'.__('Voir votre réservation','twentyfifteen').'</a></div>';
 	
 	endif;
 	

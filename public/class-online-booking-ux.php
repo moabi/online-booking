@@ -79,5 +79,13 @@ class online_booking_ux  {
 		}
 		return $themes;	
 	}
+	
+	public function single_reservation_btn($id){
+		
+		$content = '<a id="CTA" class="btn btn-reg" href="'.site_url().'/'.BOOKING_URL.'/?addId='.$id.'">'.__('Ajouter cette activité','online-booking').'</a>';
+		$content .= '<a class="btn btn-reg grey" href="'.site_url().'/'.SEJOUR_URL.'/">'.__('Voir toutes nos activités','online-booking').'</a>';
+		
+		return $content;
+	}
 
 }

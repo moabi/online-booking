@@ -25,6 +25,7 @@ get_header(); ?>
 			<header class="page-header">
 				<h1><?php _e('Nos séjours', 'twentyfifteen'); ?></h1>
 			</header><!-- .page-header -->
+			<?php the_content(); ?>
 			<?php Online_Booking_Public::the_sejours(20,true); ?>
 
 

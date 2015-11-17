@@ -13,6 +13,14 @@ get_header(); ?>
 	$postid = get_the_ID(); 
 	$ux = new online_booking_ux;
 ?>
+
+<?php if (has_post_thumbnail( $post->ID ) ): ?>
+<?php $image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ) ); ?>
+<div id="custom-bg" style="background-image: url('<?php echo $image[0]; ?>')">
+</div>
+<?php endif; ?>
+
+
 <!-- SINGLE SEJOUR -->
 <div class="pure-g inner-content">
 	<div id="primary-b" class="site-content single-animations pure-u-1 pure-u-md-24-24">
@@ -34,27 +42,24 @@ get_header(); ?>
 		
 <div class="clearfix"></div>
 <div class="pure-g">
-	<div class="pure-u-1 pure-u-md-7-12">
-		<div class="padd-l">
-	<div class="sej">
-<?php echo $ux->slider(); ?>
-		
-	</div>	
 	
-		
-		</div>
-	</div>
-	<div class="pure-u-1 pure-u-md-5-12">
+<!-- SLIDER -->
+	<div id="activity-gallery" class="pure-u-1 pure-u-md-7-12">
+		<?php echo $ux->slider(); ?>
+	</div><!-- #activity -->
+<!-- #SLIDER -->
+
+	<div id="single-top-information" class="pure-u-1 pure-u-md-5-12">
 		<div class="box-price">
-			
 			<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'twentytwelve' ) ); ?>
 			<?php Online_Booking_Public::the_sejour_btn($postid); ?>
 		</div>
-		
-		</div>
+	</div>
 </div>
+
+<div id="main-content">
+	<div class="fs1" aria-hidden="true" data-icon="p"></div><?php _e('Tous nos packages sont personnalisables','online-booking'); ?>
 <?php echo $ux->socialShare(); ?>
-<h2>Activités de l'event</h2>
 
 <?php 
 
@@ -129,7 +134,7 @@ get_header(); ?>
 
 			
 			
-
+</div>
 
 
 

@@ -60,8 +60,7 @@ get_header(); ?>
 				</div>	
 				<?php endif; ?>
 				
-				<a id="CTA" class="btn btn-reg" href="<?php echo site_url(); ?>/reservation-service/?addId=<?php the_ID(); ?>">Ajouter cette activité</a>
-				<a class="btn btn-reg grey" href="<?php echo site_url(); ?>/nos-sejours/">Voir toutes nos activités</a>
+				<?php echo $ux->single_reservation_btn($post->ID); ?>
 				<?php //echo $ux->get_theme_terms($post->ID); ?>	
 			</div>
 			<!-- #DETAILS -->
