@@ -53,7 +53,10 @@ $.noty.defaults = {
     buttons: false // an array of buttons
 };
 
-
+/*
+	doAjaxRequest function
+	retrieve post from filtering
+*/
 function doAjaxRequest( theme , geo, type ){
 	//console.log(type);
      jQuery.ajax({
@@ -294,7 +297,7 @@ function addActivity(id,activityname,price,type,img,order){
 }
 
 /*
-*delete Activity from Obj
+*delete Activity from Obj for Main Booking TPL
 *@param day : string format dd/mm/yyyy
 *@parama id : number 
 *@param price : number	
@@ -315,6 +318,25 @@ function deleteActivity(day,id,price){
 	tripToCookie(reservation);
 	
 }
+
+/*
+*delete Activity from Obj for a SEJOUR
+*@param dayNumber : integer 
+*@parama id : number 
+*@param price : number	
+*@parama obj : unique ID of the sejour
+*/
+function deleteSejourActivity(dayNumber,id,price,obj){
+	//console.log(day);
+	$('.day-content div[data-id="'+ id +'"]').remove();
+	point = obj.tripObject[Object.keys(obj.tripObject)[dayNumber]];
+	console.log(point);
+	obj.currentBudget = parseInt( (obj.currentBudget - price),10);
+	delete point[id];
+}
+
+
+
 
 /**************
 	DAYS RELATED FUNCTIONS
@@ -629,7 +651,9 @@ function setBudgetPer(min,max){
 		//setCookie('reservation', JSON.stringify(reservation), 2);
 		tripToCookie(reservation);
 }
-
+/*
+	Enable to set the booking terms for Object reservation
+*/
 function setReservationTerms(theme, lieu){
 	reservation.theme = theme;
 	reservation.lieu = lieu;
@@ -705,7 +729,9 @@ function loadTrip($trip,gotoBookingPage){
 	
 
 }
-
+/*
+	Check if budget is too high
+*/
 function checkBudget(){
 	globalBudget = parseInt(reservation.budgetPerMax,10);
 	actualCost = parseInt(reservation.currentBudget,10);
@@ -717,6 +743,23 @@ function checkBudget(){
 		console.log('budget is ok');
 		$('#budget-icon').css('color','green');
 	}
+}
+
+function loadPostsFromScratch(){
+	console.log('init posts');
+	var theme = $('#theme').val();
+    var lieu = $('#lieu').val();
+    if(lieu === null){
+    	lieu = $('select#lieu option:first-child').attr('value');
+    	$("select#lieu").val(lieu).trigger("change");
+    }
+    var type = $('#typeterms input[type=checkbox]').attr('value');
+        checkedTypes = [];
+        $("#typeterms input[type=checkbox]:checked").each(function(){
+		    checkedTypes.push($(this).val());
+		});
+    setReservationTerms(theme, lieu);
+    doAjaxRequest(theme, lieu, checkedTypes);
 }
 
 /*
@@ -739,6 +782,8 @@ function initTrip(){
 	defineTripDates();
 	the_activites();
 	
+	//Load Data
+	loadPostsFromScratch();
 	console.log(reservation);
 	
 }
@@ -888,25 +933,10 @@ jQuery(function () {
     });
     //AJAX REQUEST FOR THE FILTERING ACTIVITIES
     $('.terms-change').change(function () {
-        var theme = $('#theme').val();
-        var lieu = $('#lieu').val();
-        if(lieu === null){
-        	lieu = $('select#lieu option:first-child').attr('value');
-        	$("select#lieu").val(lieu).trigger("change");
-        }
-        setReservationTerms(theme, lieu);
-        doAjaxRequest(theme, lieu);
+        loadPostsFromScratch();
     });
 	$('#typeterms input[type=checkbox]').change(function(){
-		var type = $(this).attr('value');
-		var theme = $('#theme').val();
-        var lieu = $('#lieu').val();
-        checkedTypes = [];
-        $("#typeterms input[type=checkbox]:checked").each(function(){
-		    checkedTypes.push($(this).val());
-		});
-		console.log(checkedTypes);
-		doAjaxRequest(theme, lieu, checkedTypes);
+		loadPostsFromScratch();
 	});
 
     moment.locale('fr', {

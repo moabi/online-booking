@@ -557,16 +557,16 @@ public function ajxfn(){
 		
 		
 /*
-	display selected post in the thumbnail way
-	@param
-	
+	wp_query_thumbnail_posts function
+	SHOULD be merged with ajax_get_latest_posts
+	display selected post with GET var 'addId' in the thumbnail way
 */
 
 public static function wp_query_thumbnail_posts(){
 	
 	if(isset($_GET['addId'])){
-		wp_reset_query();
-         wp_reset_postdata(); 
+			wp_reset_query();
+			wp_reset_postdata(); 
 		$post_ID = intval($_GET['addId']);
 	
 	$filter_type = "filter-user";
@@ -638,7 +638,7 @@ public static function wp_query_thumbnail_posts(){
                 
                 $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order_val.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 
-                $posts .= '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
+                $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').' <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 
                 $posts.= '</div>';
                 
@@ -796,11 +796,13 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
                 
                 $posts .=  '<div data-type="'.$reservation_type_slug.'" class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
                 $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
-                $posts .= '<div class="presta"><h3>la prestation comprend : </h3>';
+                $posts .= '<div class="presta"><h3>'.__('La prestation comprend :','online-booking').' </h3>';
                 $posts .= get_field("la_prestation_comprend").'</div>';
-                $posts .= get_the_post_thumbnail($postID, 'square');
-                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
-                $posts .= '<a class="booking-details" href="'.get_permalink().'">Voir les details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
+                $posts .= '<div class="block-thumb">'.get_the_post_thumbnail($postID, 'square').'</div>';
+                
+                $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').'<span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
+                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                
                 $posts.= '</div>';
                 
                 $count_post++;
@@ -965,7 +967,7 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 	the_sejour
 	@param obj ($postid) display 2 buttons, add to trip && back to sejours
 */
-public static function the_sejour_btn($postid){
+public static function the_sejour_btn($postid, $single_btn = false){
                 $postID = $postid;
                 $sejours_url = 'nos-sejours';
                 $price = get_field('prix');
@@ -1029,8 +1031,9 @@ public static function the_sejour_btn($postid){
 					    endwhile;
 					endif;
 					$dayTrip .= '}';
-
-                $sejour = '<script>';
+				$sejour = '';
+				if($single_btn == false):
+                $sejour .= '<script>';
                 $sejour .= 'Uniquesejour'.$postID.' = {
 	                		"sejour" : "'.get_the_title().'",
 	                		"theme" : "'.$theme[0].'",
@@ -1048,8 +1051,11 @@ public static function the_sejour_btn($postid){
 							"tripObject": '.$dayTrip.'
 							};';
                 $sejour .= '</script>';
+                endif;
                 $sejour .= '<a id="CTA" href="javascript:void(0)" class="loadit" onclick="loadTrip(Uniquesejour'.$postID.',true);">'.__('Sélectionnez cet évènement','online-booking').'</a>';
+                if($single_btn == false):
                 $sejour .= '<a class="btn btn-reg grey" href="'.get_site_url().'/'.$sejours_url.'">'.__('Voir Toutes nos activités','online-booking').'</a>';
+                endif;
          echo $sejour;
 
 }
@@ -1148,7 +1154,7 @@ public function header_form(){
 	if ( !is_user_logged_in() ): 
             $output = '<div id="logger">';
 	        $output .= '<a href="#login-popup" class="open-popup-link">';
-		    $output .=  __('Connexion','twentyfifteen'); 
+		    $output .=  __('Se connecter','twentyfifteen'); 
 		    $output .= '</a>';
 	        $output .= '</div>';
 			$output .= '<div id="login-popup" class="white-popup mfp-hide">';

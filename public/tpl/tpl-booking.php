@@ -226,92 +226,13 @@ $terms = get_terms($taxonomies, $args);
 </div>
 </div>
 
-<?php echo Online_Booking_Public::wp_query_thumbnail_posts(); ?>
+	<?php echo Online_Booking_Public::wp_query_thumbnail_posts(); ?>
+	
 	<?php
 		//START POST LISTING
 		 echo '<div id="activities-content" class="blocks">';
-		//order posts by terms ? => yes and use $i to add data-order attr to element
-	$terms_array_order = get_terms( 'reservation_type', array(
-			    'orderby'    => 'count',
-			    'hide_empty' => 0,
-			    'parent'	=> 0,
-	)); 
-
-	foreach($terms_array_order as $term_item):
-		
-		$data_order = Online_Booking_Public::get_term_order($term_item->slug);
-		if(!$data_order):
-			$data_order = 0;
-		endif;
-		
-		echo '<div class="clearfix"></div><h4>'.$term_item->slug.'</h4><div class="clearfix"></div>';
-		
-		
-        $args = array(
-	        'post_type' => 'reservation',
-			'posts_per_page' => -1,
-			'post_status'		=> 'publish',
-			'reservation_type' => $term_item->slug
-        );
-        
-        $the_query = new WP_Query( $args );
-        // The Loop
-        if ( $the_query->have_posts() ):
-           
-            while ( $the_query->have_posts() ):
-                $the_query->the_post();
-                global $post;
-                $postID = $the_query->post->ID;
-                $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
-                $termstheme = wp_get_post_terms($postID,'theme');
-                $terms = wp_get_post_terms($post->ID,'lieu');
-                $term_list = wp_get_post_terms($post->ID, 'reservation_type');
-                $type = json_decode(json_encode($term_list), true);
-                $price = get_field('prix');
-                $termsarray = json_decode(json_encode($terms), true);
-                $themearray = json_decode(json_encode($termstheme), true);
-                //var_dump($term_list);
-                $lieu = 'data-lieux="';
-                foreach($termsarray as $activity){
-	                $lieu .= $activity['slug'].', ';
-                }
-                $lieu .= '"';
-                
-                $themes = 'data-themes="';
-                foreach($themearray as $activity){
-	                $themes .= $activity['slug'].', ';
-                }
-                $themes .= '"';
-                $typearray = '';
-                foreach($type as $singleType){
-	               $typearray .= ' '.$singleType['slug'];
-                }
-                
-                
-				
-
-                echo '<div class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
-                echo '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
-                if(has_post_thumbnail()){
-	                the_post_thumbnail('thumbnail');
-                } else{
-	                
-	                echo '<img width="150" height="150" src="" class="attachment-thumbnail wp-post-image" alt="missing-image-onlyoo">';
-                }
-               
-                
-                echo '<div class="presta"><h3>la prestation comprend : </h3>';
-                echo get_field("la_prestation_comprend").'</div>';
-                echo '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\''.$url.'\','.$data_order.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
-                echo '<a class="booking-details" href="'.get_permalink().'">Details <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
-                echo '</div>';
-                
-            endwhile;
-            
-         endif;
-	endforeach;
-	echo '</div>';
-		?>
+		 echo '</div>';
+	?>
 
 		<h2 class="upptitle">Vous aimerez également...</h2>
 

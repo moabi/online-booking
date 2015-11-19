@@ -118,31 +118,36 @@ class online_booking_budget  {
 	}
 	
 	
-	
+	/*
+		Display a SEJOUR from the jSON file in DB
+		@param integer ($tripID)
+		@param string ($item)
+	*/
 	public static function the_trip($tripID , $item){
-		
 
 		$budget = json_decode($item, true);
 		$budgetMaxTotal = $budget['participants'] * $budget['budgetPerMax'];
-		
+		$ux = new online_booking_ux;
 		//var_dump($budget);
-		echo '<div id="trip-public">';
+		echo '<div id="event-trip-planning" class="trip-public">';
 		echo '<div class="trip-public-user">';
-		echo '<h4>Détails de votre event : </h4>';
+		echo '<h4>'.__('Détails de votre event','online-booking').' : </h4>';
 		$trips = $budget['tripObject'];
 		$budgetSingle = array();
 		//var_dump(is_array($trips));
 		echo '<div class="activity-budget-user pure-g">';
-			        echo '<div class="pure-u-1-3">Activité</div>';
-			        //echo $value['type'].'<br />';
-		            echo '<div class="pure-u-1-3"></div>';
 		            echo '<div class="pure-u-1-3">'.$budget['participants'].' personnes</div>';
 		echo '</div>';
 		
 		$trip_dates =  array_keys($trips);
 		$days_count = 0;
 		foreach ($trips as $trip) {
-			echo '<div class="pure-g budget-day">'.$trip_dates[$days_count].'</div>';
+			echo '<div class="event-day day-content">';
+			echo '<div class="etp-day">';
+			echo '<div class="day-title"';
+			echo '<span class="fs1" aria-hidden="true" data-icon=""></span><br />';
+			echo $trip_dates[$days_count].'</div>';
+			echo '</div>';
 			
 		    //  Check type
 		    if (is_array($trip)){
@@ -150,19 +155,24 @@ class online_booking_budget  {
 		        //var_dump($trip);
 		        $trip_id =  array_keys($trip);
 		        $i = 0;
-		        echo '<div class ="slicker" >';
+		        echo '<div class ="etp-days" >';
 		        foreach ($trip as $value) {
 			        //calculate 
 			        
 			        array_push($budgetSingle, $value['price']);
 			        //html
-			        echo '<div data-id="'.$trip_id[$i].'" class="activity-budget-user pure-g">';
-			        echo '<div class="pure-u-1 pure-u-md-6-24">'.get_the_post_thumbnail($trip_id[$i],'thumbnail').'</div>';
-			        echo '<div class="pure-u-1 pure-u-md-6-24">';
-			        echo '<a href="'.get_permalink($trip_id[$i]).'" target="_blank">';
-			        echo '<span class="bdg '.$value['type'].'"></span>'.$value['name'].'</a></div>';
-		            
-		            echo '<div class="pure-u-1 pure-u-md-12-24">';
+			        echo '<div data-id="'.$trip_id[$i].'" class="pure-u-1 single-activity-row">';
+			        echo '<div class="sejour-type">';
+					echo $ux->get_reservation_type($trip_id[$i]);
+					echo '</div>';
+										
+			        echo '<div class="pure-u-1 pure-u-md-7-24">';
+			        echo get_the_post_thumbnail($trip_id[$i],'thumbnail');
+			        echo'</div>';
+			        
+			        echo '<div class="pure-u-1 pure-u-md-17-24">';
+			        echo '<h3><a href="'.get_permalink($trip_id[$i]).'" target="_blank">';
+			        echo $value['name'].'</a></h3>';
 		            echo get_field('la_prestation_comprend',$trip_id[$i]);
 		            echo '</div>';
 		            echo '</div>';
@@ -174,6 +184,7 @@ class online_booking_budget  {
 		        // one, two, three
 		        echo $trip;
 		    }
+		    echo '</div>';
 		}
 
 		

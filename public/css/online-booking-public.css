@@ -7,19 +7,21 @@ h4 .fs1{float:left}
 h1.archive-title{padding-top:0}
 #ui-datepicker-div{background:#2eaadd}
 .ui-datepicker-calendar thead{background:#fff}
-.booking-details{position:absolute;width:50%;text-align:center;text-decoration:none;bottom:0;left:0;background:#fff;padding:8px 0;margin:0;right:0;border-radius:0;font-size:10px;text-transform:uppercase}
+.booking-details,.addThis{position: relative;width: 120px;text-align:center;text-decoration:none;background: #EFEFEF;padding:8px 0;margin:0;border-radius:0;font-size: 12px;text-transform: none;display: inline-block;float: none;margin: 5px;color: #9F9F9F;}
+.booking-details .fs1,.addThis .fs1{margin:0 0 0 5px}
 .choices span{padding:8px;margin:1%;background:#49484D;display:block;float:left;font-size:12px;color:#fff;cursor:pointer}
-.addThis{position:absolute;color:#fff;right:0;background:#2EAADD;text-decoration:none;width:50%;text-align:center;border-radius:0;padding:8px 0;bottom:0;top:inherit;left:inherit;font-size:10px;text-transform:uppercase}
+.addThis{color:#fff;background:#2EAADD;}
 #activities-content.blocks{margin:0}
 #selectedOne{margin:0;padding:0;clear:both;width:100%}
-#activities-content.blocks .block h2,#selectedOne h2{line-height:30px;float:left;padding:0 2%;font-weight:400;font-size:10px;margin:0;color:rgba(153,153,153,0.87);clear:both;height:30px;overflow:hidden}
-#activities-content.blocks .block span.price-u,#selectedOne .price-u{float:right;width:20%;background:#fff;line-height:30px;font-size:11px;display:block;color:#868686}
+#activities-content.blocks .block h2,#selectedOne h2{line-height:30px;float:left;padding:0 2%;font-weight: 700;font-size: 12px;margin:0;color: rgba(74, 74, 74, 0.87);clear:both;height:30px;overflow:hidden;text-transform: none;}
+#activities-content.blocks .block span.price-u,#selectedOne .price-u{position: absolute;width: 70px;background:#fff;line-height:30px;font-size:11px;display:block;color:#868686;right: 0;top: 31px;}
 #activities-content.blocks .presta h3,#selectedOne h3{font-weight:400;font-size:14px}
 #activities-content.blocks .presta ul li,#selectedOne .presta ul li{font-size:12px;margin:3% 2%;border-bottom:1px solid #ededed;padding:2%;list-style:none}
 #activities-content.blocks .block:hover .presta,#selectedOne .block:hover .presta{opacity:.9}
 #activities-content.blocks .presta,#selectedOne .presta{opacity:0;transition:all .4s ease;position:absolute;top:0;background:#fff;width:90%;padding:5%;font-weight:400}
+.block-thumb {overflow:hidden;display:block;width: 260px;height: 260px;}
 #activities-content.blocks .block .head,#selectedOne .head{padding:0;text-align:center;top:-32px;position:absolute;left:0;right:0;opacity:1}
-#activities-content.blocks .block,#selectedOne .block{background:#ededed;float:inherit;margin:30px 1% 40px;border:1px solid rgba(153,153,153,0.22);width:260px;float:left;position:relative}
+#activities-content.blocks .block,#selectedOne .block{background: #fff;float:inherit;margin:30px 1% 40px;width:260px;float:left;position:relative}
 #activities-content.blocks .block img,#selectedOne .block img{width:260px;height:260px}
 #selectedOne .block{float:right;box-shadow:0 2px 8px #C7C7C7;margin:30px 50px}
 #selectedOne .block .head{background:#FF4C4C}
@@ -113,13 +115,13 @@ img.alignleft{float:left;padding:0 1em 1em 0}
 #animation-excerpt{margin:1em auto;display:block;padding:1em;box-shadow:1px 2px 0 #EFE9E9;max-width:70%}
 #animation-excerpt ul{list-style:none}
 #animation-excerpt ul li{border-bottom:1px solid #ededed;padding:5px 5px 5px 0;line-height:20px}
-a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float: none;padding: 1em 0px;font-size: 16px;text-transform: uppercase;clear: both;margin: 1em auto;text-align: center;max-width: 320px;width: 100%;}
+a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float: none;padding: 1em 0px;font-size: 16px;text-transform: uppercase;clear: both;margin: 1em auto;text-align: center;max-width: 320px;width: 100%;line-height: 28px;}
 .btn.grey{background: #E4DEDE;color: #9F9D9E;text-transform: uppercase;padding: 1em 0;max-width: 320px;margin: auto;width: 100%;}
 #secondary h2{text-align:center;font-size:18px}
 .home #page-wrapper{padding:0}
 .home .post-onepage.notFullWidth{width:100%;max-width:100%}
-#logger{position:fixed;top:0;right:0;background:#F7F7F7;color:#2da9dc;border-radius:4px;padding:10px;z-index:991}
-#logger a{color:#2da9dc;padding:0 20px}
+#logger{position:fixed;top:0;right:0;color:#2da9dc;border-radius:4px;padding: 0;z-index:991}
+#logger a{color: #F2910C;padding: 0 4em;font-size: 16px;line-height: 112px;}
 #logger a.log-out{display:block;float:right;background:url(../img/out.png) no-repeat 0 50%;text-indent:-9999px;height:24px;width:24px;padding:0}
 .hidden{display:none}
 #userTrips{list-style:none}
@@ -135,19 +137,26 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float: none;
 #on-settings{background-color: #F5F5F5;margin:0 0 0 -1em;padding:2em 0 0 1em;box-shadow: 2px 0px 2px #000;}
 #on-settings .on-field{padding:0 0 20px}
 .hidden{display:none!important;visibility:hidden}
-#event-trip-planning{list-style:none;display:block;padding:30px 0;width:100%;float:left;clear:both;}
-#event-trip-planning .event-day{border:1px solid #ccc;clear: both;display: block;float: left;width: 100%;margin: 1em 0;padding: 1em 0;}
+#event-trip-planning{list-style:none;display:block;padding: 0;width:100%;float:left;clear:both;}
+#event-trip-planning .event-day{border:1px solid #ccc;margin: 0 0 2em;padding: 0;      display: block;   overflow: hidden;float: none;}
 #event-trip-planning li{float:left;margin:0 2%;width:25%}
-#event-trip-planning .single-activity-row{border: 1px solid #ededed;padding:1em;width:80%;margin: 0 auto 2em;float: left;display:block;clear:both;background: #F9F9F9;}
-#event-trip-planning .single-activity-row img{width:90px;height:auto;display:block}
-#event-trip-planning .etp-day{background:none;text-align:left;color:#575757;line-height:30px;width:90%;display:block;margin:0 auto 20px;text-transform:uppercase;padding:0 0 0 2em;border-bottom:1px solid #333}
+#event-trip-planning .single-activity-row{border: 1px solid #ededed;padding: 0 0 1em;width: 98%;margin: 1em 1em 1em -4em;background: #F9F9F9;position: relative;}
+#event-trip-planning .single-activity-row img{width: auto;height:auto;display:block;max-height: 120px;}
+#event-trip-planning .etp-day{background: #EDEDED;color: #37ABDB;line-height:30px;display:block;margin: 0;text-transform: none;padding: 0;width: 15%;text-align: center;font-size: 18px;font-weight: 700;float: left;}
+.day-title{font-weight:500;font-size:16px;padding: 1em 0;}
+.sejour-type{
+    font-size: 18px;
+    background: #fff;
+    padding: .5em 2em;
+    position: relative;
+}
 .tags-s{position:relative}
 .tags-s span.fs1{background:none}
-.dcicons{font-family:Flaticon;font-size:18px;font-style:normal;position:absolute;top:0;left:0;color:#2ca8d7;margin:auto;float:none;text-align:center}
+.dcicons{font-family:Flaticon;font-size: 22px;font-style:normal;position: relative;color: #F2910C;margin: 0 10px 0 0;float:none;text-align:center}
 .tags-s span{background-color:rgba(228,228,167,0.52);color:#949494;font-size:11px;padding:3px 4px;line-height:20px;margin:0 4px 0 0;float:left}
-#event-trip-planning .etp-days{clear:both;display:block;width:100%;float:left}
+#event-trip-planning .etp-days{float: right;padding: 5em 0em 1em;background: #fff;width: 85%;}
 #event-trip-planning .etp-days li{width:100%;display:block;clear:both}
-#event-trip-planning .etp-days h3{font-size:16px;text-align:left;color:#000;position:relative;padding:0 0 0 27px}
+#event-trip-planning .etp-days h3 a{font-size:16px;text-align:left;color:#000;position:relative;padding: 0;margin: 1em 0 .5em;font-weight: bold;}
 #event-trip-planning .etp-days img{margin:auto;display:block}
 .activity-budget-user.total-line{color:#191919;font-weight:700}
 .bdg{position:relative;width:20px;display:block;float:left;height:20px;margin:0 10px 0 4px}
@@ -208,6 +217,7 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float: none;
     float: left;
     margin: 8px .2em 0;
     line-height: 48px;
+    background: #1A85BC;
 }
  
 .crunchify-link:hover,.crunchify-link:active {
@@ -252,7 +262,7 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float: none;
     display: block;
     height: 64px;
     margin: auto;
-    width: 250px;
+    width: 295px;
     overflow: hidden;
     line-height: 64px;
 }
