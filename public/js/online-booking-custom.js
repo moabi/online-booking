@@ -1,8 +1,8 @@
+/*online-booking*/
 var $ = jQuery;
 var bookingPage = '/reservation-service/';
 var isBookingTpl = $('#booking-wrapper').length;
 var USERID = $('#user-logged-in-infos').attr("data-id");
-
 var reservation = {
 	user 	  : '',
 	name	  : '',
@@ -94,7 +94,9 @@ function doAjaxRequest( theme , geo, type ){
 
 //BOOKING FN
 
-//STORAGE
+/*
+	Storage -- cookies
+*/
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -483,8 +485,22 @@ function addADay(){
 		tripToCookie(reservation);
 		var n = noty({text: 'Jour ajouté'});
 	}
+	
+	setdaysCount();
+	
 }
-
+/*
+	setdaysCount
+	set the number of days (input#daysCount)
+*/
+function setdaysCount(){
+	if(reservation){
+		$('#daysCount').val(reservation.days);
+	} else {
+		console.warn('not able to count days');
+	}
+	
+}
 /*
 	remove Last day
 	decrement number of days
@@ -519,6 +535,7 @@ function removeLastDay(){
 		tripToCookie(reservation);
 		var n = noty({text: 'Jour supprimé'});
 	}
+	setdaysCount();
 }
 
 /*
@@ -665,6 +682,15 @@ function setNumberOfPersonns(personNb){
 	checkBudget();
 	tripToCookie(reservation);
 }
+function setTripName(name){
+	if(!name){
+		name = reservation.sejour;
+	}	
+	console.log('name',name);
+	$('#tripName').val(name);
+}
+
+
 //INIT TRIP
 /*
 	a useless function
@@ -721,6 +747,8 @@ function loadTrip($trip,gotoBookingPage){
 		}
 		
 		defineTripDates();
+		setTripName();
+		setdaysCount();
 		the_activites();
 		checkBudget();
 
@@ -746,7 +774,7 @@ function checkBudget(){
 }
 
 function loadPostsFromScratch(){
-	console.log('init posts');
+	console.log('loadPostsFromScratch');
 	var theme = $('#theme').val();
     var lieu = $('#lieu').val();
     if(lieu === null){
@@ -779,8 +807,10 @@ function initTrip(){
 	reservation.globalBudgetMin = $budgetRange[0] * $participants;
 	reservation.globalBudgetMax = $budgetRange[1] * $participants;
 	
+	setTripName(name);
 	defineTripDates();
 	the_activites();
+	setdaysCount();
 	
 	//Load Data
 	loadPostsFromScratch();
@@ -907,7 +937,21 @@ jQuery(function () {
             
         }
     });
-
+	$("#arrival-form").datepicker({
+        defaultDate: "+1w",
+        dateFormat: "dd/mm/yy",
+        altFormat: "dd/mm/yy",
+        minDate: 0,
+        changeMonth: true,
+        numberOfMonths: 1,
+        inline: true,
+        showOtherMonths: true,
+        onClose: function (selectedDate) {
+	        console.log(selectedDate);
+	        $("#arrival-form").val(selectedDate);
+        }
+     });
+     
     $("#departure").datepicker({
         defaultDate: "+1w",
         dateFormat: "dd/mm/yy",
@@ -1025,6 +1069,8 @@ $('.img-pop').magnificPopup({
   }
 	// other options
 });
+/*STICKY*/
+$("#sidebar-booking-b").stick_in_parent();
 
 
 });

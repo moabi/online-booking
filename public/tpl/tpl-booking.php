@@ -14,10 +14,40 @@
 
 get_header(); ?>
 
+<?php
+	
+	/*
+		Validate if comes from front form
+	*/
+	function validateDate($date, $format = 'Y-m-d H:i:s'){
+		    $d = DateTime::createFromFormat($format, $date);
+		    return $d && $d->format($format) == $date;
+	}
+	$sel_participants = (isset($_POST["participants"])) ? intval($_POST["participants"]) : 5;
+	$sel_theme = (isset($_POST["cat"])) ? intval($_POST["cat"]) : false;
+	$sel_lieu = (isset($_POST["categories"])) ? intval($_POST["categories"]) : false;
+	if(isset($_POST["formdate"])){
+		$form_date = validateDate($_POST["formdate"], 'd/m/Y');
+	} else{
+		$form_date = false;
+	}
+	
+	if($form_date == true){
+		$sel_date = (isset($_POST["formdate"])) ? $_POST["formdate"] : date("d/m/Y");
+	} else {
+		$sel_date =  date("d/m/Y");
+	}
+	
+	$date = explode('/', $sel_date); 
+	$date = $date[0] . '-' . $date[1] . '-' . $date[2]; 
+	$dateN1 = date('d/m/Y', strtotime("$date +1 day"));
+	
+				
+?>
+				
+				
+<div id="content-wrap">
 <div class="pure-g form-booking" id="booking-wrapper">
-
-
-
 	<div id="primary-b" class="booking pure-u-1 pure-u-md-18-24">
 	
 		<div class="padd-l">
@@ -27,50 +57,54 @@ get_header(); ?>
 	<!--
 <h2 id="settings-title" class="upptitle"><span class="fs1" aria-hidden="true" data-icon=""></span> Paramètres de votre séjour</h2>	-->
 		
-			<?php $args = array(
-			'show_option_all'    => '',
-			'show_option_none'   => '',
-			'option_none_value'  => '-1',
-			'orderby'            => 'ID', 
-			'order'              => 'ASC',
-			'show_count'         => 0,
-			'hide_empty'         => true, 
-			'child_of'           => 0,
-			'exclude'            => '',
-			'echo'               => 1,
-			'selected'           => 0,
-			'hierarchical'       => 0, 
-			'name'               => 'cat',
-			'id'                 => 'theme',
-			'class'              => 'postform terms-change form-control',
-			'depth'              => 0,
-			'tab_index'          => 0,
-			'taxonomy'           => 'theme',
-			'hide_if_empty'      => true,
-			'value_field'	     => 'term_id',	
-		); ?>
-			<?php $argsLieux = array(
-			'show_option_all'    => '',
-			'show_option_none'   => '',
-			'option_none_value'  => '-1',
-			'orderby'            => 'ID', 
-			'order'              => 'ASC',
-			'show_count'         => 0,
-			'hide_empty'         => true, 
-			'child_of'           => 0,
-			'exclude'            => '',
-			'echo'               => 1,
-			'selected'           => false,
-			'hierarchical'       => 1, 
-			'name'               => 'categories',
-			'id'                 => 'lieu',
-			'class'              => 'postform terms-change form-control',
-			'depth'              => 0,
-			'tab_index'          => 0,
-			'taxonomy'           => 'lieu',
-			'hide_if_empty'      => true,
-			'value_field'	     => 'term_id',	
-		); ?>
+			<?php 
+			
+			$args = array(
+				'show_option_all'    => '',
+				'show_option_none'   => '',
+				'option_none_value'  => '-1',
+				'orderby'            => 'ID', 
+				'order'              => 'ASC',
+				'show_count'         => 0,
+				'hide_empty'         => true, 
+				'child_of'           => 0,
+				'exclude'            => '',
+				'echo'               => 1,
+				'selected'           => $sel_theme,
+				'hierarchical'       => 0, 
+				'name'               => 'cat',
+				'id'                 => 'theme',
+				'class'              => 'postform terms-change form-control',
+				'depth'              => 0,
+				'tab_index'          => 0,
+				'taxonomy'           => 'theme',
+				'hide_if_empty'      => true,
+				'value_field'	     => 'term_id',	
+			); 
+			
+			$argsLieux = array(
+				'show_option_all'    => '',
+				'show_option_none'   => '',
+				'option_none_value'  => '-1',
+				'orderby'            => 'ID', 
+				'order'              => 'ASC',
+				'show_count'         => 0,
+				'hide_empty'         => true, 
+				'child_of'           => 0,
+				'exclude'            => '',
+				'echo'               => 1,
+				'selected'           => $sel_lieu,
+				'hierarchical'       => 1, 
+				'name'               => 'categories',
+				'id'                 => 'lieu',
+				'class'              => 'postform terms-change form-control',
+				'depth'              => 0,
+				'tab_index'          => 0,
+				'taxonomy'           => 'lieu',
+				'hide_if_empty'      => true,
+				'value_field'	     => 'term_id',	
+			); 
+		?>
 		
 
 
@@ -101,7 +135,7 @@ get_header(); ?>
 		<label class="floating-label" for="arrival"><span class="fs1" aria-hidden="true" data-icon=""></span> Arrivée sur place</label>	
 	</div>
 	<div class="pure-u-1 pure-u-md-12-24">					
-		<input data-value="" value="<?php echo date("d/m/Y"); ?>" class="datepicker bk-form form-control" id="arrival">
+		<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
 	</div>
 </div>
 
@@ -112,7 +146,7 @@ get_header(); ?>
 			<label class="floating-label" for="participants"><span class="fs1" aria-hidden="true" data-icon=""></span>Nombre de participants</label>
 		</div>
 		<div class="pure-u-1 pure-u-md-10-24">	
-			<input type="number" id="participants" value="5" class="bk-form form-control" />
+			<input type="number" id="participants" value="<?php echo $sel_participants; ?>" class="bk-form form-control" />
 		</div>
 	</div>
 
@@ -123,7 +157,7 @@ get_header(); ?>
 <div class="pure-u-1 pure-u-md-8-24 on-field hidden">							
 	<div class="pure-u-1 pure-u-md-2-4 hidden">
 		<label class="floating-label" for="departure"><span class="fs1" aria-hidden="true" data-icon=""></span> Retour</label>	
-		<input data-value="" value="<?php echo date("d/m/Y", time()+86400); ?>" class="datepicker bk-form form-control" id="departure">
+		<input data-value="" value="<?php echo $dateN1; ?>" class="datepicker bk-form form-control" id="departure">
 	</div>
 </div>
 
@@ -143,6 +177,7 @@ get_header(); ?>
 		</div>
 		<div id="days-modifier" class="pure-u-1 pure-u-md-12-24">
 			<button onclick="removeLastDay();">-</button>
+			<input id="daysCount" readonly name="daysCount" type="number" value="2" />
 			<button onclick="addADay();">+</button>	
 		</div>
 	
@@ -321,5 +356,5 @@ Connectez-vous pour sauvegarder
 </div>
 <!-- #SIDEBAR -->
 </div><!-- pure-g -->
-
+</div>
 <?php get_footer(); ?>

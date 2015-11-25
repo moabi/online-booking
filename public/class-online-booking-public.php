@@ -658,6 +658,88 @@ public static function wp_query_thumbnail_posts(){
 	
 	}
 }
+
+/*
+	get_reservation_content
+	@param array ($args) arguments for the posts loops
+	@param string ($reservation_type_slug) slug of the reservation type term
+	@param string ($reservation_type_name) name of the reservation type term
+	@param integer ($data_order) activities order 
+	display the vignette content for an activity
+*/
+public function get_reservation_content($args,$reservation_type_slug,$reservation_type_name,$data_order,$onbookingpage = true){
+	
+	$posts = '';
+	$the_query = new WP_Query( $args );
+        // The Loop
+        if ( $the_query->have_posts() ) {
+	        
+	        $count_post = 0;
+            
+            while ( $the_query->have_posts() ) {
+	            if($count_post == 0): 
+		            $posts .= '<h4 class="ajx-fetch">';
+					$posts .= $reservation_type_name;
+					$posts .= '</h4><div class="clearfix"></div>';
+	            endif;
+                $the_query->the_post();
+                global $post;
+                $postID = $the_query->post->ID;
+                $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
+                $term_list = wp_get_post_terms($post->ID, 'reservation_type');
+                $type = json_decode(json_encode($term_list), true);
+                //var_dump($type);
+                $termstheme = wp_get_post_terms($postID,'theme');
+                $terms = wp_get_post_terms($postID,'lieu');
+                
+                $price = get_field('prix');
+                $termsarray = json_decode(json_encode($terms), true);
+                $themearray = json_decode(json_encode($termstheme), true);
+                //var_dump($termsarray);
+                $lieu = 'data-lieux="';
+                foreach($termsarray as $activity){
+	                $lieu .= $activity['slug'].', ';
+                }
+                $lieu .= '"';
+                
+                $themes = 'data-themes="';
+                foreach($themearray as $activity){
+	                $themes .= $activity['slug'].', ';
+                }
+                $themes .= '"';
+                $typearray = '';
+                foreach($type as $singleType){
+	               $typearray .= ' '.$singleType['slug'];
+                }
+                
+                $posts .=  '<div data-type="'.$reservation_type_slug.'" class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
+                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
+                $posts .= '<div class="presta"><h3>'.__('La prestation comprend :','online-booking').' </h3>';
+                $posts .= get_field("la_prestation_comprend").'</div>';
+                $posts .= '<div class="block-thumb">'.get_the_post_thumbnail($postID, 'square').'</div>';
+                
+                $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').'<span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
+                if($onbookingpage == true){
+	                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                } else{
+	                $posts .= '<a href="'.site_url().'/'.BOOKING_URL.'?addId='.$postID.'" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                }
+                
+                
+                $posts.= '</div>';
+                
+                $count_post++;
+                
+            }
+            
+            
+         } else {
+	         
+         }
+         
+         return $posts;
+}
+
 /*
 	ajax_get_latest_posts function
 	filter by term according to user choice
@@ -752,67 +834,9 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
 	        );      
 
 
-        $the_query = new WP_Query( $args );
-        // The Loop
-        if ( $the_query->have_posts() ) {
-	        
-	        $count_post = 0;
-            
-            while ( $the_query->have_posts() ) {
-	            if($count_post == 0): 
-		            $posts .= '<h4 class="ajx-fetch">';
-					$posts .= $reservation_type_name;
-					$posts .= '</h4><div class="clearfix"></div>';
-	            endif;
-                $the_query->the_post();
-                global $post;
-                $postID = $the_query->post->ID;
-                $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
-                $term_list = wp_get_post_terms($post->ID, 'reservation_type');
-                $type = json_decode(json_encode($term_list), true);
-                //var_dump($type);
-                $termstheme = wp_get_post_terms($postID,'theme');
-                $terms = wp_get_post_terms($postID,'lieu');
-                
-                $price = get_field('prix');
-                $termsarray = json_decode(json_encode($terms), true);
-                $themearray = json_decode(json_encode($termstheme), true);
-                //var_dump($termsarray);
-                $lieu = 'data-lieux="';
-                foreach($termsarray as $activity){
-	                $lieu .= $activity['slug'].', ';
-                }
-                $lieu .= '"';
-                
-                $themes = 'data-themes="';
-                foreach($themearray as $activity){
-	                $themes .= $activity['slug'].', ';
-                }
-                $themes .= '"';
-                $typearray = '';
-                foreach($type as $singleType){
-	               $typearray .= ' '.$singleType['slug'];
-                }
-                
-                $posts .=  '<div data-type="'.$reservation_type_slug.'" class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
-                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
-                $posts .= '<div class="presta"><h3>'.__('La prestation comprend :','online-booking').' </h3>';
-                $posts .= get_field("la_prestation_comprend").'</div>';
-                $posts .= '<div class="block-thumb">'.get_the_post_thumbnail($postID, 'square').'</div>';
-                
-                $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').'<span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
-                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
-                
-                $posts.= '</div>';
-                
-                $count_post++;
-                
-            }
-            
-            
-         } else {
-	         
-         }
+        //GET CONTENT
+        $posts .= $this::get_reservation_content($args,$reservation_type_slug,$reservation_type_name,$data_order);
+    
          $posts.= '</div>';
 		 //wp_reset_postdata();
 	}
@@ -1070,69 +1094,68 @@ public static function the_sejour_btn($postid, $single_btn = false){
 public function front_form_shortcode($booking_url) {
 	// Code
 			$args = array(
-			'show_option_all'    => '',
-			'show_option_none'   => '',
-			'option_none_value'  => '-1',
-			'orderby'            => 'ID', 
-			'order'              => 'ASC',
-			'show_count'         => 0,
-			'hide_empty'         => 0, 
-			'child_of'           => 0,
-			'exclude'            => '',
-			'echo'               => 0,
-			'selected'           => 0,
-			'hierarchical'       => 0, 
-			'name'               => 'cat',
-			'id'                 => 'theme',
-			'class'              => 'postform terms-change form-control',
-			'depth'              => 0,
-			'tab_index'          => 0,
-			'taxonomy'           => 'theme',
-			'hide_if_empty'      => false,
-			'value_field'	     => 'term_id',	
-		); 
+				'show_option_all'    => '',
+				'show_option_none'   => '',
+				'option_none_value'  => '-1',
+				'orderby'            => 'ID', 
+				'order'              => 'ASC',
+				'show_count'         => 0,
+				'hide_empty'         => true, 
+				'child_of'           => 0,
+				'exclude'            => '',
+				'echo'               => 0,
+				'selected'           => false,
+				'hierarchical'       => 0, 
+				'name'               => 'cat',
+				'id'                 => 'theme-form',
+				'class'              => 'postform form-control',
+				'depth'              => 0,
+				'tab_index'          => 0,
+				'taxonomy'           => 'theme',
+				'hide_if_empty'      => true,
+				'value_field'	     => 'term_id',	
+			); 
 		$argsLieux = array(
-			'show_option_all'    => '',
-			'show_option_none'   => '',
-			'option_none_value'  => '-1',
-			'orderby'            => 'ID', 
-			'order'              => 'ASC',
-			'show_count'         => 0,
-			'hide_empty'         => 0, 
-			'child_of'           => 0,
-			'exclude'            => '',
-			'echo'               => 0,
-			'selected'           => 0,
-			'hierarchical'       => 1, 
-			'name'               => 'categories',
-			'id'                 => 'lieu',
-			'class'              => 'postform terms-change form-control',
-			'depth'              => 0,
-			'tab_index'          => 0,
-			'taxonomy'           => 'lieu',
-			'hide_if_empty'      => false,
-			'value_field'	     => 'term_id',	
-		); 
+				'show_option_all'    => '',
+				'show_option_none'   => '',
+				'option_none_value'  => '-1',
+				'orderby'            => 'ID', 
+				'order'              => 'ASC',
+				'show_count'         => 0,
+				'hide_empty'         => true, 
+				'child_of'           => 0,
+				'exclude'            => '',
+				'echo'               => 0,
+				'selected'           => false,
+				'hierarchical'       => 1, 
+				'name'               => 'categories',
+				'id'                 => 'lieu-form',
+				'class'              => 'postform form-control',
+				'depth'              => 0,
+				'tab_index'          => 0,
+				'taxonomy'           => 'lieu',
+				'hide_if_empty'      => true,
+				'value_field'	     => 'term_id',	
+			); 
 		
 	if(!isset($_COOKIE['reservation'])):
 	
-		$front_form = '<div id="front-form" class="booking" data-url="'.get_bloginfo('url').'/'.BOOKING_URL.'/">';
+		$front_form = '<form id="front-form" method="post" class="booking" action="'.get_bloginfo('url').'/'.BOOKING_URL.'/">';
 		$front_form .= '<div class="pure-g">';
 		$front_form .= '<div class="pure-u-1 pure-u-sm-5-24">';
 		$front_form .= wp_dropdown_categories( $argsLieux );
 		$front_form .= '</div><div class="pure-u-1 pure-u-sm-5-24">';
 		$front_form .= wp_dropdown_categories( $args );
 		$front_form .= '</div><div class="pure-u-1 pure-u-sm-5-24">';
-		$front_form .= '<div class="date-wrapper"><input data-value="" value="'.date("d/m/Y").'" class="datepicker bk-form form-control" id="arrival">';
+		$front_form .= '<div class="date-wrapper"><input data-value="" name="formdate" value="'.date("d/m/Y").'" class="datepicker bk-form form-control" id="arrival-form">';
 		$front_form .= '<div class="fs1" aria-hidden="true" data-icon=""></div></div>';
 		$front_form .= '</div><div class="pure-u-1 pure-u-sm-3-24">';
-		$front_form .= '<div class="people-wrapper"><input type="number" id="participants" value="5" class="bk-form form-control" />';
+		$front_form .= '<div class="people-wrapper"><input name="participants" type="number" id="participants-form" value="5" class="bk-form form-control" />';
 		$front_form .= '<div class="fs1" aria-hidden="true" data-icon=""></div></div>';
 		$front_form .= '</div><div class="pure-u-1 pure-u-sm-6-24">';
 		$front_form .= '<input type="submit" value="GO" />';
-		$front_form .= '</div></div></div>';
+		$front_form .= '</div></div></form>';
 		$front_form .= '<div class="clearfix"></div>';
-	
 	else: 
 	
 		$front_form = '<div id="front-form" class="booking exists"><a href="'.get_bloginfo('url').'/'.BOOKING_URL.'/" title="'.__('Voir votre réservation','twentyfifteen').'">'.__('Voir votre réservation','twentyfifteen').'</a></div>';

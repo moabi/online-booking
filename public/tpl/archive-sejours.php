@@ -18,18 +18,17 @@
 
 get_header(); ?>
 
+			<div id="desc-ar">
+			<header class="page-header inner-content">
+				<h1><div class="fs1" aria-hidden="true" data-icon=""></div><?php _e('Découvrez nos séjours clef en main', 'online-booking'); ?></h1>
+				<?php the_content(); ?>
+			</header><!-- .page-header -->
+			
+			</div>
+			
 	<section id="primary" class="content-area archive-reservations">
 		<main id="main" class="site-main" role="main">
-
-
-			<header class="page-header">
-				<h1><?php _e('Nos séjours', 'twentyfifteen'); ?></h1>
-			</header><!-- .page-header -->
-			<?php the_content(); ?>
 			<?php Online_Booking_Public::the_sejours(20,true); ?>
-
-
-
 		</main><!-- .site-main -->
 	</section><!-- .content-area -->
 

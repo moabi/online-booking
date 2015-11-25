@@ -55,7 +55,7 @@ get_header(); ?>
 				
 				<?php if(get_field('prix')): ?>
 				<div class="pure-u-1">
-					<div class="fs1" aria-hidden="true" data-icon=""></div>
+					<div class="fs1" aria-hidden="true" data-icon=""></div>
 					Tarif : <strong><?php the_field('prix'); ?>€ / pers</strong>
 				</div>	
 				<?php endif; ?>
@@ -79,13 +79,19 @@ get_header(); ?>
 <!-- NAVIGATION -->
 <div class="pure-g" id="single-tabber">
 	<div class="pure-u-1-3 active">
-		<a href="#" class="tabsto" data-target="0">Description</a>
+		<a href="#" class="tabsto" data-target="0">
+			<div class="fs1" aria-hidden="true" data-icon=""></div>
+			Description</a>
 	</div>
 	<div class="pure-u-1-3">
-		<a href="#" class="tabsto" data-target="1">Informations pratiques</a>
+		<a href="#" class="tabsto" data-target="1">
+			<div class="fs1" aria-hidden="true" data-icon=""></div>
+			Informations pratiques</a>
 	</div>
 	<div class="pure-u-1-3">
-		<a href="#" class="tabsto" data-target="2">Lieu</a>
+		<a href="#" class="tabsto" data-target="2">
+			<div class="fs1" aria-hidden="true" data-icon=""></div>
+		Lieu</a>
 	</div>
 </div>
 
@@ -162,8 +168,32 @@ get_header(); ?>
 <!-- #tabs -->
 </div>
 	</div>
-		
-<?php if ( function_exists( 'echo_crp' ) ) echo_crp(); ?>
+	
+<h2 class="related-title"><div class="fs1" aria-hidden="true" data-icon=""></div>
+<?php _e('Vous aimerez également','online-booking'); ?></h2>
+<div id="activities-content" class="blocks">
+<?php $single_lieu = $ux->get_place($post->ID); 
+	  $term_reservation_type = wp_get_post_terms($post->ID, 'reservation_type');
+	  //var_dump($term_reservation_type);
+	  $args = array(
+		      'post_type' => 'reservation',
+	          'post_status' => 'publish',
+			  'posts_per_page' => 4,
+			  'orderby' => 'rand',
+			  'post__not_in' => array($post->ID),
+			  /*
+			  'tax_query' => array(
+					array(
+						'taxonomy' => 'reservation_type',
+						'field'    => 'slug',
+						'terms'    => $term_reservation_type[0]->slug,
+					),
+				),*/
+	        );  
+	$obpp = new Online_Booking_Public('online-booking',1);
+	echo $obpp->get_reservation_content($args,$term_reservation_type[0]->slug,$term_reservation_type[0]->name,0,false);
+?>	
+</div>
 
 	</article><!-- #post -->
 
