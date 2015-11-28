@@ -48,7 +48,7 @@ get_header(); ?>
 				
 <div id="content-wrap">
 <div class="pure-g form-booking" id="booking-wrapper">
-	<div id="primary-b" class="booking pure-u-1 pure-u-md-18-24">
+	<div id="primary-b" class="booking pure-u-1 pure-u-md-17-24">
 	
 		<div class="padd-l">
 		
@@ -112,7 +112,9 @@ get_header(); ?>
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
 		<div class="pure-u-1 pure-u-md-8-24">							
-			<label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon="g"></span>Secteur d'activité</label>
+			<label class="floating-label" for="float-select">
+			<?php //<span class="fs1" aria-hidden="true" data-icon="g"></span> ?>
+			Secteur d'activité</label>
 		</div>
 		<div class="pure-u-1 pure-u-md-12-24">
 			<?php wp_dropdown_categories( $args ); ?> 
@@ -122,7 +124,9 @@ get_header(); ?>
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
 		<div class="pure-u-1 pure-u-md-8-24">
-		<label class="floating-label" for="float-select"><span class="fs1" aria-hidden="true" data-icon=""></span>Le lieu</label>
+		<label class="floating-label" for="float-select">
+		<?php //<span class="fs1" aria-hidden="true" data-icon=""></span> ?>
+		Le lieu</label>
 		</div>
 		<div class="pure-u-1 pure-u-md-12-24">
 		<?php wp_dropdown_categories( $argsLieux ); ?> 
@@ -132,9 +136,13 @@ get_header(); ?>
 
 <div class="pure-u-1 pure-u-md-8-24 on-field">
 	<div class="pure-u-1 pure-u-md-12-24">	
-		<label class="floating-label" for="arrival"><span class="fs1" aria-hidden="true" data-icon=""></span> Arrivée sur place</label>	
+		<label class="floating-label" for="arrival">
+			 
+			<?php _e('Arrivée sur place','online-booking'); ?>
+		</label>	
 	</div>
-	<div class="pure-u-1 pure-u-md-12-24">					
+	<div class="pure-u-1 pure-u-md-12-24">		
+		<span class="fs1 input-box" aria-hidden="true" data-icon=""></span>			
 		<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
 	</div>
 </div>
@@ -143,9 +151,13 @@ get_header(); ?>
 							
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
 		<div class="pure-u-1 pure-u-md-8-24">
-			<label class="floating-label" for="participants"><span class="fs1" aria-hidden="true" data-icon=""></span>Nombre de participants</label>
+			<label class="floating-label" for="participants">
+			
+			<?php _e('Participants','online-booking'); ?>
+			</label>
 		</div>
 		<div class="pure-u-1 pure-u-md-10-24">	
+			<span class="fs1 input-box" aria-hidden="true" data-icon=""></span>
 			<input type="number" id="participants" value="<?php echo $sel_participants; ?>" class="bk-form form-control" />
 		</div>
 	</div>
@@ -156,14 +168,16 @@ get_header(); ?>
 
 <div class="pure-u-1 pure-u-md-8-24 on-field hidden">							
 	<div class="pure-u-1 pure-u-md-2-4 hidden">
-		<label class="floating-label" for="departure"><span class="fs1" aria-hidden="true" data-icon=""></span> Retour</label>	
 		<input data-value="" value="<?php echo $dateN1; ?>" class="datepicker bk-form form-control" id="departure">
 	</div>
 </div>
 
 <!-- budget -->		
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-			<label for=""><span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>Budget/personne ( entre <span id="st">45</span> et <span id="end">300</span> Euros )
+			<label for="">
+			<span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>
+			<?php _e('Budget par participant','online-booking'); ?>
+			( entre <span id="st">45</span> et <span id="end">300</span> Euros )
 			</label>
 			<div id="slider-range"></div>
 			<input type="hidden" id="budget" value="45/300" class="bk-form form-control"  />
@@ -173,7 +187,10 @@ get_header(); ?>
 <!-- Number of days -->
 <div class="pure-u-1 pure-u-md-8-24 on-field">
 		<div class="pure-u-1 pure-u-md-12-24">
-		<label class="floating-label" for="days"><span class="fs1" aria-hidden="true" data-icon=""></span> Nombre de jours</label>	
+		<label class="floating-label" for="days">
+		<?php //<span class="fs1" aria-hidden="true" data-icon=""></span>  ?>
+		<?php _e('Nombre de jours',''); ?>
+		</label>	
 		</div>
 		<div id="days-modifier" class="pure-u-1 pure-u-md-12-24">
 			<button onclick="removeLastDay();">-</button>
@@ -192,7 +209,7 @@ get_header(); ?>
 
 
 <!-- ACTIVITES -->
-	<h2 class="upptitle">Package sur mesure <span>Sélectionnez vos activités à la carte</span></h2>
+	<h2 class="upptitle"><?php _e('Votre évènement sur mesure','online-booking'); ?> <span><?php _e('Sélectionnez vos activités à la carte','online-booking'); ?></span></h2>
 	<div class="clearfix"></div>
 	
 							<div class="pure-g">
@@ -269,32 +286,61 @@ $terms = get_terms($taxonomies, $args);
 		 echo '</div>';
 	?>
 
-		<h2 class="upptitle">Vous aimerez également...</h2>
+		<h2 class="upptitle"><?php _e('Vous aimerez également','online-booking'); ?></h2>
 
 		<?php Online_Booking_Public::the_sejours(5,false); ?>
 		</div>
 		</div><!-- #content -->
 
 
+
+
+
 <!-- SIDEBAR -->
-<div id="sidebar-booking-b" class="pure-u-1 pure-u-md-6-24">
+<div id="sidebar-booking-b" class="pure-u-1 pure-u-md-7-24">
 	<div id="sidebar-sticky">
 		
-		 <?php if ( is_active_sidebar( 'right_sidebar' ) ) : ?>
+		 
     <div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+
+	    
+
+<?php if ( is_active_sidebar( 'right_sidebar' ) ) : ?>
       <?php dynamic_sidebar( 'right_sidebar' ); ?>
+       <?php endif; ?>
+      	    <div id="caller-side" class="pure-g">
+		    <div class="pure-u-1-2">
+			    	<div id="pre-padd">
+			    		<img id="phone-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACMElEQVRYR7WXwXHaUBCG/zXY17iDlBBTgXEHTgdoIuXiEUGHiGPwEeUAFpNLxAykAzqw3AElkArss2NYjySEJZD0FkePo/jf7sf/dlcLoeAT+MMREfUYfGvZ/UGRpq5ntB9o6nszEDrp880JWl9v3GVdCffj5AD2k2/FoWm7V9oBSpLHeRl0ZdnfQx0QsQNVyXW7QMFkOCDQD9Wv0+UCTX3vEYRzNQCWlu22VLpjv6fpxGPpIWIYX7ruXKqX6I4CYMaD1XXbksBSDQW+FxLhUnKAmR2r2x9LtFJN5EAU8Jv6AP8x7f5uQKn1MgUFk59tAt9Xy/Ukj3Imc2DirQB8LIPQUXxprhhAMAu0jeMYYDYanb80n1cE+lDmgrZBlCZUusC8aqzPWobjPMnKS6bKvw0VtQDwwrT7n2WhZaocgKgjGHOz6xqy8GrV4UIimQs1QhwAJG05XAL0qZK/JohCAElXJHC8aLycGUWFGe+VoA4ISwbdli00hQBR6N+/vAvacFjVmgkDr5hOjGyCwgWHMW+sT5192FKAoyASO0Le0JiIr7NLbe4aGU8gDEzbvctNwqq7FjuhLvidgoGoxpzItUoH0hM6ILax70QA77gOsR9igN07o/FvIV1gBBRyB7LBlO8NQWYg2TGOciAPES0ym7FyYBXCvC047wZI4wb+sBe1lnJevPVAbrX7b4BdbTSfe/Hkq9isUtuzptQCkA24bdlrMLVBfLF15i+D50V/9V8BtLHxa2YLzj4AAAAASUVORK5CYII="/>
+Des questions ?
+<span id="phone-side">
+0811 202 101
+</span>
+<span class="vert-sep"></span>
+			    	</div>
+		    		    
+		    </div>
+		    <div class="pure-u-1-2">
+			    <div id="pre-xs">
+			    	Du Lundi au Vendredi <br />
+					De 9h00 à 18h00
+			    </div>
+		    	
+		    </div>
+		    
+	    </div>
     </div><!-- #primary-sidebar -->
-  <?php endif; ?>
+ 
   
 <!-- JOURNEES -->
-	<h2 class="upptitle">Votre séjour</h2>
+	<h2 class="upptitle"><?php _e('Votre évènement','online-booking'); ?></h2>
 	
 		<div id="daysTrip"></div>
 <!-- #JOURNEES -->	
 
 <?php  if ( !is_user_logged_in() ): ?>
 <!-- FORMUAIRE SEND -->	
-	<h2 class="upptitle">Votre devis sur mesure</h2>
+	<h2 class="upptitle"><?php _e('Votre devis sur mesure','online-booking'); ?></h2>
 	
 		<form action="tpl-booking.php" method="" accept-charset="utf-8">
 			        <input type="text" name="s" id="name" placeholder="Votre nom" value="" type="text"  /> <br />

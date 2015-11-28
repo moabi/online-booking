@@ -16,19 +16,7 @@
 	font-weight: normal;
 	font-style: normal;
 }
-.day-content .dc::before{
-	font-family: Flaticon;
-	font-size: 24px;
-	font-style: normal;
-	margin-left: 20px;
-	position: absolute;
-	top: 19px;
-	left: 12px;
-	color: rgb(44, 168, 215);
-	margin: auto;
-	float: none;
-	text-align: center;
-}
+
 .flaticon-bus21:before {
 	content: "\e000";
 }

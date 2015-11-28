@@ -23,6 +23,7 @@
  	define('BOOKING_URL','reservation-service');
 	define('CONFIRMATION_URL','validation-devis');
 	define('SEJOUR_URL','nos-sejours');
+	define('DEVIS_EXPRESS','devis-express');
 	
 class Online_Booking_Public {
 
@@ -86,8 +87,9 @@ class Online_Booking_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/online-booking-public.css', array(), $this->version, 'all' );
+		
 		wp_enqueue_style( $this->plugin_name.'plugins', plugin_dir_url( __FILE__ ) . 'css/onlyoo-plugins.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/online-booking-public.css', array(), $this->version, 'all' );
 		wp_enqueue_style($this->plugin_name.'jquery-ui', plugin_dir_url( __FILE__ ) . 'js/jquery-ui/jquery-ui.min.css',array(), $this->version, 'all');
 
 	}
@@ -151,7 +153,11 @@ public function booking_page_template( $page_template )
     } elseif ( is_page( 'public' ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-public.php';
         
+    } elseif ( is_page( 'proposer-votre-activite' ) ) {
+        $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-proposer.php';
+        
     }
+    
     return $page_template;
 }
 
@@ -250,7 +256,20 @@ public function create_booking_pages() {
 		);
 
 	// Otherwise, we'll stop
-	}else {
+	}elseif(null == get_page_by_title( 'Devis express' ) ){
+		// Set the post ID so that we know the post was created successfully
+		$post_id = wp_insert_post(
+			array(
+				'comment_status'	=>	'closed',
+				'ping_status'		=>	'closed',
+				'post_author'		=>	$author_id,
+				'post_name'		=>	DEVIS_EXPRESS,
+				'post_title'		=>	'Devis express',
+				'post_status'		=>	'publish',
+				'post_type'		=>	'page'
+			)
+		);
+	} else {
 
     		// Arbitrarily use -2 to indicate that the page with the title already exists
     		$post_id = -2;
@@ -629,9 +648,9 @@ public static function wp_query_thumbnail_posts(){
                 
                 $posts .=  '<div data-type="'.$reservation_type_slug.'" class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
                 
-                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
+                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' €</span></div>';
                 
-                $posts .= '<div class="presta"><h3>la prestation comprend : </h3>';
+                $posts .= '<div class="presta">';
                 $posts .= get_field("la_prestation_comprend").'</div>';
                 
                 $posts .= get_the_post_thumbnail($postID, 'square');
@@ -677,7 +696,7 @@ public function get_reservation_content($args,$reservation_type_slug,$reservatio
 	        $count_post = 0;
             
             while ( $the_query->have_posts() ) {
-	            if($count_post == 0): 
+	            if($count_post == 0 && $onbookingpage == true): 
 		            $posts .= '<h4 class="ajx-fetch">';
 					$posts .= $reservation_type_name;
 					$posts .= '</h4><div class="clearfix"></div>';
@@ -713,8 +732,8 @@ public function get_reservation_content($args,$reservation_type_slug,$reservatio
                 }
                 
                 $posts .=  '<div data-type="'.$reservation_type_slug.'" class="block" id="ac-'.get_the_id().'" data-price="'.$price.'" '.$lieu.' '.$themes.'>';
-                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' euros</span></div>';
-                $posts .= '<div class="presta"><h3>'.__('La prestation comprend :','online-booking').' </h3>';
+                $posts .= '<div class="head"><h2>'.get_the_title().'</h2><span class="price-u">'.$price.' €</span></div>';
+                $posts .= '<div class="presta">';
                 $posts .= get_field("la_prestation_comprend").'</div>';
                 $posts .= '<div class="block-thumb">'.get_the_post_thumbnail($postID, 'square').'</div>';
                 
@@ -1185,10 +1204,10 @@ public function header_form(){
 			$output .= '</div>';
     else:
         	$output = '<div id="logger">';
-	        $output .= '<span class="user-name">';
-	        $output .= __('Bonjour','online-booking');
-	        $output .= $current_user->user_login;
-	        $output .= '</span>';
+	        //$output .= '<span class="user-name">';
+	        //$output .= __('Bonjour','online-booking');
+	        //$output .= $current_user->user_login;
+	        //$output .= '</span>';
 	        $output .= '<a class="my-account" href="'.get_bloginfo('url').'/compte">'. __('Mon compte','online-booking').'</a>';
 	       $output .= '<a class="log-out" href="'.wp_logout_url( home_url().'?log=ftl' ).'">'.__('Déconnexion', 'online-booking').'</a>';
 	       	$output .= '</div>';
