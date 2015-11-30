@@ -1,3 +1,7 @@
+
+.noty_buttons{text-align: center !important;}
+.noty_buttons .btn.btn-reg{float: none;display:inline-block;width:100px;margin: auto;padding: 0;}
+.btn.btn-danger{background: rgb(242, 145, 12);}
 .day-content .dc::before {
     font-family: Flaticon;
     font-size: 24px;
@@ -214,10 +218,14 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float: none;
 #logger a.log-out{}
 .hidden{display:none}
 #userTrips{list-style:none}
-#userTrips .sharetrip{clear:both;margin:0 10px;font-size:14px;display:block}
-#userTrips .sharetrip pre .fs1{color:#fff}
-#userTrips .sharetrip pre{background-color:#2eaadd;border-radius:4px;padding:0 8px;color:#fff;float:right;margin:0 0 0 10px}
-#userTrips li{margin:0 0 10px;padding:10px;line-height:30px;font-size:16px}
+#userTrips .user-date-invoice{margin: .5em 0;clear:both;display:block;color: #2EAADD;}
+#userTrips .user-date-invoice a{color: rgba(0, 0, 0, 0.68);}
+#userTrips .user-date-invoice a:hover{color: #F39C25;}
+#userTrips .sharetrip a{color:red;}
+#userTrips .sharetrip{clear:both;margin: 1em 10px 0;font-size:14px;display:block}
+#userTrips .sharetrip pre .fs1{color: #FFFFFF;background: #F2910C;padding: 0 1em;border-radius: 4px 0 0 4px;}
+#userTrips .sharetrip pre{background-color: #D8D8D8;border-radius:4px;padding: 0 8px 0 0;color: #616161;float: none;margin:0 0 0 10px}
+#userTrips li{margin:0 0 10px;padding:10px;line-height:30px;font-size:16px;border: 1px solid #ccc;width: 94%;}
 #userTrips li .fs1{float:left;margin:0 10px 0 0}
 #userTrips li .fs1.js-delete-user-trip::before{margin:0 5px 0 0}
 #userTrips li .fs1.js-delete-user-trip:hover{background:rgba(199,34,69,0.71);color:#fafafa;padding:0 8px;box-shadow:0 1px 1px #8C1D1D}

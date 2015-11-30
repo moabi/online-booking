@@ -148,26 +148,50 @@ function tripToCookie(reservation){
 	User Account functions
 */
 function deleteUserTrip(tripID){
-	$.ajax({
-	          url: '/wp-admin/admin-ajax.php',
-	          data:{
-	               'action':'do_ajax',
-	               'deleteUserTrip' : tripID
-	               },
-	          dataType: 'JSON',
-	          success:function(data){    
-			        console.log(data);
-			       var n = noty({text: 'Suppression effectuée'});
-	               $('#ut-' + tripID).remove();
-	                             },
-	          error: function(errorThrown){
-	               var n = noty({
-		               text: 'Echec de la suppression :(',
-		               template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
-		               });
-	               console.warn(errorThrown.responseText);
-	          }
-		     });
+	
+	var n = noty ({
+		layout: 'center',
+		modal: true,
+		text: 'Ëtes-vous sûr de vouloir <br />supprimer cet évènement !',
+		template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+		closeWith:['button'],
+	    buttons: [
+			{addClass: 'btn-reg btn btn-primary', text: 'Oui', onClick: function($noty) {
+	
+				$noty.close();
+				$.ajax({
+		          url: '/wp-admin/admin-ajax.php',
+		          data:{
+		               'action':'do_ajax',
+		               'deleteUserTrip' : tripID
+		               },
+		          dataType: 'JSON',
+		          success:function(data){    
+				        console.log(data);
+				       var n = noty({text: 'Suppression effectuée'});
+		               $('#ut-' + tripID).remove();
+		                             },
+		          error: function(errorThrown){
+		               var n = noty({
+			               text: 'Echec de la suppression :(',
+			               template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+			               });
+		               console.warn(errorThrown.responseText);
+		          }
+			    });
+		     
+	
+				}
+			},
+			{addClass: 'btn-reg btn btn-danger', text: 'Non', onClick: function($noty) {
+					$noty.close();
+				}
+			}
+		],
+	    type: 'confirm',
+
+	});
+    	
 }
 
 /*
@@ -719,11 +743,34 @@ function loadTrip($trip,gotoBookingPage){
 	reservation.currentBudget = 0;
 	//either we need to go to the page or not
 	if(gotoBookingPage === true){
-		console.log('true');
-		//setCookie('reservation', JSON.stringify($trip), 2);
-		cookieValue = JSON.stringify($trip);
-		Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
-		window.location = bookingPage;
+
+		var n = noty ({
+			layout: 'center',
+			modal: true,
+			text: 'Voulez-vous charger cet évènement ? Attention, vous risquez de perdre votre évènement en cours !',
+			template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+			closeWith:['button'],
+		    buttons: [
+				{addClass: 'btn-reg btn btn-primary', text: 'Ok', onClick: function($noty) {
+		
+					$noty.close();
+					//setCookie('reservation', JSON.stringify($trip), 2);
+					cookieValue = JSON.stringify($trip);
+					Cookies.set('reservation', cookieValue, { expires: 7, path: '/' });
+					window.location = bookingPage;
+		
+					}
+				},
+				{addClass: 'btn-reg btn btn-danger', text: 'Annuler', onClick: function($noty) {
+						$noty.close();
+					}
+				}
+			],
+		    type: 'confirm',
+
+    	});
+    	
+		
 	}else {
 		$getBudgetMin = ( reservation.budgetPerMin ) ? reservation.budgetPerMin : 100;
 		$getBudgetMax = ( reservation.budgetPerMax ) ? reservation.budgetPerMax : 300;

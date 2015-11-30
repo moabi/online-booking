@@ -177,7 +177,7 @@ get_header(); ?>
 			<label for="">
 			<span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>
 			<?php _e('Budget par participant','online-booking'); ?>
-			( entre <span id="st">45</span> et <span id="end">300</span> Euros )
+			(entre <span id="st">45</span> et <span id="end">300</span> €)
 			</label>
 			<div id="slider-range"></div>
 			<input type="hidden" id="budget" value="45/300" class="bk-form form-control"  />

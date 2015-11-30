@@ -73,17 +73,21 @@ class online_booking_user  {
 					echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
 					
 					
-					echo '<a title="Voir votre event" onclick="loadTrip(trip'.$result->ID.',true)" href="#">';
+					echo '<a title="'.__('Voir votre évènement','online-booking').'" onclick="loadTrip(trip'.$result->ID.',true)" href="#">';
 					echo '<div class="fs1" aria-hidden="true" data-icon="j"></div>';
 					echo $tripName;
 					echo '</a>';
-					
-					echo '<div class="sharetrip">partager votre event : <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><div class="fs1" aria-hidden="true" data-icon=""></div></a></pre></div>';
-					
 					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer</div>';
+					echo ' <br /> ';
 					
 					//BUDGET
 					online_booking_user::the_budget($tripID, $booking,$tripDate);
+					
+					echo '<div class="sharetrip">'.__('Partager votre évènement :','online-booking').' <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><div class="fs1" aria-hidden="true" data-icon=""></div></a></pre></div>';
+					
+					
+					
+					echo '<div class="clearfix"></div>';
 					echo '</li>';
 				}
 			echo '</ul>';
@@ -95,11 +99,11 @@ class online_booking_user  {
 		$budget = json_decode($item, true);
 		$budgetMaxTotal = $budget['participants'] * $budget['budgetPerMax'];
 		
-		$newDate = date("d/m/y", strtotime($tripDate));
+		$newDate = date("d/m/Y", strtotime($tripDate));
 		$newDateDevis = date("dmy", strtotime($tripDate));
 		
 		//VISIBLE LINK
-		echo '<span class="user-date-invoice"><a class="open-popup-link" href="#tu-'.$tripID.'">Devis n°ol'.$newDateDevis.$tripID.' ('.$newDate.')</a></span>';
+		echo '<span class="user-date-invoice"> <span class="fs1" aria-hidden="true" data-icon=""></span><a class="open-popup-link" href="#tu-'.$tripID.'">'.__('Voir votre devis n°','online-booking').''.$newDateDevis.$tripID.' (daté du '.$newDate.')</a></span>';
 		
 		
 		//var_dump($budget);
