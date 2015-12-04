@@ -43,6 +43,19 @@ class online_booking_user  {
 	private $version;
 	
 	/*
+		clear_reservation_cookie
+		Clear cookie on logout
+	*/
+	public function clear_reservation_cookie(){
+		if (isset($_COOKIE['reservation'])) {
+			unset($_COOKIE['reservation']);
+			return true;
+		} else{
+			return false;
+		}
+	}
+	
+	/*
 		retrieve trips
 	*/
 	public static function get_user_booking(){
@@ -73,9 +86,10 @@ class online_booking_user  {
 					echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
 					
 					
-					echo '<a title="'.__('Voir votre évènement','online-booking').'" onclick="loadTrip(trip'.$result->ID.',true)" href="#">';
+					echo '<a class="event-name" title="'.__('Voir votre évènement','online-booking').'" onclick="loadTrip(trip'.$result->ID.',true)" href="#">';
 					echo '<div class="fs1" aria-hidden="true" data-icon="j"></div>';
 					echo $tripName;
+					echo '<span>'.__('Modifier','online-booking').'</span>';
 					echo '</a>';
 					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer</div>';
 					echo ' <br /> ';
@@ -83,7 +97,7 @@ class online_booking_user  {
 					//BUDGET
 					online_booking_user::the_budget($tripID, $booking,$tripDate);
 					
-					echo '<div class="sharetrip">'.__('Partager votre évènement :','online-booking').' <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><div class="fs1" aria-hidden="true" data-icon=""></div></a></pre></div>';
+					echo '<div class="sharetrip">'.__('Partager/Voir votre évènement :','online-booking').' <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><div class="fs1" aria-hidden="true" data-icon=""></div></a></pre></div>';
 					
 					
 					

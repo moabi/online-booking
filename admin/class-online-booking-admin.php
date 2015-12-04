@@ -100,15 +100,31 @@ class Online_Booking_Admin {
 
 	}
 	
+	/*
+		Add option page
+	*/
 	public function online_booking_menu(){	
-		add_options_page( 'Online Booking', 'Online Booking', 'publish_pages', 'online-booking-admin-display', array( $this, 'helper' ) );
+		add_options_page( 'Online Booking', 'Online Booking', 'publish_pages', 'online-booking-orders', array( $this, 'helper' ) );
 	}
 	
+	public function my_plugin_action_links( $links ) {
+	  $links[] = '<a href="'. esc_url( get_admin_url(null, 'options-general.php?page=online-booking-orders') ) .'">'. __('Configure','online-booking').'</a>';
+
+	  return $links;
+	}
+	
+	/*
+		
+	*/
 	public function helper(){
-		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-admin-display.php';
+		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-orders.php';
 		include_once $admin_view;
 	}
 	
+	
+	/*
+		get_users_booking
+	*/
 	public static function get_users_booking($validation = '0'){
 			global $wpdb;
 			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID	

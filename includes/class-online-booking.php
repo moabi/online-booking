@@ -161,6 +161,7 @@ class Online_Booking {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'online_booking_menu' );
+		$this->loader->add_filter( 'plugin_action_links_' . plugin_basename(__FILE__),$plugin_admin, 'my_plugin_action_links' );
 
 	}
 
@@ -193,15 +194,20 @@ class Online_Booking {
 		$this->loader->add_action( 'init', $plugin_public, 'sejour_post_type',0 );
 		
 		$this->loader->add_shortcode( 'frontform', $plugin_public,'front_form_shortcode' );
+		$this->loader->add_shortcode( 'ob-activities',$plugin_public, 'home_activites' );
+		$this->loader->add_shortcode( 'ob-sejours',$plugin_public, 'home_sejours' );
 		
 		//add_filter('media_upload_tabs', 'remove_media_library_tab');
 		$this->loader->add_filter( 'media_upload_tabs', $plugin_public, 'remove_media_library_tab',0 );
+		$this->loader->add_filter('media_view_strings',$plugin_public, 'remove_medialibrary_tab');
 		//AJAX
 		$this->loader->add_action('wp_ajax_nopriv_do_ajax', $plugin_public,  'ajxfn');
 		$this->loader-> add_action('wp_ajax_do_ajax', $plugin_public, 'ajxfn');
 		
 		//USER FILTERS/HOOK
+		$this->loader->add_action('wp_logout',$plugin_public, 'clear_reservation_cookie');
 		$this->loader->add_filter( 'login_redirect',$plugin_public,'my_login_redirect', 10, 3 );
+		
 		//filter head
 		$this->loader->add_action('wp_head',$plugin_public,'header_form');
 		$this->loader->add_action('wp_head',$plugin_public,'current_user_infos');

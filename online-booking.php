@@ -16,7 +16,7 @@
  * Plugin Name:       Online Booking
  * Plugin URI:        http://little-dream.fr/
  * Description:        Online Booking plugin
- * Version:           1.0.1
+ * Version:           2.0.1
  * Author:            little-dream.fr
  * Author URI:        http://little-dream.fr
  * License:           GPL-2.0+

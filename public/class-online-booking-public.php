@@ -134,6 +134,13 @@ public function get_custom_post_type_template($single_template) {
 }
 
 
+public function remove_medialibrary_tab($tabs) {
+    if ( !current_user_can( 'administrator' ) ) {
+        unset($tabs["mediaLibraryTitle"]);
+    }
+    return $tabs;
+}
+
 /*
  * add page templates
 */
@@ -678,6 +685,110 @@ public static function wp_query_thumbnail_posts(){
 	}
 }
 
+
+	/*
+		provide a shortcode
+		show activites
+	*/
+	public function home_activites($atts){
+		
+		/* Restore original Post Data */
+		wp_reset_postdata();
+		
+		$args_act = array(
+		      'post_type' => 'reservation',
+	          'post_status' => 'publish',
+			  'posts_per_page' => 8,
+			  'orderby' => 'rand'
+	    ); 
+		$output = '';   
+        // The Query
+		$the_query = new WP_Query($args_act);
+		
+		// The Loop
+		if ( $the_query->have_posts() ) {
+		
+		while ( $the_query->have_posts() ) {
+			$the_query->the_post();
+			$postid = get_the_ID();
+			$exc = strip_tags(get_the_content());
+				$output .= '<div class="block-fe pure-u-1-2 pure-u-md-1-4">';
+				$output .= '<div class="block-thumb">';
+				$output .= '<a href="'.get_the_permalink().'">';
+				$output .= get_the_post_thumbnail($postid, 'square');
+				$output .= '</a></div>';
+				$output .= '<div class="head-img">'.get_the_title().'</div>';
+				$output .= '<div class="presta">';
+				$output .= '<div class="exc">'.substr($exc, 0, 70) . '...</div>';
+				$output .= '<span class="fs1" aria-hidden="true" data-icon=""></span>'.get_field('nombre_de_personnes');
+				$output .= '<span class="fs1" aria-hidden="true" data-icon="}"></span>'.get_field('duree').'h';
+				$output .= '</div>';
+				$output .= '</div>';
+				
+		}
+		
+		} else {
+		// no posts found
+		}
+		/* Restore original Post Data */
+		wp_reset_postdata();
+
+		
+		return $output;
+		
+	}
+
+
+	/*
+		provide a shortcode
+		show sejours
+	*/
+	public function home_sejours($atts){
+		
+		/* Restore original Post Data */
+		wp_reset_postdata();
+		
+		$args_act = array(
+		      'post_type' => 'sejour',
+	          'post_status' => 'publish',
+			  'posts_per_page' => 5,
+			  'orderby' => 'rand'
+	    ); 
+		$output = '';   
+        // The Query
+		$the_query = new WP_Query($args_act);
+		
+		// The Loop
+		if ( $the_query->have_posts() ) {
+		$i = 0;
+		while ( $the_query->have_posts() ) {
+			$i++;
+			$pure_class = ($i > 3) ? 'pure-u-md-1-2' : 'pure-u-md-1-3';
+			$the_query->the_post();
+			$postid = get_the_ID();
+			$exc = get_the_excerpt();
+				$output .= '<div class="block-fe sej pure-u-1-2 '.$pure_class.'">';
+				$output .= '<div class="block-thumb">';
+				$output .= '<a href="'.get_the_permalink().'">';
+				$output .= get_the_post_thumbnail($postid, 'square');
+				$output .= '</a></div>';
+				$output .= '<div class="head-img">'.get_the_title().'</div>';
+				$output .= '</div>';
+				
+		}
+		
+		} else {
+		// no posts found
+		}
+		/* Restore original Post Data */
+		wp_reset_postdata();
+
+		
+		return $output;
+		
+	}
+	
+		
 /*
 	get_reservation_content
 	@param array ($args) arguments for the posts loops

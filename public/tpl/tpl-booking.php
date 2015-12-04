@@ -142,8 +142,9 @@ get_header(); ?>
 		</label>	
 	</div>
 	<div class="pure-u-1 pure-u-md-12-24">		
-		<span class="fs1 input-box" aria-hidden="true" data-icon=""></span>			
+		<div class="fs1 input-box" aria-hidden="true" data-icon="">		
 		<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
+		</div>	
 	</div>
 </div>
 
@@ -157,8 +158,9 @@ get_header(); ?>
 			</label>
 		</div>
 		<div class="pure-u-1 pure-u-md-10-24">	
-			<span class="fs1 input-box" aria-hidden="true" data-icon=""></span>
+			<div class="fs1 input-box" aria-hidden="true" data-icon="">
 			<input type="number" id="participants" value="<?php echo $sel_participants; ?>" class="bk-form form-control" />
+			</div>
 		</div>
 	</div>
 

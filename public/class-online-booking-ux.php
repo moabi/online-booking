@@ -5,7 +5,12 @@
 	
 class online_booking_ux  {
 	
+
 	
+	/*
+		Provide a slider template
+	*/
+		
 	public function slider(){
 		$images = get_field('gallerie');
 		$slider = '';

@@ -1,7 +1,8 @@
 <?php
-if ( ! ( is_user_logged_in() || current_user_can('publish_posts') ) ) {
-		return;
-	}else{
+if ( is_user_logged_in() || current_user_can('publish_posts')  ) {
+		//sanitize html
+		add_filter('acf/update_value', 'wp_kses_post', 10, 1);
+		//get ressources
 		acf_form_head();
 	}
 	
@@ -28,31 +29,37 @@ function tsm_deregister_admin_styles() {
  */
 
 	// Bail if not logged in or able to post
-	if ( ! ( is_user_logged_in()|| current_user_can('publish_posts') ) ) {
-		echo '<h2>Merci de vous connecter pour pouvoir ajouter votre activité</h2>';
-		return;
-	}
+
 	while ( have_posts() ) : the_post();
 	echo '<h1 class="page-title">'.get_the_title().'</h1>';
-	the_content();
-	$new_post = array(
-		'post_id'            => 'new_post', // Create a new post
-		'post_title' => true,
-		'post_content' => true,
-		'new_post'		=> array(
-					'post_type'		=> 'reservation',
-					'post_status'		=> 'pending'
-				),
-		// PUT IN YOUR OWN FIELD GROUP ID(s)
-		//'field_groups'       => array(791), // Create post field group ID(s)
-		'form'               => true,
-		'return'             => '%post_url%', // Redirect to new post url
-		'html_before_fields' => '',
-		'html_after_fields'  => '',
-		'submit_value'       => 'Créer votre activité',
-		'updated_message'    => 'Saved!'
-	);
-	acf_form( $new_post );
+	
+	if ( !(is_user_logged_in()|| current_user_can('publish_posts') ) )
+	echo 'Merci de vous connecter pour pouvoir ajouter votre activité';
+	
+	if ( is_user_logged_in()|| current_user_can('publish_posts')  ) {
+		the_content();
+
+			
+		$new_post = array(
+			'post_id'            => 'new_post', // Create a new post
+			'post_title' => true,
+			'post_content' => true,
+			'new_post'		=> array(
+						'post_type'		=> 'reservation',
+						'post_status'		=> 'pending'
+					),
+			// PUT IN YOUR OWN FIELD GROUP ID(s)
+			//'field_groups'       => array(791), // Create post field group ID(s)
+			'form'               => true,
+			'return'             => '%post_url%', // Redirect to new post url
+			'html_before_fields' => '',
+			'html_after_fields'  => '',
+			'submit_value'       => 'Créer votre activité',
+			'updated_message'    => 'Saved!'
+		);
+		
+		acf_form( $new_post );
+	}
 	endwhile;
 
 /**
@@ -108,6 +115,8 @@ function tsm_save_image_field_to_featured_image( $post_id ) {
 }
 // acf/update_value/name={$field_name} - filter for a specific field based on it's key
 
+
+
 ?>
 
 
@@ -123,4 +132,5 @@ function tsm_save_image_field_to_featured_image( $post_id ) {
 De 9h00 à 18h00</div>
 		</div>    </div><!-- #primary-sidebar -->
 		</div></div>
+		
 <?php get_footer(); ?>
