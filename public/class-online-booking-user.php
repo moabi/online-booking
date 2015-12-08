@@ -92,12 +92,16 @@ class online_booking_user  {
 					echo '<span>'.__('Modifier','online-booking').'</span>';
 					echo '</a>';
 					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer</div>';
+					echo '<div class="fs1 quote-it js-quote-user-trip" aria-hidden="true" data-icon="" onclick="estimateUserTrip('.$tripID.')">Demande de devis</div>';
 					echo ' <br /> ';
 					
 					//BUDGET
 					online_booking_user::the_budget($tripID, $booking,$tripDate);
 					
-					echo '<div class="sharetrip">'.__('Partager/Voir votre évènement :','online-booking').' <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><div class="fs1" aria-hidden="true" data-icon=""></div></a></pre></div>';
+					echo '<div class="sharetrip">'.__('Partager/Voir votre évènement :','online-booking');
+					echo ' <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><div class="fs1" aria-hidden="true" data-icon=""></div></a></pre>';
+					echo __('Cette adresse publique,mais anonyme, vous permet de partage votre event','online-booking');
+					echo '</div>';
 					
 					
 					
@@ -276,7 +280,40 @@ class online_booking_user  {
 		
 	}
 	
-	
+	/*
+	 * estimateUserTrip
+	 *
+	 */
+	 public function estimateUserTrip($tripIDtoEstimate){
+		 global $wpdb;
+		
+		$userID = get_current_user_id();
+		$date =  current_time('mysql', 1);
+		if(!empty($userID) &&  is_user_logged_in() ):
+			$table = $wpdb->prefix.'online_booking';
+			$rowToEstimate = $wpdb->update( 
+					$table, 
+					array(
+						'validation'	=> '1'
+					),
+					array( 
+						'ID' 			=> $tripIDtoEstimate,
+					),
+					array(
+						'%d'
+					),
+					array( '%d' ) 
+			 );
+			$userTripsEstimate = "success";
+			$mailer = new Online_Booking_Mailer;
+			$mailer->send_mail('estimate');
+		else: 
+			$userTripsEstimate = 'failed to delete';
+		endif;
+
+		return $userTripsEstimate;
+	 }
+	 
 	/*
 		delete user's trip to DB
 	*/

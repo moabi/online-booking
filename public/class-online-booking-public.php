@@ -535,7 +535,9 @@ public function sejour_post_type() {
 	ajax FUNCTIONS
 */
 public function ajxfn(){
-
+	
+	$user_action = new online_booking_user;
+	
      if(!empty($_REQUEST['theme']) && !empty($_REQUEST['geo'])){
 	     $type = isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : null;
          $output = Online_Booking_Public::ajax_get_latest_posts($_REQUEST['theme'],$_REQUEST['geo'],$type);
@@ -544,7 +546,10 @@ public function ajxfn(){
 	    $output = online_booking_user::save_trip($tripName);
     }  else if(!empty($_REQUEST['deleteUserTrip'])){
 	    $userTrip = intval($_REQUEST['deleteUserTrip']);
-	    $output = online_booking_user::delete_trip($userTrip);
+	    $output = $user_action->delete_trip($userTrip);
+	}else if(!empty($_REQUEST['estimateUserTrip'])){
+	    $userTrip = intval($_REQUEST['estimateUserTrip']);
+	    $output = $user_action->estimateUserTrip($userTrip);
 	}else {
          $output = 'No function specified, check your jQuery.ajax() call';
  

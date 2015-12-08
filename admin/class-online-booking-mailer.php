@@ -44,23 +44,28 @@ class Online_Booking_Mailer {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct() {
 
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
 
 	}
 	
-	public function send_confirmation_mail(){
-		$admin_email = esc_attr( get_option('ob_admin_email') );
+	/*
+	 * send_mail
+	 *
+	 * @param $type
+	 */
+	public function send_mail($type){
 		
-		$to = 'sendto@example.com';
+		$admin_email = esc_attr( get_option('ob_admin_email','contact@loading-data.com') );
+		$body_content = esc_attr( get_option('ob_confirmation_content','Missing Content, please get back to Onlyoo website administrator') );
+		
+		$to = $admin_email;
 		$subject = 'Onlyoo - email de confirmation';
-		$body = 'The email body content';
-		$headers = array('Content-Type: text/html; charset=UTF-8');
+		$body = $body_content;
+		$headers[] = 'Content-Type: text/html';
+		$headers[] = 'charset=UTF-8';
+		$headers[] = 'From: Onlyoo <no-reply@onlyoo.com>' . "\r\n";
 		
 		wp_mail( $to, $subject, $body, $headers );
 
