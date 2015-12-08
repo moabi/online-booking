@@ -24,26 +24,45 @@ get_header(); ?>
 <div id="account-wrapper">
 <!-- NAVIGATION -->
 <div class="pure-g" id="single-tabber">
-	<div class="pure-u-1-3 active">
+	<?php
+		$user = wp_get_current_user();
+if ( in_array( 'partner', (array) $user->roles ) ) {
+    //The user has the "author" role
+    $tabs_cl = 'pure-u-1-4';
+} else {
+	$tabs_cl = 'pure-u-1-3';
+}
+?>
+	<div class="<?php echo $tabs_cl; ?> active">
 		<a href="#" class="tabsto" data-target="0">
 			<div class="fs1" aria-hidden="true" data-icon=""></div>
 			<?php _e('Mes devis','online-booking'); ?></a>
 	</div>
-	<div class="pure-u-1-3">
+	<div class="<?php echo $tabs_cl; ?>">
 		<a href="#" class="tabsto" data-target="1">
 			<div class="fs1" aria-hidden="true" data-icon=""></div>
 			<?php _e('Mes commandes','online-booking'); ?></a></a>
 	</div>
-	<div class="pure-u-1-3">
+	<div class="<?php echo $tabs_cl; ?>">
 		<a href="#" class="tabsto" data-target="2">
 			<div class="fs1" aria-hidden="true" data-icon=""></div>
 		<?php _e('Mes informations','online-booking'); ?></a></a>
 	</div>
+	<?php
+		if ( in_array( 'partner', (array) $user->roles ) ) {
+    echo '<div class="pure-u-1-4">
+		<a href="#" class="tabsto" data-target="3">
+			<div class="fs1" aria-hidden="true" data-icon=""></div>
+			'.__("Mes activités","online-booking").'</a>
+	</div>
+	';
+}
+?>
 </div>
 
 <!-- TABS -->
 <div id="tabs-single" class="slick-single">
-	
+
 	<div class="single-el">
 		<div class="comprend">
 			<h2><?php _e('Mes devis', 'online-booking'); ?></h2>
@@ -61,6 +80,16 @@ get_header(); ?>
 			<?php echo do_shortcode('[userpro template=edit]'); ?>
 		</div>
 	</div>
+		<?php
+		if ( in_array( 'partner', (array) $user->roles ) ) { ?>
+		<div class="single-el">
+		<div class="comprend">
+			<h2><?php _e('Mes activités', 'online-booking'); ?></h2>
+			<?php online_booking_partners::get_partner_activites(); ?>
+		</div>
+	</div>
+		
+		<?php }?>
 </div>
 
 	

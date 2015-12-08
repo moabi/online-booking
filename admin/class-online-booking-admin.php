@@ -104,7 +104,13 @@ class Online_Booking_Admin {
 		Add option page
 	*/
 	public function online_booking_menu(){	
-		add_options_page( 'Online Booking', 'Online Booking', 'publish_pages', 'online-booking-orders', array( $this, 'helper' ) );
+		add_menu_page( 'Online Booking', 'Online Booking', 'publish_pages', 'online-booking-orders', array( $this, 'helper' ) );
+		
+		add_submenu_page( 'online-booking-orders', 'Emails','Emails', 'publish_pages', 'online-booking-emails', array( $this, 'emails' ) );
+		
+		add_submenu_page( 'online-booking-orders', 'Help','Help', 'publish_pages', 'online-booking-help', array( $this, 'ob_help' ) );
+		
+		add_action( 'admin_init', array($this, 'register_ob_settings') );
 	}
 	
 	public function my_plugin_action_links( $links ) {
@@ -120,7 +126,24 @@ class Online_Booking_Admin {
 		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-orders.php';
 		include_once $admin_view;
 	}
+	public function emails(){
+		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-emails.php';
+		include_once $admin_view;
+	}
+	public function ob_help(){
+		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-help.php';
+		include_once $admin_view;
+	}
 	
+	public function register_ob_settings() {
+		//register our settings
+		register_setting( 'ob-settings-group', 'ob_admin_email' );
+		register_setting( 'ob-settings-group', 'ob_confirmation_content' );
+		register_setting( 'ob-settings-group', 'ob_annulation_content' );
+		
+
+	}
+
 	
 	/*
 		get_users_booking

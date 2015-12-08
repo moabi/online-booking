@@ -342,17 +342,7 @@ Des questions ?
 
 <?php  if ( !is_user_logged_in() ): ?>
 <!-- FORMUAIRE SEND -->	
-	<h2 class="upptitle"><?php _e('Votre devis sur mesure','online-booking'); ?></h2>
-	
-		<form action="tpl-booking.php" method="" accept-charset="utf-8">
-			        <input type="text" name="s" id="name" placeholder="Votre nom" value="" type="text"  /> <br />
-			        <input type="tel" name="s" id="name" placeholder="Téléphone" value="" type="text"  />
-			        <br />
-			        <input type="email" name="s" id="name" placeholder="Votre mail" value="" type="text"  />
-			        <br />
-			        <input type="submit" name="s" id="name" value="Envoyer" type="text"  />
-			        	
-		</form>
+	<a href="#login-popup" class="open-popup-link btn-danger btn btn-reg"><?php _e('Connectez-vous<br /> pour sauvegarder','online-booking'); ?></a>
 <!-- #formulaire send -->
 <?php endif; ?>
 
@@ -387,15 +377,10 @@ Des questions ?
 			?>
 
 		</div>
-		<div class="pure-u-1">
-			<a href="#"  class="btn btn-reg">
-			Demande de devis
-			</a>
-		</div>
+
 		</div>
 </div>
-<?php else: ?>
-Connectez-vous pour sauvegarder
+
 <?php endif; ?>
 
 

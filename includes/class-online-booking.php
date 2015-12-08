@@ -111,6 +111,7 @@ class Online_Booking {
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
+		 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-online-booking-mailer.php';
 		 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-quotation-table.php';
 		 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-online-booking-admin.php';
 		
@@ -122,6 +123,7 @@ class Online_Booking {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-public.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-user.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-partners.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-budget.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-ux.php';
 
@@ -162,8 +164,25 @@ class Online_Booking {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'online_booking_menu' );
 		$this->loader->add_filter( 'plugin_action_links_' . plugin_basename(__FILE__),$plugin_admin, 'my_plugin_action_links' );
+		//settings
+		//$this->loader->add_action( 'admin_init',$plugin_admin, 'register_ob_settings' );
 
 	}
+	
+	/**
+	 * Register all of the hooks related to the admin area functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_mailer_hooks() {
+
+		$plugin_admin = new Online_Booking_Mailer( $this->get_plugin_name(), $this->get_version() );
+
+
+	}
+	
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality

@@ -51,11 +51,10 @@ function tsm_deregister_admin_styles() {
 			// PUT IN YOUR OWN FIELD GROUP ID(s)
 			//'field_groups'       => array(791), // Create post field group ID(s)
 			'form'               => true,
-			'return'             => '%post_url%', // Redirect to new post url
 			'html_before_fields' => '',
 			'html_after_fields'  => '',
-			'submit_value'       => 'Créer votre activité',
-			'updated_message'    => 'Saved!'
+			'submit_value'       => __('Créer votre activité','online-booking'),
+			'updated_message'    => __('Merci, nous reviendrons vers vous rapidement.','online-booking')
 		);
 		
 		acf_form( $new_post );
@@ -76,14 +75,23 @@ function tsm_do_pre_save_post( $post_id ) {
 	if( $post_id != 'new_post' ) {
 		return $post_id;
 	}
+	
+	//save custom taxonomies
+	$acf_lieu = wp_strip_all_tags($_POST['acf[field_5661ef1d1f9f7]']);
+	$acf_reservation = wp_strip_all_tags($_POST['acf']['field_5661ef54d1d4d']);
+	
 	// Create a new post
 	$post = array(
 		'post_type'     => 'reservation', // Your post type ( post, page, custom post type )
 		'post_status'   => 'pending', // (publish, draft, private, etc.)
-		/*
+		'tax_input'      => array(
+			'lieu' => $acf_lieu,
+			'reservation_type' => $acf_reservation
+			)
+		);		/*
 		'post_title'    => wp_strip_all_tags($_POST['acf']['field_54dfc93e35ec4']), // Post Title ACF field key
 		'post_content'  => $_POST['acf']['field_54dfc94e35ec5'], // Post Content ACF field key*/
-	);
+
 	// insert the post
 	$post_id = wp_insert_post( $post );
 	// Save the fields to the post
@@ -105,13 +113,13 @@ function tsm_save_image_field_to_featured_image( $post_id ) {
 		return;
 	}
 	// ACF image field key
-	$image = $_POST['acf']['field_54dfcd4278d63'];
+	$img = $_POST['acf']['field_56629ef93a621'];
 	// Bail if image field is empty
-	if ( empty($image) ) {
+	if ( empty($acf_lieu) ) {
 		return;
 	}
 	// Add the value which is the image ID to the _thumbnail_id meta data for the current post
-	add_post_meta( $post_id, '_thumbnail_id', $image );
+	add_post_meta( $post_id, '_thumbnail_id', $img );
 }
 // acf/update_value/name={$field_name} - filter for a specific field based on it's key
 
