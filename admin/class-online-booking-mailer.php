@@ -55,20 +55,31 @@ class Online_Booking_Mailer {
 	 *
 	 * @param $type
 	 */
-	public function send_mail($type){
+	public function send_mail($type,$to,$body){
 		
-		$admin_email = esc_attr( get_option('ob_admin_email','contact@loading-data.com') );
-		$body_content = esc_attr( get_option('ob_confirmation_content','Missing Content, please get back to Onlyoo website administrator') );
-		
-		$to = $admin_email;
-		$subject = 'Onlyoo - email de confirmation';
-		$body = $body_content;
+
+		$subject = 'Onlyoo - '.$type.' - '. date("d/m/Y");
 		$headers[] = 'Content-Type: text/html';
 		$headers[] = 'charset=UTF-8';
 		$headers[] = 'From: Onlyoo <no-reply@onlyoo.com>' . "\r\n";
 		
 		wp_mail( $to, $subject, $body, $headers );
 
+	}
+	
+	public function confirmation_mail($userID){
+		
+		$user_info = get_userdata($userID);
+		$username = $user_info->user_login;
+		
+		$type = 'confirmation';
+		$admin_email = esc_attr( get_option('ob_admin_email','david@loading-data.com') );
+		
+		$body = esc_attr( get_option('ob_confirmation_content','Missing Content, please get back to Onlyoo website administrator') );
+		$body = str_replace('[client-name]', $username, $body);
+		
+		self::send_mail($type,$admin_email,$body);
+		
 	}
 
 

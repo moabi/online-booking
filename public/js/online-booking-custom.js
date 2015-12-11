@@ -356,12 +356,12 @@ function addActivityAnimation(id){
  * addActivity
  * Add an activity to a selected/default day
  * 
- * @param id
- * @param activityname
- * @param price
- * @param type
- * @param img
- * @param order
+ * @param id the trip id - post->id
+ * @param activityname post->name
+ * @param price acf - prix - should be static
+ * @param type taxonomy 
+ * @param img featured thumbnail
+ * @param integer order   
  */
 function addActivity(id,activityname,price,type,img,order){
 
@@ -482,6 +482,7 @@ function checkIfDateOk(start,end){
 	return isReversedDate;
 
 }
+
 
 /**
  * check number of days allowed
@@ -652,6 +653,51 @@ function removeLastDay(){
 	setdaysCount();
 }
 
+/*
+ * getDays
+ *
+ */
+function getDays(){
+	if(reservation){
+		obj = reservation.tripObject;
+		tripDays = Object.keys(reservation.tripObject);
+		getDaysArray = [];
+		//iterate through dates
+		for (var i in tripDays) {
+			if (tripDays.hasOwnProperty(i) && typeof(i) !== 'function') {
+				tripDay = tripDays[i];
+				getDaysArray.push(tripDay);
+			}
+		}
+		return getDaysArray;
+	} else {
+		return false;
+	}
+}
+
+function createDaysSelector(){
+	daysArray = getDays();
+	countD = daysArray.length;
+	$('#daysSelector').empty();
+	for(var i = 0; i < countD ; i++){
+		daySelector = '<span onClick="changeCurrentDay(\''+ daysArray[i] + '\')">'+ daysArray[i] +'</div>';
+		$('#daysSelector').append(daySelector);
+	}
+	
+}
+/*
+ *
+ *
+ */
+function selectYourDay(el){
+	createDaysSelector();
+	$('#daysSelector').insertAfter(el).fadeIn();
+	
+	setTimeout(function(){
+		$('#daysSelector').fadeOut();
+	}, 4000);
+	//$('#daysSelector').css();
+}
 /*
  * Get this day active
  * set it active globally and in html

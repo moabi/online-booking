@@ -10,8 +10,23 @@ if( ! class_exists( 'WP_List_Table' ) ) {
 class Quotation_Table extends WP_List_Table
 {
 	
+	var $validation_state;
 
-    
+   public function __construct($args) {
+	   global $status, $page;
+	   parent::__construct( [
+			'singular' => __( 'Order', 'online-booking' ), //singular name of the listed records
+			'plural'   => __( 'Orders', 'online-booking' ), //plural name of the listed records
+			'ajax'     => false //should this table support ajax?
+
+		] );
+      
+      if ( is_null($args) ) return false;
+		if ( is_array($args) ) {
+			foreach ($args as $var => $val) $this->{$var} = $val;
+		}
+      
+   }
     
     /**
      * Override the parent columns method. Defines the columns to use in your listing table
@@ -57,7 +72,7 @@ class Quotation_Table extends WP_List_Table
      *
      * @return Array
      */
-    private function table_data($validation = 0)
+    private function table_data()
     {
 	    global $wpdb;
 			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID	
@@ -65,7 +80,7 @@ class Quotation_Table extends WP_List_Table
 						SELECT *
 						FROM ".$wpdb->prefix."online_booking a	
 						WHERE a.validation = %d
-						",$validation); 
+						",$this->validation_state); 
 					
 			$results = $wpdb->get_results($sql);
 			$data = json_decode(json_encode($results), true);
@@ -80,8 +95,16 @@ class Quotation_Table extends WP_List_Table
 		public function column_id($item)
 		{
 		    //return $item['ID'];
-		    $del_input = '<input type="radio" name="validate" value="'.$item['ID'].'" /> ';
-            return $del_input;
+		    /*
+		    $del_input = '<input id="s-'.$this->validation_state.'-'.$item['ID'].'" type="checkbox" name="bulk-delete[]" value="'.$item['ID'].'" /> ';
+            return $del_input;*/
+            
+            return sprintf(
+            '<input type="checkbox" name="%1$s[]" value="%2$s" />',
+            /*$1%s*/ $this->_args['singular'],  //Let's simply repurpose the table's singular label ("movie")
+            /*$2%s*/ $item['ID']                //The value of the checkbox should be the record's id
+        );
+        
 		}
 		
 		public function column_booking_object($item){
@@ -201,14 +224,16 @@ class Quotation_Table extends WP_List_Table
         $columns = $this->get_columns();
         $hidden = $this->get_hidden_columns();
         $sortable = $this->get_sortable_columns();
-
+		
+		$this->process_bulk_action();
+		
         $data = $this->table_data();
         usort( $data, array( &$this, 'sort_data' ) );
 
-        $perPage = 5;
+        $perPage = 25;
         $currentPage = $this->get_pagenum();
         $totalItems = count($data);
-
+		
         $this->set_pagination_args( array(
             'total_items' => $totalItems,
             'per_page'    => $perPage
@@ -220,6 +245,63 @@ class Quotation_Table extends WP_List_Table
         $this->items = $data;
     }
     
+	
+	/**
+	 * Returns an associative array containing the bulk action
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions() {
+	  $actions = [
+		'bulk-validate' => "Valider Devis",
+	    'bulk-delete' => 'Supprimer',
+	    'bulk-callback' => 'Mail rappel',
+	    
+	  ];
+	
+	  return $actions;
+	}
 
+	/*
+	 * process_bulk_action
+	 * will process table actions
+	*/
+	public function process_bulk_action() {
+	
+	  //Detect when a bulk action is being triggered...
+	  if ( 'delete' === $this->current_action() ) {
+	
+	    // In our file that handles the request, verify the nonce.
+	    $nonce = esc_attr( $_REQUEST['_wpnonce'] );
+	
+	    if ( ! wp_verify_nonce( $nonce, 'ob_delete_customer' ) ) {
+	      die( 'Go get a life script kiddies' );
+	    }
+	    else {
+	      //self::delete_customer( absint( $_GET['customer'] ) );
+	
+	      wp_redirect( esc_url( add_query_arg() ) );
+	      exit;
+	    }
+	
+	  }
+	
+	  // If the delete bulk action is triggered
+	  if ( ( isset( $_POST['action'] ) && $_POST['action'] == 'bulk-delete' )
+	       || ( isset( $_POST['action2'] ) && $_POST['action2'] == 'bulk-delete' )
+	  ) {
+	
+	    $delete_ids = esc_sql( $_POST['bulk-delete'] );
+	
+	    // loop over the array of record IDs and delete them
+	    foreach ( $delete_ids as $id ) {
+	      //self::delete_customer( $id );
+	
+	    }
+	
+	    wp_redirect( esc_url( add_query_arg() ) );
+	    exit;
+	  }
+	}
 
 }

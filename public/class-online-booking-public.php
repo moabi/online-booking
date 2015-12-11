@@ -667,7 +667,7 @@ public static function wp_query_thumbnail_posts(){
                 
                 $posts .= get_the_post_thumbnail($postID, 'square');
                 
-                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order_val.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order_val.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').' <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 
@@ -855,7 +855,7 @@ public function get_reservation_content($args,$reservation_type_slug,$reservatio
                 
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').'<span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 if($onbookingpage == true){
-	                $posts .= '<a href="javascript:void(0)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+	                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 } else{
 	                $posts .= '<a href="'.site_url().'/'.BOOKING_URL.'?addId='.$postID.'" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 }

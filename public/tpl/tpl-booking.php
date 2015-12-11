@@ -44,7 +44,8 @@ get_header(); ?>
 	
 				
 ?>
-				
+	
+<div id="daysSelector"></div>			
 				
 <div id="content-wrap">
 <div class="pure-g form-booking" id="booking-wrapper">

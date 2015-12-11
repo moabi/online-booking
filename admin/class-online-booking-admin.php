@@ -106,6 +106,8 @@ class Online_Booking_Admin {
 	public function online_booking_menu(){	
 		add_menu_page( 'Online Booking', 'Online Booking', 'publish_pages', 'online-booking-orders', array( $this, 'helper' ) );
 		
+		add_submenu_page( 'online-booking-orders', 'Demandes','Demandes', 'publish_pages', 'online-booking-estimate', array( $this, 'estimate' ) );
+		
 		add_submenu_page( 'online-booking-orders', 'Emails','Emails', 'publish_pages', 'online-booking-emails', array( $this, 'emails' ) );
 		
 		add_submenu_page( 'online-booking-orders', 'Help','Help', 'publish_pages', 'online-booking-help', array( $this, 'ob_help' ) );
@@ -124,6 +126,10 @@ class Online_Booking_Admin {
 	*/
 	public function helper(){
 		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-orders.php';
+		include_once $admin_view;
+	}
+	public function estimate(){
+		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-estimate.php';
 		include_once $admin_view;
 	}
 	public function emails(){
@@ -201,14 +207,14 @@ class Online_Booking_Admin {
      *
      * @return Void
      */
-    public function list_table_page()
+    public function data_table_list($validation_state)
     {
-        $quotationTable = new Quotation_Table();
+        $quotationTable = new Quotation_Table($validation_state);
         $quotationTable->prepare_items();
         ?>
             <div class="wrap">
                 <div id="icon-users" class="icon32"></div>
-                <h2><?php _e('Devis à valider','online-booking'); ?></h2>
+               
                 <?php $quotationTable->display(); ?>
             </div>
         <?php

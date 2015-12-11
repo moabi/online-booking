@@ -306,7 +306,7 @@ class online_booking_user  {
 			 );
 			$userTripsEstimate = "success";
 			$mailer = new Online_Booking_Mailer;
-			$mailer->send_mail('estimate');
+			$mailer->confirmation_mail($userID);
 		else: 
 			$userTripsEstimate = 'failed to delete';
 		endif;
