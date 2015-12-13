@@ -146,6 +146,10 @@ class Online_Booking_Admin {
 		register_setting( 'ob-settings-group', 'ob_admin_email' );
 		register_setting( 'ob-settings-group', 'ob_confirmation_content' );
 		register_setting( 'ob-settings-group', 'ob_annulation_content' );
+		register_setting( 'ob-settings-group', 'ob_min_budget' );
+		register_setting( 'ob-settings-group', 'ob_max_budget' );
+		register_setting( 'ob-settings-group', 'ob_max_days' );
+		
 		
 
 	}

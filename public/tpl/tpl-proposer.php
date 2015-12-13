@@ -9,7 +9,7 @@ if ( is_user_logged_in() || current_user_can('publish_posts')  ) {
 ?>
 <?php get_header(); ?>
 
-	<div id="primary-invite" class="content-area pure-g">
+	<div id="primary-invite" class="content-area pure-g inner-content">
 		<div id="content-b" class="site-content-invite pure-u-1 pure-u-md-2-3">
 <?php
 /**

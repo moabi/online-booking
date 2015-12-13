@@ -123,13 +123,18 @@ class Quotation_Table extends WP_List_Table
 					echo '<div class="pure-u-1-3">Buget Max Total : '.$budgetMaxTotal.' </div>';
 					echo '</div>';
 					echo '<div class="excerpt-budget">';
-					echo 'Budget Minimum par personne : '.$budget['budgetPerMin'].'<br />';
-					echo 'Budget Minimum : '.$budget['budgetPerMin'] * $budget['participants'].'<br />';
-					echo 'Budget Maximum par personne : '.$budget['budgetPerMax'].'<br />';
-					echo 'Budget Maximum : '.$budget['budgetPerMax'] * $budget['participants'].'<br />';
-					echo 'Budget global par personne : '.$budget['currentBudget'].'<br />';
+					
+					echo '<table class="wp-list-table widefat  striped ">';
+					echo '<tr><td>Budget Minimum par personne </td><td> '.$budget['budgetPerMin'].'</td></tr>';
+					echo '<tr><td>Budget Minimum </td><td>'.$budget['budgetPerMin'] * $budget['participants'].'</td></tr>';
+					echo '<tr><td>Budget Maximum par personne </td><td> '.$budget['budgetPerMax'].'</td></tr>';
+					echo '<tr><td>Budget Maximum </td><td>'.$budget['budgetPerMax'] * $budget['participants'].'</td></tr>';
+					echo '<tr><td>Budget global par personne </td><td>'.$budget['currentBudget'].'</td></tr>';
+					echo '</table>';
 					echo '</div>';
 					echo 'Budget Total : '.$budget['currentBudget'] * $budget['participants'].'<br />';
+					
+					
 					echo '<h4>Détails de votre event : </h4>';
 					$trips = $budget['tripObject'];
 					$budgetSingle = array();

@@ -112,53 +112,55 @@ get_header(); ?>
 <div class="pure-g">
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-md-8-24">							
+		<div class="pure-u-1 pure-u-xl-8-24">							
 			<label class="floating-label" for="float-select">
 			<?php //<span class="fs1" aria-hidden="true" data-icon="g"></span> ?>
 			Secteur d'activité</label>
 		</div>
-		<div class="pure-u-1 pure-u-md-12-24">
+		<div class="pure-u-1 pure-u-xl-12-24">
 			<?php wp_dropdown_categories( $args ); ?> 
 		</div>
 
 	</div>
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-md-8-24">
+		<div class="pure-u-1 pure-u-xl-8-24">
 		<label class="floating-label" for="float-select">
 		<?php //<span class="fs1" aria-hidden="true" data-icon=""></span> ?>
 		Le lieu</label>
 		</div>
-		<div class="pure-u-1 pure-u-md-12-24">
+		<div class="pure-u-1 pure-u-xl-12-24">
 		<?php wp_dropdown_categories( $argsLieux ); ?> 
 		</div>
 	</div>
 	
 
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-	<div class="pure-u-1 pure-u-md-12-24">	
+	<div class="pure-g">
+	<div class="pure-u-1 pure-u-xl-12-24">	
 		<label class="floating-label" for="arrival">
 			 
 			<?php _e('Arrivée sur place','online-booking'); ?>
 		</label>	
 	</div>
-	<div class="pure-u-1 pure-u-md-12-24">		
+	<div class="pure-u-1 pure-u-xl-12-24">		
 		<div class="fs1 input-box" aria-hidden="true" data-icon="">		
 		<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
 		</div>	
+	</div>
 	</div>
 </div>
 
 
 							
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-md-8-24">
+		<div class="pure-u-1 pure-u-xl-8-24">
 			<label class="floating-label" for="participants">
 			
 			<?php _e('Participants','online-booking'); ?>
 			</label>
 		</div>
-		<div class="pure-u-1 pure-u-md-10-24">	
+		<div class="pure-u-1 pure-u-xl-10-24">	
 			<div class="fs1 input-box" aria-hidden="true" data-icon="">
 			<input type="number" id="participants" value="<?php echo $sel_participants; ?>" class="bk-form form-control" />
 			</div>
@@ -170,37 +172,43 @@ get_header(); ?>
 
 
 <div class="pure-u-1 pure-u-md-8-24 on-field hidden">							
-	<div class="pure-u-1 pure-u-md-2-4 hidden">
+	<div class="pure-u-1 pure-u-xl-2-4 hidden">
 		<input data-value="" value="<?php echo $dateN1; ?>" class="datepicker bk-form form-control" id="departure">
 	</div>
 </div>
 
 <!-- budget -->		
+<?php 
+	//defined option in admin plugin
+	$min_defined_budget =  esc_attr( get_option('ob_min_budget',50) ); 
+	$max_defined_budget =  esc_attr( get_option('ob_max_budget',600) ); 
+?>
 <div class="pure-u-1 pure-u-md-8-24 on-field">
 			<label for="">
 			<span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>
 			<?php _e('Budget par participant','online-booking'); ?>
-			(entre <span id="st">45</span> et <span id="end">300</span> €)
+			(entre <span id="st"><?php echo $min_defined_budget; ?></span> <?php _e('et','online-booking'); ?> <span id="end"><?php echo $max_defined_budget; ?></span> €)
 			</label>
-			<div id="slider-range"></div>
-			<input type="hidden" id="budget" value="45/300" class="bk-form form-control"  />
+			<div data-min="<?php echo $min_defined_budget; ?>" data-max="<?php echo $max_defined_budget; ?>" id="slider-range"></div>
+			<input type="hidden" id="budget" value="<?php echo $min_defined_budget; ?>/<?php echo $max_defined_budget; ?>" class="bk-form form-control"  />
 </div>
 <!-- #budget -->
 
 <!-- Number of days -->
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-md-12-24">
+	<div class="pure-g">
+		<div class="pure-u-1 pure-u-xl-12-24">
 		<label class="floating-label" for="days">
 		<?php //<span class="fs1" aria-hidden="true" data-icon=""></span>  ?>
 		<?php _e('Nombre de jours',''); ?>
 		</label>	
 		</div>
-		<div id="days-modifier" class="pure-u-1 pure-u-md-12-24">
+		<div data-max="<?php echo esc_attr( get_option('ob_max_days',4) ); ?>" id="days-modifier" class="pure-u-1 pure-u-xl-12-24">
 			<button onclick="removeLastDay();">-</button>
 			<input id="daysCount" readonly name="daysCount" type="number" value="2" />
 			<button onclick="addADay();">+</button>	
 		</div>
-	
+	</div>
 </div>
 <!-- #Number of days -->
 
@@ -312,7 +320,7 @@ $terms = get_terms($taxonomies, $args);
       <?php dynamic_sidebar( 'right_sidebar' ); ?>
        <?php endif; ?>
       	    <div id="caller-side" class="pure-g">
-		    <div class="pure-u-1-2">
+		    <div class="pure-u-1 pure-u-xl-1-2">
 			    	<div id="pre-padd">
 			    		<img id="phone-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACMElEQVRYR7WXwXHaUBCG/zXY17iDlBBTgXEHTgdoIuXiEUGHiGPwEeUAFpNLxAykAzqw3AElkArss2NYjySEJZD0FkePo/jf7sf/dlcLoeAT+MMREfUYfGvZ/UGRpq5ntB9o6nszEDrp880JWl9v3GVdCffj5AD2k2/FoWm7V9oBSpLHeRl0ZdnfQx0QsQNVyXW7QMFkOCDQD9Wv0+UCTX3vEYRzNQCWlu22VLpjv6fpxGPpIWIYX7ruXKqX6I4CYMaD1XXbksBSDQW+FxLhUnKAmR2r2x9LtFJN5EAU8Jv6AP8x7f5uQKn1MgUFk59tAt9Xy/Ukj3Imc2DirQB8LIPQUXxprhhAMAu0jeMYYDYanb80n1cE+lDmgrZBlCZUusC8aqzPWobjPMnKS6bKvw0VtQDwwrT7n2WhZaocgKgjGHOz6xqy8GrV4UIimQs1QhwAJG05XAL0qZK/JohCAElXJHC8aLycGUWFGe+VoA4ISwbdli00hQBR6N+/vAvacFjVmgkDr5hOjGyCwgWHMW+sT5192FKAoyASO0Le0JiIr7NLbe4aGU8gDEzbvctNwqq7FjuhLvidgoGoxpzItUoH0hM6ILax70QA77gOsR9igN07o/FvIV1gBBRyB7LBlO8NQWYg2TGOciAPES0ym7FyYBXCvC047wZI4wb+sBe1lnJevPVAbrX7b4BdbTSfe/Hkq9isUtuzptQCkA24bdlrMLVBfLF15i+D50V/9V8BtLHxa2YLzj4AAAAASUVORK5CYII="/>
 Des questions ?
@@ -323,7 +331,7 @@ Des questions ?
 			    	</div>
 		    		    
 		    </div>
-		    <div class="pure-u-1-2">
+		    <div class="pure-u-1 pure-u-xl-1-2">
 			    <div id="pre-xs">
 			    	Du Lundi au Vendredi <br />
 					De 9h00 à 18h00

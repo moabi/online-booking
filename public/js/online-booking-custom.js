@@ -3,6 +3,12 @@ var $ = jQuery;
 var bookingPage = '/reservation-service/';
 var isBookingTpl = $('#booking-wrapper').length;
 var USERID = $('#user-logged-in-infos').attr("data-id");
+var daysSelector = $('#daysSelector');
+var sliderRange = $("#slider-range");
+var minBudget = sliderRange.data('min');
+var maxBudget = sliderRange.data('max');
+var maxDefinedDaysOption = $('#days-modifier').data('max');
+var maxDefinedDays = parseInt( maxDefinedDaysOption,10);
 var reservation = {
 	user 	  : '',
 	name	  : '',
@@ -491,9 +497,9 @@ function checkIfDateOk(start,end){
  * @returns {*}
  */
 function checkNumberOfDays(days){
-	if(days > 4 || isNaN(days) === true){
+	if(days > maxDefinedDays || isNaN(days) === true){
 		console.warn('number of days too high or wrong');
-		days = 4;
+		days = maxDefinedDays;
 	}
 
 	return days;
@@ -575,7 +581,9 @@ function defineTripDates(){
  *  update trip object
  */
 function addADay(){
-	if(reservation.days > 3){
+	//define max number of days
+	maxDays = (maxDefinedDays) ? (maxDefinedDays - 1) : 3;
+	if(reservation.days > maxDays){
 
 		var n = noty({
 			text: 'Nombre maximum de jour atteint',
@@ -656,6 +664,7 @@ function removeLastDay(){
 /*
  * getDays
  *
+ * return array days format d/m/y
  */
 function getDays(){
 	if(reservation){
@@ -674,29 +683,34 @@ function getDays(){
 		return false;
 	}
 }
-
+/*
+ * createDaysSelector
+ * return string trip days, append to selector
+ */
 function createDaysSelector(){
 	daysArray = getDays();
 	countD = daysArray.length;
-	$('#daysSelector').empty();
+	daysSelector.empty();
 	for(var i = 0; i < countD ; i++){
-		daySelector = '<span onClick="changeCurrentDay(\''+ daysArray[i] + '\')">'+ daysArray[i] +'</div>';
-		$('#daysSelector').append(daySelector);
+		currentDay = (daysArray[i] == reservation.currentDay) ? 'current': 'legal';
+		daySelector = '<span class="'+currentDay+'" onClick="changeCurrentDay(\''+ daysArray[i] + '\')">'+ daysArray[i] +'</div>';
+		daysSelector.append(daySelector);
 	}
 	
 }
 /*
+ * selectYourDay
+ * append days selector
  *
- *
+ * @param obj el selected activity
  */
 function selectYourDay(el){
 	createDaysSelector();
-	$('#daysSelector').insertAfter(el).fadeIn();
+	daysSelector.insertAfter(el).stop( true, true ).fadeIn();
+	$(el).parent().mouseleave(function(){
+		daysSelector.stop( true, true ).fadeOut();
+	});
 	
-	setTimeout(function(){
-		$('#daysSelector').fadeOut();
-	}, 4000);
-	//$('#daysSelector').css();
 }
 /*
  * Get this day active
@@ -1067,13 +1081,13 @@ jQuery(function () {
 	});
 
 	//SLIDER RANGE SETTINGS
-	var getBudgetMin = (reservation.budgetPerMin && reservation.budgetPerMin > 0) ? reservation.budgetPerMin : 100;
-	var getBudgetMax = (reservation.budgetPerMax && reservation.budgetPerMax > 0) ? reservation.budgetPerMax : 300;
+	var getBudgetMin = (reservation.budgetPerMin && reservation.budgetPerMin > minBudget) ? reservation.budgetPerMin : minBudget;
+	var getBudgetMax = (reservation.budgetPerMax && reservation.budgetPerMax > minBudget) ? reservation.budgetPerMax : maxBudget;
 
 	$("#slider-range").slider({
 		range: true,
-		min: 50,
-		max: 600,
+		min: minBudget,
+		max: maxBudget,
 		step: 10,
 		values: [getBudgetMin, getBudgetMax],
 		slide: function (event, ui) {
@@ -1252,8 +1266,5 @@ jQuery(function () {
 		}
 		// other options
 	});
-	/*STICKY*/
-	$("#sidebar-booking-b").stick_in_parent();
-
 
 });
