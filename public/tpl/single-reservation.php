@@ -46,19 +46,32 @@ get_header(); ?>
 					Durée : <strong><?php the_field('duree'); ?>h</strong>
 				</div>	
 				<?php endif; ?>
-				<?php if(get_field('nombre_de_personnes')): ?>
+				<?php if(get_field('nombre_de_personnes',$post->ID)): ?>
 				<div class="pure-u-1">
 					<div class="fs1" aria-hidden="true" data-icon=""></div>
-					Jusqu’à : <strong><?php the_field('nombre_de_personnes'); ?> personnes</strong>
+					<?php 
+						if(get_field('nombre_de_personnes') == 1 ){
+						echo 'Pour : <strong>'.get_field('nombre_de_personnes').' personne</strong>';
+					} else{
+						echo 'Jusqu’à : <strong>'. get_field('nombre_de_personnes').' personnes</strong>';
+					} ?>
+					
 				</div>	
 				<?php endif; ?>
 				
-				<?php if(get_field('prix')): ?>
+				
 				<div class="pure-u-1">
 					<div class="fs1" aria-hidden="true" data-icon=""></div>
-					Tarif : <strong><?php the_field('prix'); ?>€ / pers</strong>
+					<?php
+						if(get_field('prix') == 0 ){
+								echo 'Tarif : <strong>gratuit !</strong>';
+							} else {
+								echo 'Tarif : <strong>'.get_field('prix').'€ / pers</strong>';
+							}
+							?>
+					
 				</div>	
-				<?php endif; ?>
+				
 				
 				<?php echo $ux->single_reservation_btn($post->ID); ?>
 				<?php //echo $ux->get_theme_terms($post->ID); ?>	

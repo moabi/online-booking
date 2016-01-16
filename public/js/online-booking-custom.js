@@ -412,19 +412,40 @@ function addActivity(id,activityname,price,type,img,order){
  *@param price : number	
  */
 function deleteActivity(day,id,price){
-	//console.log(day);
-	$('.dayblock[data-date="'+day+'"]').find('.day-content div[data-id="'+ id +'"]').remove();
-	var target = $('.dayblock[data-date="'+day+'"]').find('.day-wrapper');
-	target.addClass('anim-effect-boris');
-	setTimeout(function(){
-		target.removeClass('anim-effect-boris');
-	}, 300);
-	obj = reservation.tripObject[day];
-	//console.log('obj price : ' + price);
-	reservation.currentBudget = parseInt( (reservation.currentBudget - price),10);
-	delete obj[id];
-	checkBudget();
-	tripToCookie(reservation);
+		var n = noty ({
+		layout: 'center',
+		modal: true,
+		text: 'Êtes vous sûr de vouloir supprimer cette activité de votre programme ?',
+		template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+		closeWith:['button'],
+		buttons: [
+			{addClass: 'btn-reg btn btn-primary', text: 'Poursuivre et supprimer', onClick: function($noty) {
+
+				$noty.close();
+				//console.log(day);
+				$('.dayblock[data-date="'+day+'"]').find('.day-content div[data-id="'+ id +'"]').remove();
+				var target = $('.dayblock[data-date="'+day+'"]').find('.day-wrapper');
+				target.addClass('anim-effect-boris');
+				setTimeout(function(){
+					target.removeClass('anim-effect-boris');
+				}, 300);
+				obj = reservation.tripObject[day];
+				//console.log('obj price : ' + price);
+				reservation.currentBudget = parseInt( (reservation.currentBudget - price),10);
+				delete obj[id];
+				checkBudget();
+				tripToCookie(reservation);
+
+			}
+			},
+			{addClass: 'btn-reg btn btn-danger', text: 'Annuler l\'opération', onClick: function($noty) {
+				$noty.close();
+			}
+			}
+		],
+		type: 'confirm',
+
+	});
 
 }
 
@@ -721,8 +742,23 @@ function selectYourDay(el){
 function changeCurrentDay(day){
 	reservation.currentDay = day;
 	$(".dayblock[data-date='"+ day+"']").addClass('current').siblings().removeClass('current');
-	var n = noty({text: 'changement du jour actif'});
+			var n = noty ({
+			layout: 'bottomCenter',
+			text: 'Changement de jour',
+			template: '<div class="cdnoty"><span class="noty_text"></span></div>',
+			timeout: 1000,
+			type: 'information',
+			animation: {
+		        open: 'animated fadeIn', // jQuery animate function property object
+		        close: 'animated fadeOut', // jQuery animate function property object
+		        easing: 'swing', // easing
+		        speed: 180 // opening & closing animation speed
+		    }
+
+		});
 	tripToCookie(reservation);
+	
+
 }
 /*
  * delete full Day
@@ -736,7 +772,10 @@ function removeDay(day){
 	$(".dayblock[data-date='"+ day+"']").remove();
 	reservation.departure = $('.dayblock:last-child').attr('data-date');
 	tripToCookie(reservation);
-	var n = noty({text: 'Jour supprimé'});
+	var n = noty({
+		text: 'Jour supprimé'
+		});
+
 }
 
 /*
@@ -815,15 +854,11 @@ function changeDateRangeEvent(selectedDate){
 		}
 	}
 
-
 	//console.log(reservation);
 	//re-create html days
 	loadTrip(reservation,false);
 	tripToCookie(reservation);
 	var n = noty({text: 'date changée'});
-
-
-
 }
 
 

@@ -34,7 +34,7 @@ function tsm_deregister_admin_styles() {
 	echo '<h1 class="page-title">'.get_the_title().'</h1>';
 	
 	if ( !(is_user_logged_in()|| current_user_can('publish_posts') ) )
-	echo 'Merci de vous connecter pour pouvoir ajouter votre activité';
+	the_field('txt');
 	
 	if ( is_user_logged_in()|| current_user_can('publish_posts')  ) {
 		the_content();

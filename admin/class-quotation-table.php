@@ -40,11 +40,13 @@ class Quotation_Table extends WP_List_Table
             'user_ID'       	=> 'utilisateur',
             'booking_ID' 		=> 'Event name',
             'booking_date' 		=> 'Date',
-            'booking_object'	=> 'Devis'
+            'booking_object'	=> 'Devis',
+            'booking_validation'=> 'Validation'
         );
 
         return $columns;
     }
+    
     
     /**
      * Define which columns are hidden
@@ -64,7 +66,12 @@ class Quotation_Table extends WP_List_Table
      */
     public function get_sortable_columns()
     {
-        return array('booking_date' => array('booking_date', false));
+	    $sortable_columns = array(
+		    'user_ID' => array('user_ID', false),
+	    	'booking_date' => array('booking_date', false)
+	    	);
+        return $sortable_columns;
+
     }
     
     /**
@@ -76,12 +83,20 @@ class Quotation_Table extends WP_List_Table
     {
 	    global $wpdb;
 			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID	
+			/*
 			$sql = $wpdb->prepare(" 
 						SELECT *
 						FROM ".$wpdb->prefix."online_booking a	
 						WHERE a.validation = %d
-						",$this->validation_state); 
-					
+						",$this->validation_state); */
+			//4 should be a archived stuff
+			$sql = $wpdb->prepare(" 
+						SELECT *
+						FROM ".$wpdb->prefix."online_booking a	
+						WHERE a.validation != %d
+						ORDER BY a.booking_date
+						",4);
+							
 			$results = $wpdb->get_results($sql);
 			$data = json_decode(json_encode($results), true);
 			//var_dump($data);
@@ -209,7 +224,16 @@ class Quotation_Table extends WP_List_Table
 				return $newDate;
             case 'booking_object':
             	
-            case 'booking_ID':
+            case 'booking_validation':
+            	if($item['validation'] == 0){
+	            	$state = 'Nouveau devis';
+            	}elseif($item['validation'] == 1){
+	            	$state = 'Devis validé';
+            	}else{
+	            	$state = 'Facturation';
+            	}
+            	return $state;
+            	
             case 'booking_ID':
                 return $item[ $column_name ];
 
@@ -274,7 +298,7 @@ class Quotation_Table extends WP_List_Table
 	public function process_bulk_action() {
 	
 	  //Detect when a bulk action is being triggered...
-	  if ( 'delete' === $this->current_action() ) {
+	  if ( 'delete' === $this->current_action() || 'validate' === $this->current_action() ) {
 	
 	    // In our file that handles the request, verify the nonce.
 	    $nonce = esc_attr( $_REQUEST['_wpnonce'] );
@@ -285,27 +309,58 @@ class Quotation_Table extends WP_List_Table
 	    else {
 	      //self::delete_customer( absint( $_GET['customer'] ) );
 	
-	      wp_redirect( esc_url( add_query_arg() ) );
-	      exit;
+	       wp_die('Items deleted (or they would be if we had items to delete)!');
 	    }
 	
 	  }
-	
+	  //$admin_action = new Online_Booking_Admin;
+	  //$mailer = new Online_Booking_Mailer;
 	  // If the delete bulk action is triggered
 	  if ( ( isset( $_POST['action'] ) && $_POST['action'] == 'bulk-delete' )
 	       || ( isset( $_POST['action2'] ) && $_POST['action2'] == 'bulk-delete' )
 	  ) {
 	
-	    $delete_ids = esc_sql( $_POST['bulk-delete'] );
+	    $order_ids = esc_sql( $_POST['order'] );
 	
 	    // loop over the array of record IDs and delete them
-	    foreach ( $delete_ids as $id ) {
+	    foreach ( $order_ids as $id ) {
 	      //self::delete_customer( $id );
+	      $sender = new Online_Booking_Mailer;
+	      $sender->send_mail('confirmation','moabi31@gmail.com','Hello world'. $id);
 	
 	    }
 	
-	    wp_redirect( esc_url( add_query_arg() ) );
-	    exit;
+	     wp_die('Items deleted');
+	    
+	  } elseif( ( isset( $_POST['action'] ) && $_POST['action'] == 'bulk-validate' )
+	  		|| ( isset( $_POST['action2'] ) && $_POST['action2'] == 'bulk-validate') 
+	  ){
+		  
+			$order_ids = esc_sql( $_POST['order'] );
+			global $wpdb;
+
+		    // loop over the array of record IDs and delete them
+		    foreach ( $order_ids as $id ) {
+		      $table = $wpdb->prefix.'online_booking';
+				$rowToEstimate = $wpdb->update( 
+						$table, 
+						array(
+							'validation'	=> 1
+						),
+						array( 
+							'ID' 			=> $id,
+						),
+						array(
+							'%d'
+						),
+						array( '%d' ) 
+				 );
+				$sender = new Online_Booking_Mailer;
+	      $sender->send_mail('confirmation','moabi31@gmail.com','Hello world'. $id);
+		
+		    }
+	
+		     wp_die('Settings updated');
 	  }
 	}
 

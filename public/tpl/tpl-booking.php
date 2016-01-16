@@ -205,7 +205,7 @@ get_header(); ?>
 		</div>
 		<div data-max="<?php echo esc_attr( get_option('ob_max_days',4) ); ?>" id="days-modifier" class="pure-u-1 pure-u-xl-12-24">
 			<button onclick="removeLastDay();">-</button>
-			<input id="daysCount" readonly name="daysCount" type="number" value="2" />
+			<input id="daysCount" readonly name="daysCount" type="text" value="2" />
 			<button onclick="addADay();">+</button>	
 		</div>
 	</div>

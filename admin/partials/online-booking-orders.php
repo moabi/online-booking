@@ -28,7 +28,7 @@
 	
 	
 	
-	echo '<input type="hidden" name="page" value="online-booking-orders">';
+	echo '<input type="hidden" name="page" value="'.$_REQUEST['page'].'">';
 	$wp_list_table->search_box( 'search', 'search_id' );
 	$wp_list_table->prepare_items();
 	$wp_list_table->display();

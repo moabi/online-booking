@@ -494,7 +494,7 @@ public function sejour_post_type() {
 	$labels = array(
 		'name'                => _x( 'sejours', 'Post Type General Name', 'twentyfifteen' ),
 		'singular_name'       => _x( 'sejour', 'Post Type Singular Name', 'twentyfifteen' ),
-		'menu_name'           => __( 'sejour', 'twentyfifteen' ),
+		'menu_name'           => __( 'sejour (Pack)', 'twentyfifteen' ),
 		'name_admin_bar'      => __( 'sejour', 'twentyfifteen' ),
 		'parent_item_colon'   => __( 'Parent sejour:', 'twentyfifteen' ),
 		'all_items'           => __( 'Tous les sejours', 'twentyfifteen' ),
@@ -694,6 +694,7 @@ public static function wp_query_thumbnail_posts(){
 	/*
 		provide a shortcode
 		show activites
+		[ob-activities]
 	*/
 	public function home_activites($atts){
 		
@@ -722,7 +723,9 @@ public static function wp_query_thumbnail_posts(){
 				$output .= '<a href="'.get_the_permalink().'">';
 				$output .= get_the_post_thumbnail($postid, 'square');
 				$output .= '</a></div>';
+				$output .= '<a href="'.get_the_permalink().'">';
 				$output .= '<div class="head-img">'.get_the_title().'</div>';
+				$output .= '</a>';
 				$output .= '<div class="presta">';
 				$output .= '<div class="exc">'.substr($exc, 0, 70) . '...</div>';
 				$output .= '<span class="fs1" aria-hidden="true" data-icon=""></span>'.get_field('nombre_de_personnes');
@@ -747,6 +750,7 @@ public static function wp_query_thumbnail_posts(){
 	/*
 		provide a shortcode
 		show sejours
+		[ob-sejours]
 	*/
 	public function home_sejours($atts){
 		
@@ -777,7 +781,9 @@ public static function wp_query_thumbnail_posts(){
 				$output .= '<a href="'.get_the_permalink().'">';
 				$output .= get_the_post_thumbnail($postid, 'square');
 				$output .= '</a></div>';
+				$output .= '<a href="'.get_the_permalink().'">';
 				$output .= '<div class="head-img">'.get_the_title().'</div>';
+				$output .= '</a>';
 				$output .= '</div>';
 				
 		}

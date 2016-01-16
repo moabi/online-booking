@@ -89,9 +89,16 @@ class online_booking_ux  {
 		$data = '';
 		if(!empty($term_lieu) && $id):
 			$data .= '<span class="fs1" aria-hidden="true" data-icon=""></span>';
+			$i = 0;
 			foreach($term_lieu as $key=>$value){
 				$term_link = get_term_link( $value );
-				$data .= '<span>Lieu : <a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span> ';
+				if($i == 0){
+					$data .= '<span>Lieu : <a href="' . esc_url( $term_link ) . '">'.$value->name.'</a></span>';
+				} else {
+					$data .= ', <a href="' . esc_url( $term_link ) . '">'.$value->name.'</a>';
+				}
+				
+				$i++;
 			}
 		endif;
 		

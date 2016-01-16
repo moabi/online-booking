@@ -54,6 +54,8 @@ class Online_Booking_Mailer {
 	 * send_mail
 	 *
 	 * @param $type
+	 * @param $to
+	 * @param $body
 	 */
 	public function send_mail($type,$to,$body){
 		
