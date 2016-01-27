@@ -531,6 +531,49 @@ public function sejour_post_type() {
 }
 
 
+// Register Custom Post Type
+public function partner_post_type() {
+
+	$labels = array(
+		'name'                => _x( 'Partenaires', 'Post Type General Name', 'twentyfifteen' ),
+		'singular_name'       => _x( 'Partenaire', 'Post Type Singular Name', 'twentyfifteen' ),
+		'menu_name'           => __( 'Partenaires', 'twentyfifteen' ),
+		'name_admin_bar'      => __( 'Partenaire', 'twentyfifteen' ),
+		'parent_item_colon'   => __( 'Partenaire supérieur:', 'twentyfifteen' ),
+		'all_items'           => __( 'Tous les partenaires', 'twentyfifteen' ),
+		'add_new_item'        => __( 'Ajouter partenaire', 'twentyfifteen' ),
+		'add_new'             => __( 'Nouveau partenaire', 'twentyfifteen' ),
+		'new_item'            => __( 'Nouveau partenaire', 'twentyfifteen' ),
+		'edit_item'           => __( 'Editer partenaire', 'twentyfifteen' ),
+		'update_item'         => __( 'Mettre à jour partenaire', 'twentyfifteen' ),
+		'view_item'           => __( 'Voir partenaire', 'twentyfifteen' ),
+		'search_items'        => __( 'Chercher un partenaire', 'twentyfifteen' ),
+		'not_found'           => __( 'Non trouvé', 'twentyfifteen' ),
+		'not_found_in_trash'  => __( 'Non trouvé dans la poubelle', 'twentyfifteen' ),
+	);
+	$args = array(
+		'label'               => __( 'sejour', 'twentyfifteen' ),
+		'description'         => __( 'sejour for SB', 'twentyfifteen' ),
+		'labels'              => $labels,
+		'supports'            => array( 'title', 'editor', 'thumbnail','author'),
+		'hierarchical'        => false,
+		'public'              => true,
+		'show_ui'             => true,
+		'show_in_menu'        => true,
+		'menu_position'       => 5,
+		'show_in_admin_bar'   => true,
+		'show_in_nav_menus'   => true,
+		'can_export'          => true,
+		'has_archive'         => false,
+		'exclude_from_search' => true,
+		'publicly_queryable'  => false,
+		'capability_type'     => 'page',
+	);
+	register_post_type( 'partner', $args );
+
+}
+
+
 /*
 	ajax FUNCTIONS
 */

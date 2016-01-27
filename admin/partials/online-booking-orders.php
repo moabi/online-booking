@@ -27,7 +27,14 @@
 	$wp_list_table = new Quotation_Table($args);
 	
 	
-	
+	?>
+	<p class="search-box">
+<label class="screen-reader-text" for="search_id-search-input">
+search:</label> 
+<input id="search_id-search-input" type="text" name="s" value="" /> 
+<input id="search-submit" class="button" type="submit" name="" value="search" />
+</p>
+	<?php
 	echo '<input type="hidden" name="page" value="'.$_REQUEST['page'].'">';
 	$wp_list_table->search_box( 'search', 'search_id' );
 	$wp_list_table->prepare_items();

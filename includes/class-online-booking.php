@@ -212,6 +212,7 @@ class Online_Booking {
 		$this->loader->add_action( 'init', $plugin_public, 'reservation_type',0 );
 		$this->loader->add_action( 'init', $plugin_public, 'car_post_type',0 );
 		$this->loader->add_action( 'init', $plugin_public, 'sejour_post_type',0 );
+		//$this->loader->add_action( 'init', $plugin_public, 'partner_post_type',0 );
 		
 		$this->loader->add_shortcode( 'frontform', $plugin_public,'front_form_shortcode' );
 		$this->loader->add_shortcode( 'ob-activities',$plugin_public, 'home_activites' );

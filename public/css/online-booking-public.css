@@ -95,7 +95,7 @@ input.required{color:red!important;border-color:red!important;background-color:r
 #booking-wrapper{position:relative;width:100%;margin:auto;display:block;float:left}
 hr.clearfix{display:block}
 .padd-l{padding:0 0 0 1em;margin:0}
-#slider-range{max-width:300px;margin:0 10px}
+#slider-range{max-width:300px;margin: 10px 10px 0;}
 #settings-title span{float:left;margin:0 2% 0 0}
 #booking-wrapper h2.upptitle span{font-size:14px;color:#7C7C7C;text-transform:none;font-weight:300;margin:0 0 0 2em}
 #booking-wrapper h2.upptitle{color:#F2910C;float:left;display:block;clear:both;padding:8px 0;font-weight:900;font-size:22px;width:98%;text-align:left;margin:0 0 .5em;text-transform:none}
@@ -148,16 +148,45 @@ hr.clearfix{display:block}
 .form-booking input#participants,.form-booking input#arrival{float:right;width:60%;margin-left:-1px;border:none;max-height:46px;line-height:46px}
 .form-booking label span.fs1{margin:0 4px 0 0;color:rgba(46,170,221,0.78)}
 .form-booking label{font-size:13px;color:rgba(0,0,0,0.57);line-height:22px;padding:0}
+.form-booking label em{font-size:10px;}
 #days-modifier button{border-radius:0;height:50px;width:50px;font-size:100%;line-height:20px;text-align:center;margin:0;padding:0;background:#fff;color:#7B7B7B;border:1px solid #DFDFDF}
 #daysCount{display:inline-block;width: 18px;text-align:center;border:none;padding: 0 .2em;margin:0;background:none;}
 #typeterms{float:none;width:100%;padding:0;clear:both;display:block;margin:0 auto;list-style:none}
-#typeterms li{float:left;position:relative}
-#typeterms li:hover > ul.sub{display:block}
+#typeterms li{float:left;position:relative;background: #F4EDE5;transition: all .4s ease;}
+#typeterms li:hover > ul.sub{display:block;border-top: 1px solid #E5E1DB;width: 170px;min-width: 0;box-shadow: 3px 3px 3px rgba(165, 157, 149, 0.41);max-width: 100%;}
+#typeterms ul.sub{}
+#typeterms ul.sub:after, #typeterms ul.sub:before {
+	bottom: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+#typeterms ul.sub:after {
+	border-color: rgba(240, 237, 232, 0);
+	border-bottom-color: #F0EDE8;
+	border-width: 6px;
+	margin-left: -6px;
+}
+#typeterms ul.sub:before {
+	border-color: rgba(214, 210, 203, 0);
+	border-bottom-color: #D6D2CB;
+	border-width: 7px;
+	margin-left: -7px;
+}
 #typeterms li > ul{list-style:none}
-#typeterms li > ul.sub{list-style:none;display:none;top:50px;left:0;z-index:99;box-shadow:none}
-#typeterms li > ul li{margin:0;background-color:#f7f7f7;font-style:italic}
-#typeterms span input{float:left;width:auto;margin:12px 8px 0 0}
-#typeterms span{float:left;width:auto;display:block;clear:none;margin:0;padding:.4em 2em;background:#F4EDE5;border:1px solid rgba(197,192,185,0.59);line-height:36px;color:#616161}
+#typeterms li i{margin: 0;position: absolute;top: 10px;right: 12px;}
+#typeterms li label{cursor:pointer;line-height: 45px;}
+#typeterms li > ul.sub{list-style:none;display:none;top: 48px;left:0;z-index:99;box-shadow:none;transition: all .4s ease;}
+#typeterms li > ul li{border-bottom: 1px solid #E5E1DB;clear:both;}
+#typeterms li > ul li input{top: 15px;}
+#typeterms li > ul li span{margin:0;font-size: 12px;background: #F0EDE8;border: none;height: 40px;padding: 0;}
+#typeterms span input{position: absolute;width:auto;margin: 0;line-height: 1;left: 1em;top: 22px;}
+#typeterms span{float:left;width:auto;display:block;clear:none;margin:0;padding: .4em 0;background:#F4EDE5;border:1px solid rgba(197,192,185,0.59);line-height:36px;color:#616161;width: 170px;text-align: center;cursor: pointer;}
 img{max-width:100%}
 #desc-ar{background:rgba(175,175,175,0.13);padding:.5em 0 1em;margin:1em 0 2em;color:rgba(129,129,131,0.63)}
 .archive-reservations h4{border-bottom:1px solid;display:block;width:100%}
@@ -237,19 +266,20 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float:none;p
 .single h2.related-title .fs1{color:#F2910C;float:left;margin:0 1em 0 0}
 .slickReservation img{display:block;max-width:100%;max-height:400px;margin:auto}
 .slickReservation .fs1.prevmulti,.slickReservation .fs1.nextmulti{cursor:pointer;position:absolute;font-size:90px;top:20%;left:0;width:auto;color:#35AADC}
-#activity-gallery{position:relative;overflow:hidden;margin:0 0 1em}
-#single-top-information{line-height:48px;color:#000;font-size:24px;z-index:9;padding:0;overflow:hidden}
+#activity-gallery{position:relative;overflow:hidden;margin:0 0 1em;z-index: 2;}
+#single-top-information{line-height:48px;color:#000;font-size:24px;z-index:9;padding:0;overflow:hidden;position: relative;}
 #main-content{background:#fff;z-index:1;position:relative}
+#middle-bar{position:relative;clear:both;z-index:2}
 #primary-b{position:relative;z-index:1}
 #custom-bg{position:absolute;top:120px;left:0;width:100%;height:400px;background-repeat:no-repeat;background-size:cover;z-index:0;-webkit-filter:blur(20px);-moz-filter:blur(20px);-o-filter:blur(20px);-ms-filter:blur(20px);filter:blur(20px);border-top:1px solid #ccc;overflow:hidden}
-.box-price{padding:2% 4%;border:1px solid #ccc;margin:auto;display:block;width:86%;float:right;height:100%;display:block;color:rgba(0,0,0,0.54);font-size:16px;z-index:1;background:#fff}
+.box-price{padding:2% 4%;border:1px solid #ccc;margin:auto;display:block;width:86%;float:right;height:100%;display:block;color:rgba(0,0,0,0.54);font-size:16px;z-index:1;background:#fff;position: relative;}
 .box-price .fs1{float:left;margin:0 .5em 0 0;font-size:26px;color:#F18F11}
 .box-price p{font-size:14px}
 #crp_related ul li{float:left;margin:0 5px 40px;text-align:center}
 #primary-b #activity-gallery h1{position:relative;z-index:1;left:0;width:100%;margin:0;top:20%;font-size:28px;text-shadow:0 1px 0 rgba(255,255,255,0.69);text-align:left;color:rgba(0,0,0,0.86);font-weight:700;padding:0}
 .slick-single{padding:30px}
 #single-tabber{overflow:hidden}
-#tabs-single{background:#F5F5F5}
+#tabs-single{background:#F5F5F5;clear: both;display: block;}
 #single-tabber .active a{background-color:#F5F5F5;color:#404040;margin:0;border-bottom:1px solid #F5F5F5;position:relative}
 #single-tabber .active a .fs1{color:#636363}
 #single-tabber .active a::after{content:"";display:block;width:90%;margin:0 auto;height:4px;background:#F2910D;position:absolute;bottom:6px;left:0;right:0}

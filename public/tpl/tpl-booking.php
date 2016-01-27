@@ -64,7 +64,7 @@ get_header(); ?>
 				'show_option_all'    => '',
 				'show_option_none'   => '',
 				'option_none_value'  => '-1',
-				'orderby'            => 'ID', 
+				'orderby'            => 'NAME', 
 				'order'              => 'ASC',
 				'show_count'         => 0,
 				'hide_empty'         => true, 
@@ -87,7 +87,7 @@ get_header(); ?>
 				'show_option_all'    => '',
 				'show_option_none'   => '',
 				'option_none_value'  => '-1',
-				'orderby'            => 'ID', 
+				'orderby'            => 'NAME', 
 				'order'              => 'ASC',
 				'show_count'         => 0,
 				'hide_empty'         => true, 
@@ -124,30 +124,34 @@ get_header(); ?>
 	</div>
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-xl-8-24">
-		<label class="floating-label" for="float-select">
-		<?php //<span class="fs1" aria-hidden="true" data-icon=""></span> ?>
-		Le lieu</label>
-		</div>
-		<div class="pure-u-1 pure-u-xl-12-24">
-		<?php wp_dropdown_categories( $argsLieux ); ?> 
+		<div class="padd-l">
+			<div class="pure-u-1 pure-u-xl-8-24">
+			<label class="floating-label" for="float-select">
+			<?php //<span class="fs1" aria-hidden="true" data-icon=""></span> ?>
+			Le lieu</label>
+			</div>
+			<div class="pure-u-1 pure-u-xl-12-24">
+			<?php wp_dropdown_categories( $argsLieux ); ?> 
+			</div>
 		</div>
 	</div>
 	
 
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-	<div class="pure-g">
-	<div class="pure-u-1 pure-u-xl-12-24">	
-		<label class="floating-label" for="arrival">
-			 
-			<?php _e('Arrivée sur place','online-booking'); ?>
-		</label>	
-	</div>
-	<div class="pure-u-1 pure-u-xl-12-24">		
-		<div class="fs1 input-box" aria-hidden="true" data-icon="">		
-		<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
-		</div>	
-	</div>
+	<div class="padd-l">
+		<div class="pure-g">
+		<div class="pure-u-1 pure-u-xl-12-24">	
+			<label class="floating-label" for="arrival">
+				 
+				<?php _e('Arrivée sur place','online-booking'); ?>
+			</label>	
+		</div>
+		<div class="pure-u-1 pure-u-xl-12-24">		
+			<div class="fs1 input-box" aria-hidden="true" data-icon="">		
+			<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
+			</div>	
+		</div>
+		</div>
 	</div>
 </div>
 
@@ -171,10 +175,8 @@ get_header(); ?>
 
 
 
-<div class="pure-u-1 pure-u-md-8-24 on-field hidden">							
-	<div class="pure-u-1 pure-u-xl-2-4 hidden">
+<div class="on-field hidden">	
 		<input data-value="" value="<?php echo $dateN1; ?>" class="datepicker bk-form form-control" id="departure">
-	</div>
 </div>
 
 <!-- budget -->		
@@ -184,18 +186,21 @@ get_header(); ?>
 	$max_defined_budget =  esc_attr( get_option('ob_max_budget',600) ); 
 ?>
 <div class="pure-u-1 pure-u-md-8-24 on-field">
+	<div class="padd-l">
 			<label for="">
 			<span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>
-			<?php _e('Budget par participant','online-booking'); ?>
-			(entre <span id="st"><?php echo $min_defined_budget; ?></span> <?php _e('et','online-booking'); ?> <span id="end"><?php echo $max_defined_budget; ?></span> €)
+			<?php _e('Budget par participant','online-booking'); ?><em>
+			(entre <span id="st"><?php echo $min_defined_budget; ?></span> <?php _e('et','online-booking'); ?> <span id="end"><?php echo $max_defined_budget; ?></span> €)</em>
 			</label>
 			<div data-min="<?php echo $min_defined_budget; ?>" data-max="<?php echo $max_defined_budget; ?>" id="slider-range"></div>
 			<input type="hidden" id="budget" value="<?php echo $min_defined_budget; ?>/<?php echo $max_defined_budget; ?>" class="bk-form form-control"  />
+	</div>
 </div>
 <!-- #budget -->
 
 <!-- Number of days -->
 <div class="pure-u-1 pure-u-md-8-24 on-field">
+	<div class="padd-l">
 	<div class="pure-g">
 		<div class="pure-u-1 pure-u-xl-12-24">
 		<label class="floating-label" for="days">
@@ -209,12 +214,13 @@ get_header(); ?>
 			<button onclick="addADay();">+</button>	
 		</div>
 	</div>
+	</div>
 </div>
 <!-- #Number of days -->
 
 </div>
 
-	
+	<div class="clearfix"></div>
 </div>
 <!-- #SETTING -->
 
@@ -263,8 +269,10 @@ $terms = get_terms($taxonomies, $args);
      echo '<ul id="typeterms" class="sf-menu">';
      foreach ( $terms as $term ) {
 	 	//var_dump($term);
+	 	$fa_icon = get_field('fa_icon', $term->taxonomy.'_'.$term->term_id);
 	 	echo '<li>';
-       echo '<span><input type="checkbox" name="typeactivite" value="'.$term->term_id.'" />' . $term->name.'</span>';
+       echo '<span><i class="fa '.$fa_icon.'"></i><input id="term-'.$term->term_id.'" type="checkbox" name="typeactivite" value="'.$term->term_id.'" />';
+       echo '<label for="term-'.$term->term_id.'">'.$term->name.'</label></span>';
        	     $args = array(
 		    'hide_empty'        => true, 
 		    'child_of'          => $term->term_id,
@@ -272,10 +280,14 @@ $terms = get_terms($taxonomies, $args);
 		    'order'				=> 'ASC'
 		); 
 		$childTerms = get_terms($taxonomies, $args);
-		 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
+		 if ( ! empty( $childTerms ) && ! is_wp_error( $terms ) ){
 			 echo '<ul class="sub">';
 		foreach ( $childTerms as $childterm ) {
-			echo '<li><span><input type="checkbox" name="typeactivite" value="'.$childterm->term_id.'" />' . $childterm->name.'</span></li>';
+			
+			echo '<li><span>';
+			echo '<input id="term-'.$childterm->term_id.'" type="checkbox" name="typeactivite" value="'.$childterm->term_id.'" />';
+			echo '<label for="term-'.$childterm->term_id.'">'.$childterm->name.'</label>';
+			echo '</span></li>';
 		}
 		echo '</ul>';
 		}

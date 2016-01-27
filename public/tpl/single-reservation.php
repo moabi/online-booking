@@ -43,7 +43,21 @@ get_header(); ?>
 				<?php if(get_field('duree')): ?>
 				<div class="pure-u-1">
 					<div class="fs1" aria-hidden="true" data-icon="}"></div>
-					Durée : <strong><?php the_field('duree'); ?>h</strong>
+					<?php
+						$time = get_field('duree');
+						$time_s = get_field('duree-s');
+						if( is_int($time) ){
+							
+							echo $time.' '.$time_s;
+							
+						}else{
+							
+							$timeduration = explode('.', $time);
+							$mn = (isset($timeduration[1])) ? $timeduration[1] : '';
+							$duree = $timeduration[0].' '.$time_s.' '.$mn;
+						}
+						?>
+					Durée : <strong><?php echo $duree; ?></strong>
 				</div>	
 				<?php endif; ?>
 				<?php if(get_field('nombre_de_personnes',$post->ID)): ?>
@@ -94,18 +108,35 @@ get_header(); ?>
 	<div class="pure-u-1-3 active">
 		<a href="#" class="tabsto" data-target="0">
 			<div class="fs1" aria-hidden="true" data-icon=""></div>
-			Description</a>
+			<?php _e('Description','online-booking'); ?>
+		</a>
 	</div>
+	
+	<?php if(get_field('infos_pratiques')): ?>
 	<div class="pure-u-1-3">
 		<a href="#" class="tabsto" data-target="1">
 			<div class="fs1" aria-hidden="true" data-icon=""></div>
-			Informations pratiques</a>
+			<?php _e('Informations pratiques','online-booking'); ?>
+		</a>
 	</div>
+	<?php endif; ?>
+	
+	<?php if(get_field('lieu')): ?>
 	<div class="pure-u-1-3">
 		<a href="#" class="tabsto" data-target="2">
 			<div class="fs1" aria-hidden="true" data-icon=""></div>
-		Lieu</a>
+			<?php _e('Lieu','online-booking'); ?>
+		</a>
 	</div>
+	<?php endif; ?>
+	<?php if(get_field('responsable')): ?>
+	<div class="pure-u-1-3">
+		<a href="#" class="tabsto" data-target="3">
+			<div class="fs1" aria-hidden="true" data-icon=""></div>
+			<?php _e('Responsable','online-booking'); ?>
+		</a>
+	</div>
+	<?php endif; ?>
 </div>
 
 </div>
@@ -119,16 +150,12 @@ get_header(); ?>
 	<div class="single-el">
 		<div class="comprend">
 			<div id="animation-text">
-						<?php 
-					$default_attr = array(
-			'class' => "alignleft"
-		);
-					the_post_thumbnail('thumbnail',$default_attr); ?>
+					
 				<?php 
 					if(get_the_content()){
 						the_content(); 
 					}else{
-						_e('Contenu non disponible','online-booking');
+						_e('Description non disponible','online-booking');
 					}
 					
 					?>
@@ -137,25 +164,33 @@ get_header(); ?>
 		</div>
 	</div>
 	
+	<?php if(get_field('infos_pratiques')): ?>
 	<div class="single-el">
-		<?php 
-			if(get_field('infos_pratiques')){
-				the_field('infos_pratiques');
-			}else{
-				_e('Contenu non disponible','online-booking');
-			}
-			 ?>
+		<?php the_field('infos_pratiques'); ?>
 	</div>
+	<?php endif; ?>
 	
+	<?php if(get_field('lieu')): ?>
 	<div class="single-el">
-		<?php 
-			if(get_field('lieu')){
-				the_field('lieu');
-			}else{
-				_e('Contenu non disponible','online-booking');
-			}
-			?>
+		<?php the_field('lieu'); ?>
 	</div>
+	<?php endif; ?>
+	
+	<?php if(get_field('responsable')): ?>
+	<div class="single-el">
+		<?php //var_dump(get_field('responsable')); ?>
+		<?php
+			echo '<ul>';
+			$user_partner = get_field('responsable');
+			$user_partner_ID = $user_partner['ID'];
+			echo '<li>Nom : '.$user_partner['user_firstname'].' '.$user_partner['user_lastname'].'</li>';
+			echo '<li>Site web : '.$user_partner['user_url'].'</li>';
+			echo '<li>Téléphone : '.get_field('telephone', 'user_'.$user_partner_ID).' <br />Fax : '.get_field('fax', 'user_'.$user_partner_ID).'</li>';
+			echo '<li>'.get_field('ville', 'user_'.$user_partner_ID).', '.get_field('code_postal', 'user_'.$user_partner_ID).'<br /> '.get_field('pays', 'user_'.$user_partner_ID).'</li>';
+			echo '</ul>';
+		?>
+	</div>
+	<?php endif; ?>
 	
 </div>
 
