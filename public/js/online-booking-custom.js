@@ -1105,7 +1105,7 @@ function the_activites(){
 
 jQuery(function () {
 
-
+ $("#sidebar-sticky").sticky({topSpacing:0});
 	$('.postform').select2({
 		'width' : '96%'
 	});

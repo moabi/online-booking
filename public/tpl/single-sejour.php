@@ -32,6 +32,7 @@ get_header(); ?>
 
 		<header class="entry-header">
 			<h1 class="entry-title">
+				<i class="fa fa-search"></i>
 				<?php the_title(); ?> 
 				
 			</h1>
@@ -61,8 +62,10 @@ get_header(); ?>
 <div id="main-content">
 	<div class="pure-g">
 		<div class="pure-u-1-2">
-			<div class="fs1" aria-hidden="true" data-icon="p"></div>
+			<div class="pack-perso">
+				<div class="fs1" aria-hidden="true" data-icon="p"></div>
 			<?php _e('Tous nos packages sont personnalisables','online-booking'); ?>
+			</div>
 		</div>
 		<div class="pure-u-1-2">
 			<?php echo $ux->socialShare(); ?>
@@ -77,8 +80,11 @@ get_header(); ?>
 
 	<div class="pure-g">
 		<div class="pure-u-1-2">
-			<div class="fs1" aria-hidden="true" data-icon="p"></div>
+			<div class="pack-perso">
+				<div class="fs1" aria-hidden="true" data-icon="p"></div>
 			<?php _e('Tous nos packages sont personnalisables','online-booking'); ?>
+			</div>
+			
 		</div>
 		<div class="pure-u-1-2">
 			<?php Online_Booking_Public::the_sejour_btn($postid,true); ?>
