@@ -583,7 +583,9 @@ public function ajxfn(){
 	
      if(!empty($_REQUEST['theme']) && !empty($_REQUEST['geo'])){
 	     $type = isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : null;
-         $output = Online_Booking_Public::ajax_get_latest_posts($_REQUEST['theme'],$_REQUEST['geo'],$type);
+         $content = Online_Booking_Public::ajax_get_latest_posts($_REQUEST['theme'],$_REQUEST['geo'],$type);
+	         $output = $content;
+
     } else if(!empty($_REQUEST['reservation'])){
 	    $tripName = htmlspecialchars($_REQUEST['bookinkTrip']);
 	    $output = online_booking_user::save_trip($tripName);
@@ -593,6 +595,24 @@ public function ajxfn(){
 	}else if(!empty($_REQUEST['estimateUserTrip'])){
 	    $userTrip = intval($_REQUEST['estimateUserTrip']);
 	    $output = $user_action->estimateUserTrip($userTrip);
+	} else if(!empty($_REQUEST['id'])){
+		$post_id = intval($_REQUEST['id']);
+		$page_data = get_page($post_id);
+		  if ($page_data) {
+			if($page_data->post_status == "publish"){
+				//post_name
+				$content = get_the_post_thumbnail($post_id);
+				$content .= '<h3><a href="'.get_permalink($post_id).'">'.$page_data->post_name.'</a></h3>';
+				$content .= substr($page_data->post_content, 0, 200).'...' ;
+				$output = $content;
+			} else {
+				
+			}
+		    
+		  } else {
+			  $output = 'post not found...';
+		  }
+		
 	}else {
          $output = 'No function specified, check your jQuery.ajax() call';
  
@@ -1019,16 +1039,21 @@ public function ajax_get_latest_posts($theme,$lieu,$type){
 
 
         //GET CONTENT
-        $posts .= $this::get_reservation_content($args,$reservation_type_slug,$reservation_type_name,$data_order);
-    
-         $posts.= '</div>';
+        $content = $this::get_reservation_content($args,$reservation_type_slug,$reservation_type_name,$data_order);
+        if(!empty($content)){
+	        $posts.= $content;
+        }else {
+	        //no post found for This category
+	        $posts.= "";
+        }
+        $posts.= '</div>';
 		 //wp_reset_postdata();
 	}
 	
 
 	$posts .= '</div>';
 	wp_reset_query();
-         wp_reset_postdata(); 
+    wp_reset_postdata(); 
 	
     return $posts;
 }

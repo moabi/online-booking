@@ -112,25 +112,26 @@ get_header(); ?>
 <div class="pure-g">
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-u-1 pure-u-xl-8-24">							
-			<label class="floating-label" for="float-select">
-			<?php //<span class="fs1" aria-hidden="true" data-icon="g"></span> ?>
-			Secteur d'activité</label>
+		<div class="pure-g">
+			<div class="pure-u-1 pure-u-xl-8-24">							
+				<label class="floating-label" for="float-select">
+				<?php //<span class="fs1" aria-hidden="true" data-icon="g"></span> ?>
+				Secteur d'activité</label>
+			</div>
+			<div class="pure-u-1 pure-u-xl-16-24">
+				<?php wp_dropdown_categories( $args ); ?> 
+			</div>
 		</div>
-		<div class="pure-u-1 pure-u-xl-12-24">
-			<?php wp_dropdown_categories( $args ); ?> 
-		</div>
-
 	</div>
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="padd-l">
+		<div class="pure-g">
 			<div class="pure-u-1 pure-u-xl-8-24">
 			<label class="floating-label" for="float-select">
 			<?php //<span class="fs1" aria-hidden="true" data-icon=""></span> ?>
 			Le lieu</label>
 			</div>
-			<div class="pure-u-1 pure-u-xl-12-24">
+			<div class="pure-u-1 pure-u-xl-16-24">
 			<?php wp_dropdown_categories( $argsLieux ); ?> 
 			</div>
 		</div>
@@ -138,8 +139,7 @@ get_header(); ?>
 	
 
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-	<div class="padd-l">
-		<div class="pure-g">
+	<div class="pure-g">
 		<div class="pure-u-1 pure-u-xl-12-24">	
 			<label class="floating-label" for="arrival">
 				 
@@ -151,13 +151,13 @@ get_header(); ?>
 			<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
 			</div>	
 		</div>
-		</div>
 	</div>
 </div>
 
 
 							
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
+		<div class="pure-g">
 		<div class="pure-u-1 pure-u-xl-8-24">
 			<label class="floating-label" for="participants">
 			
@@ -168,6 +168,7 @@ get_header(); ?>
 			<div class="fs1 input-box" aria-hidden="true" data-icon="">
 			<input type="number" id="participants" value="<?php echo $sel_participants; ?>" class="bk-form form-control" />
 			</div>
+		</div>
 		</div>
 	</div>
 
@@ -185,7 +186,7 @@ get_header(); ?>
 	$min_defined_budget =  esc_attr( get_option('ob_min_budget',50) ); 
 	$max_defined_budget =  esc_attr( get_option('ob_max_budget',600) ); 
 ?>
-<div class="pure-u-1 pure-u-md-8-24 on-field">
+<div id="slider-field" class="pure-u-1 pure-u-md-8-24 on-field">
 	<div class="padd-l">
 			<label for="">
 			<span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>
@@ -200,7 +201,6 @@ get_header(); ?>
 
 <!-- Number of days -->
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-	<div class="padd-l">
 	<div class="pure-g">
 		<div class="pure-u-1 pure-u-xl-12-24">
 		<label class="floating-label" for="days">
@@ -213,7 +213,6 @@ get_header(); ?>
 			<input id="daysCount" readonly name="daysCount" type="text" value="2" />
 			<button onclick="addADay();">+</button>	
 		</div>
-	</div>
 	</div>
 </div>
 <!-- #Number of days -->
@@ -356,26 +355,20 @@ Des questions ?
  
   
 <!-- JOURNEES -->
-	<h2 class="upptitle"><?php _e('Votre évènement','online-booking'); ?></h2>
-	
-		<div id="daysTrip"></div>
-<!-- #JOURNEES -->	
-
-<?php  if ( !is_user_logged_in() ): ?>
+<div id="side-stick">
+	<h2 class="upptitle"><i class="fa fa-pencil"></i><input maxlength="20" id="tripName" type="text" value="" placeholder="Nom de votre reservation" /></h2>
+	<div id="daysTrip"></div>
+	<div class="cleafix"></div>
+	<?php  if ( !is_user_logged_in() ): ?>
 <!-- FORMUAIRE SEND -->	
 	<a href="#login-popup" class="open-popup-link btn-danger btn btn-reg"><?php _e('Connectez-vous<br /> pour sauvegarder','online-booking'); ?></a>
 <!-- #formulaire send -->
 <?php endif; ?>
 
 <?php  if ( is_user_logged_in() ): ?>
-<h2 class="upptitle">Votre devis sur mesure</h2>
+
 <div class="pure-g" id="user-actions">
 	<div id="savetrip" >
-		<div class="pure-u-1">
-			<input maxlength="20" id="tripName" type="text" value="" placeholder="Nom de votre reservation" />
-		</div>
-		
-		<div class="pure-u-1">
 		<?php 
 			$eventid = 0;
 			$btn_Name = __('Enregistrer','onlyoo');
@@ -396,13 +389,14 @@ Des questions ?
 			echo $btn_Name;
 			echo '<span class="fs1" aria-hidden="true" data-icon=""></span></a>';
 			?>
-
-		</div>
-
 		</div>
 </div>
 
 <?php endif; ?>
+</div>
+<!-- #JOURNEES -->	
+
+
 
 
 	

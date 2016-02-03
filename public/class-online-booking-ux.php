@@ -194,11 +194,9 @@ class online_booking_ux  {
 
 										echo '<div data-id="'.$data->ID.'" class="pure-u-1 single-activity-row">';
 										
-										echo '<div class="sejour-type">';
-										echo $this->get_reservation_type($data->ID);
-										echo $this->get_trash_btn($i - 1, $data->ID);
-										echo '</div>';
-
+										
+										
+										echo '<div class="pure-g">';
 										echo '<div class="pure-u-1 pure-u-md-7-24">';
 										echo '<a href="'.get_permalink($data->ID).'">';
 										echo get_the_post_thumbnail( $data->ID, 'square' );
@@ -207,11 +205,13 @@ class online_booking_ux  {
 										
 										echo '<div class="pure-u-1 pure-u-md-17-24">';
 											echo '<h3>';
-											echo '<a href="'.get_permalink($data->ID).'">';
+											echo '<a href="'.get_permalink($data->ID).'"><i class="fa fa-search"></i>';
 											echo $data->post_title;
-											echo '</a></h3>';
+											echo '</a>'.$this->get_trash_btn($i - 1, $data->ID).'</h3>';
 											echo get_field('la_prestation_comprend', $data->ID);
+											echo '<div class="tags"><i class="fa fa-tags"></i>'.$this->get_reservation_type($data->ID).'</div>';
 											
+										echo '</div>';
 										echo '</div>';
 										
 										echo '</div>';

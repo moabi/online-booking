@@ -107,6 +107,45 @@ function doAjaxRequest( theme , geo, type ){
 
 }
 
+/**
+ * doAjaxRequest
+ * wp ajax request
+ * 
+ * @param theme
+ * @param geo
+ * @param type
+ */
+function ajaxPostRequest( id,target ){
+	//console.log(type);
+	jQuery.ajax({
+		url: '/wp-admin/admin-ajax.php',
+		settings:{
+			cache : true
+		},
+		data:{
+			'action':'do_ajax',
+			'id':id
+		},
+		//JSON can cause issues on Chrome ? use text instead ?
+		dataType: 'JSON',
+		success:function(data){
+			$(target).empty().append($('<div>', {
+				html : data
+			}));
+			console.log(data);
+		},
+		error: function(errorThrown){
+			console.warn('error');
+			console.log(errorThrown);
+			var n = noty({
+				text: 'Echec du chargement :(',
+				template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
+			});
+		}
+	});
+
+
+}
 //BOOKING FN
 
 
@@ -369,7 +408,7 @@ function addActivityAnimation(id){
  * @param img featured thumbnail
  * @param integer order   
  */
-function addActivity(id,activityname,price,type,img,order){
+function addActivity(id,activityname,price,type,order){
 
 	getLength = reservation.tripObject[reservation.currentDay][id];
 	if(!getLength){
@@ -377,15 +416,13 @@ function addActivity(id,activityname,price,type,img,order){
 			name  : activityname,
 			price : price,
 			type  : type,
-			img   : encodeURIComponent(img),
 			order : order
 		};
 		//console.log('obj price : ' + price);
 		reservation.currentBudget = parseInt(reservation.currentBudget,10) + parseInt(price,10);
-		tripImg = (img) ? '<img src="'+img+'" />' : '';
 		tripType = (type) ? type : 'notDefined';
 		$htmlDay = $('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content');
-		$htmlDay.append('<div data-order="'+order+'" data-id="'+ id +'" class="dc '+tripType+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' € </span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
+		$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc '+tripType+'"><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' € </span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
 
 		$htmlDay.find('div.dc').sort(function (a, b) {
 					return +a.getAttribute('data-order') - +b.getAttribute('data-order');
@@ -406,10 +443,25 @@ function addActivity(id,activityname,price,type,img,order){
 }
 
 /*
+ * loadSingleActivity
+ * @param id integer
+*/
+function loadSingleActivity(el,id){
+	target = $(el).find('.popit');
+	if(target.hasClass('filled')){
+	
+	} else {
+		ajaxPostRequest( id,target );
+		target.addClass('filled');
+	}
+	
+	
+}
+/*
  *delete Activity from Obj for Main Booking TPL
  *@param day : string format dd/mm/yyyy
- *@parama id : number 
- *@param price : number	
+ *@parama id : integer 
+ *@param price : integer	
  */
 function deleteActivity(day,id,price){
 		var n = noty ({
@@ -659,25 +711,49 @@ function removeLastDay(){
 			template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
 		});
 	} else{
-		lastDay = moment(reservation.departure, "DD/MM/YYYY");
-		reservation.days--;
-		lastDayString = lastDay.format("DD/MM/YYYY");
-		//console.log(lastDayString);
-		delete reservation.tripObject[lastDayString];
-		$(".dayblock[data-date='"+ lastDayString +"']").remove();
-		newDeparture = lastDay.subtract(1, 'days').format("DD/MM/YYYY");
-		reservation.departure = newDeparture;
-		reservation.currentDay = reservation.arrival;
-		$(".dayblock[data-date='"+ reservation.currentDay +"']").addClass('current');
-		//$( "#departure" ).datepicker( "setDate", reservation.departure );
-		//add a del button
-		var spanBtn = '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q"></span>';
-		$(".dayblock:last-child").find('.day-wrapper').append(spanBtn);
-		//store the day added
-		//console.log(reservation);
-		checkBudget();
-		tripToCookie(reservation);
-		var n = noty({text: 'Jour supprimé'});
+				var n = noty ({
+		layout: 'center',
+		modal: true,
+		text: 'Êtes vous sûr de vouloir supprimer cette journée de votre programme ?',
+		template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+		closeWith:['button'],
+		buttons: [
+			{addClass: 'btn-reg btn btn-primary', text: 'Poursuivre et supprimer', onClick: function($noty) {
+
+				$noty.close();
+				lastDay = moment(reservation.departure, "DD/MM/YYYY");
+				reservation.days--;
+				lastDayString = lastDay.format("DD/MM/YYYY");
+				//console.log(lastDayString);
+				delete reservation.tripObject[lastDayString];
+				$(".dayblock[data-date='"+ lastDayString +"']").remove();
+				newDeparture = lastDay.subtract(1, 'days').format("DD/MM/YYYY");
+				reservation.departure = newDeparture;
+				reservation.currentDay = reservation.arrival;
+				$(".dayblock[data-date='"+ reservation.currentDay +"']").addClass('current');
+				//$( "#departure" ).datepicker( "setDate", reservation.departure );
+				//add a del button
+				var spanBtn = '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q"></span>';
+				$(".dayblock:last-child").find('.day-wrapper').append(spanBtn);
+				//store the day added
+				//console.log(reservation);
+				checkBudget();
+				tripToCookie(reservation);
+				setdaysCount();
+				var n = noty({text: 'Jour supprimé'});
+
+			}
+			},
+			{addClass: 'btn-reg btn btn-danger', text: 'Annuler l\'opération', onClick: function($noty) {
+				$noty.close();
+			}
+			}
+		],
+		type: 'confirm',
+
+	});
+	
+
 	}
 	setdaysCount();
 }
@@ -1077,14 +1153,12 @@ function the_activites(){
 							var activityname = reservation.tripObject[day][id]['name'],
 									price = reservation.tripObject[day][id]['price'],
 									order = reservation.tripObject[day][id]['order'],
-									img = decodeURIComponent(reservation.tripObject[day][id]['img']),
 									type = reservation.tripObject[day][id]['type'];
 
-							tripImg = (img) ? '<img src="'+img+'" />' : '';
 							tripType = (type) ? type : 'notDefined';
 							$htmlDay = $('.dayblock[data-date="'+ day +'"]').find('.day-content');
 							//build html
-							$htmlDay.append('<div data-order="'+order+'" data-id="'+ id +'" class="dc '+type+'"><span class="popit">'+ tripImg +'</span>'+ activityname +' <span class="dp">'+ price +' €</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+							$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc '+type+'"><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' €</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
 							$htmlDay.find('div.dc').sort(function (a, b) {
 										return +a.getAttribute('data-order') - +b.getAttribute('data-order');
 									})
@@ -1105,7 +1179,10 @@ function the_activites(){
 
 jQuery(function () {
 
- $("#sidebar-sticky").sticky({topSpacing:0});
+ $("#side-stick").sticky({
+	 topSpacing:70,
+	 bottomSpacing:530
+	 });
 	$('.postform').select2({
 		'width' : '96%'
 	});
@@ -1209,12 +1286,14 @@ jQuery(function () {
 	});
 	//AJAX REQUEST FOR THE FILTERING ACTIVITIES
 	$('.terms-change').change(function () {
+		console.log('place/type triggered');
 		loadPostsFromScratch();
 	});
+	//filtering event
 	$('#typeterms input[type=checkbox]').change(function(){
 		loadPostsFromScratch();
 	});
-
+	//i18n momentjs
 	moment.locale('fr', {
 		months: "janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre".split("_"),
 		monthsShort: "janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.".split("_"),

@@ -86,26 +86,28 @@ class online_booking_user  {
 					echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
 					
 					
-					echo '<a class="event-name" title="'.__('Voir votre évènement','online-booking').'" onclick="loadTrip(trip'.$result->ID.',true)" href="#">';
-					echo '<div class="fs1" aria-hidden="true" data-icon="j"></div>';
+					echo '<div class="pure-g head"><div class="pure-u-1" title="'.__('Voir votre évènement','online-booking').'" >';				
 					echo $tripName;
-					echo '<span>'.__('Modifier','online-booking').'</span>';
-					echo '</a>';
-					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer</div>';
-					echo '<div class="fs1 quote-it js-quote-user-trip" aria-hidden="true" data-icon="" onclick="estimateUserTrip('.$tripID.')">Demande de devis</div>';
-					echo ' <br /> ';
+					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer ce devis</div>';
+					echo '</div>';
+					echo '</div>';
 					
+					echo '<div class="pure-g">';
+					echo '<div class="pure-u-14-24"><div class="padd-l">';
 					//BUDGET
 					online_booking_user::the_budget($tripID, $booking,$tripDate);
 					
 					echo '<div class="sharetrip">'.__('Partager/Voir votre évènement :','online-booking');
-					echo ' <pre>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><div class="fs1" aria-hidden="true" data-icon=""></div></a></pre>';
-					echo __('Cette adresse publique,mais anonyme, vous permet de partage votre event','online-booking');
+					echo ' <pre><div class="btn fs1" aria-hidden="true" data-icon=""></div>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"></a></pre>';
+					echo '<em>'.__('Cette adresse publique,mais anonyme, vous permet de partage votre event','online-booking').'</em>';
+					echo '</div></div>';
 					echo '</div>';
-					
-					
-					
-					echo '<div class="clearfix"></div>';
+					echo '<div class="pure-u-5-24">';
+					echo '<div class="btn btn-border" onclick="loadTrip(trip'.$result->ID.',true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Voir le détail ou Modifier','online-booking').'</div>';
+					echo '</div>';
+					echo '<div class="pure-u-5-24">';
+					echo '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')">Valider ma demande</div>';
+					echo '</div></div>';
 					echo '</li>';
 				}
 			echo '</ul>';
