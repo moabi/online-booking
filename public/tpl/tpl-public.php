@@ -30,10 +30,16 @@
 				</div>
 				<?php 
 					//get user && trip data
+					$obp = new Online_Booking_Public('ob',1);
+					$uri = $_GET['ut'];
 					
-					$data = explode('-',$_GET['ut']); ?>
+					$public_url = $obp->decode_str($uri);
+					
+					 ?>
 				<?php 
-			if($_GET['ut']){	
+			if(isset($public_url)){	
+				
+			$data = explode('-',$public_url);
 			$user = $data[1]; 
 			$trip = $data[0];			
 			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID	

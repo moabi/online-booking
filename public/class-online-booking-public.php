@@ -44,6 +44,7 @@ class Online_Booking_Public {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;	
+	private $mdkey = "dql103s789fs7d";
 
 	/**
 	 * Initialize the class and set its properties.
@@ -68,6 +69,29 @@ class Online_Booking_Public {
 		echo $utility;
 	}
 
+	public function encode_str($data){
+		$key = $this->mdkey;
+		if(16 !== strlen($key)) $key = hash('MD5', $key, true);
+  $padding = 16 - (strlen($data) % 16);
+  $data .= str_repeat(chr($padding), $padding);
+  return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, str_repeat("\0", 16)));
+    
+		
+		$encoded = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($this->mdkey), $str, MCRYPT_MODE_CBC, md5(md5($this->mdkey))));
+		
+		return $encoded;
+	}
+	
+	public function decode_str($data){
+		$key = $this->mdkey;
+		$data = base64_decode($data);
+  if(16 !== strlen($key)) $key = hash('MD5', $key, true);
+  $data = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, str_repeat("\0", 16));
+  $padding = ord($data[strlen($data) - 1]); 
+  return substr($data, 0, -$padding); 
+		
+	}
+	
 	/**
 	 * Register the stylesheets for the public-facing side of the site.
 	 *
@@ -1482,5 +1506,39 @@ public function my_login_redirect( $redirect_to, $request, $user ) {
 	}
 }
 
+/**
+* add custom contact form value
+*/
+	public function custom_add_shortcode_clock() {
+		//$clockfn = $this::custom_clock_shortcode_handler();
+    	wpcf7_add_shortcode( 'clock', $this::custom_clock_shortcode_handler("clock")  ); // "clock" is the type of the form-tag
+	}
+ 
+	public function custom_clock_shortcode_handler( $tag) {
+		$argsLieux = array(
+				'show_option_all'    => '',
+				'show_option_none'   => '',
+				'option_none_value'  => '-1',
+				'orderby'            => 'NAME', 
+				'order'              => 'ASC',
+				'show_count'         => 0,
+				'hide_empty'         => true, 
+				'child_of'           => 0,
+				'exclude'            => '',
+				'echo'               => false,
+				'hierarchical'       => 1, 
+				'name'               => 'categories',
+				'id'                 => 'lieu',
+				'class'              => 'postform terms-change form-control',
+				'depth'              => 0,
+				'tab_index'          => 0,
+				'taxonomy'           => 'lieu',
+				'hide_if_empty'      => true,
+				'value_field'	     => 'term_id',	
+			); 
+		$places = wp_dropdown_categories( $argsLieux ); 
+	    return wp_dropdown_categories( $argsLieux );
+	}
+	
 
 }

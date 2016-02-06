@@ -1,5 +1,5 @@
 .cdnoty{text-align:center;width:auto;padding:1em 0;font-size:16px}
-.btn.btn-border{background:#EFEFEF;color:#000}
+.btn.btn-border{background:#EFEFEF;color:#000;border: 1px solid;padding: .5em 1em;font-size: 14px;}
 div.userpro form{margin:0 auto!important}
 #login-popup .userpro-right a{background:#F2910C;color:#fff;padding:.5em 3em}
 .mfp-auto-cursor .mfp-content{max-width:600px}
@@ -16,8 +16,15 @@ div.userpro-input input[type=text],div.userpro-input input[type=password],div.us
 .form-box.grey{background:rgba(237,237,237,0.44)}
 .form-box.orange{background:rgba(255,165,0,0.1)}
 form.wpcf7-form{width:100%;max-width:100%;padding:0;float:left}
-.cform.devis{padding:2em 4%;width:92%;display:block;clear:both;margin:0}
+.cform.devis{padding: 0;width:92%;display:block;clear:both;margin: 2em auto 4em;max-width: 800px;border: 1px solid #ededed;border-radius: 12px;}
 .cform.devis h3{color:#37ABDB;font-size:22px;margin:1em 0 .5em}
+.cform.devis .icon-wrapper{position:relative;padding: 0;margin: 0;}
+.cform.devis .icon-wrapper .fa{position:absolute;top: 16px;left: 15px;color: #2DA9DD;font-size: 22px;}
+.cform.devis .date-picker{text-indent:4em}
+.cform.devis label{line-height:1.4;font-size:16px;margin:0 0 1em}
+.cform.devis .wpcf7-radio label{margin-right:1em;background: rgba(117, 117, 117, 0.04);padding: .2em 1em;}
+.cform.devis input[type=checkbox],.cform.devis input[type=radio]{margin:0 1em;display:inline-block;}
+.cform.devis input[type=number]{margin:0;text-align: left;width: 100%;text-indent: 4em;}
 #message.updated{background:#3AB13A;padding:1em 0;color:#fff;text-align:center;font-size:16px;margin:3em auto;max-width:80%}
 #message.updated p{margin:0}
 .home .block-title h2{border:none;text-align:center;color:#37ABDA;margin:0 0 1em}
@@ -34,6 +41,7 @@ form.wpcf7-form{width:100%;max-width:100%;padding:0;float:left}
 .noty_buttons{text-align:center!important}
 .noty_buttons .btn.btn-reg{float:none;display:inline-block;width: 40%;margin:auto;padding: .5em 0;line-height: 1.4;font-size: 11px;}
 .btn.btn-danger{background:#f2910c;clear:both;width:80%;margin:auto;padding:.5em 0}
+.btn.btn-orange{background: #F2910C;}
 .day-content .dc::before{font-family:Flaticon;font-size:20px;font-style:normal;position:absolute;top:2px;left:8px;color:#f2910c;margin:0;float:none;text-align:center;text-indent:0}
 .select2-container--default .select2-selection--single{background-color:#fff;border:1px solid #DFDFDF;border-radius:1px;line-height:50px;height:50px}
 .select2-container--default .select2-selection--single .select2-selection__rendered{color:#444;line-height:50px}
@@ -222,13 +230,21 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float:none;p
 #userTrips .user-date-invoice{margin:.5em 0;clear:both;display:block;color:#2EAADD}
 #userTrips .user-date-invoice a{color:rgba(0,0,0,0.68)}
 #userTrips .user-date-invoice a:hover{color:#F39C25}
-#userTrips .sharetrip a{color:red}
+#userTrips .sharetrip a{color:#FFF;background: #6D6D6D;padding: 0;border-radius:4px 0 0 4px;width: 8%;display: block;float: left;line-height: 33px;height: 33px;border: 1px solid;border-right: 0px;}
+#userTrips .sharetrip a .fs1{width:100%;float:left;display:block;line-height: 32px;padding: 0;margin: 0;}
+#userTrips .sharetrip input{
+    float: left;
+    width: 60%;
+    overflow: hidden;
+    height: 32px;
+    line-height: 32px;
+    margin: 0;
+}
 #userTrips .sharetrip{clear:both;margin:1em 10px 0 0;font-size:14px;display:block}
-#userTrips .sharetrip pre .fs1{color:#FFF;background: #6D6D6D;padding:0 1em;border-radius:4px 0 0 4px;width: 20px;}
+
 #userTrips .sharetrip em{clear:both;display:block;font-size:12px}
 #userTrips .sharetrip pre{background-color: #FFFFFF;border-radius:4px;padding:0 8px 0 0;color:#616161;float:none;margin: 0;max-width:500px;border: 1px solid #6D6D6D;}
 #userTrips li{margin:0 0 1em;padding:0;line-height:30px;font-size:16px;width:94%;background:#F4F4F4}
-#userTrips li .fs1{float:left;margin:0 10px 0 0;line-height:32px}
 #userTrips li .fs1.quote-it{float:right;display:inline-block;margin:0 2em 0 1em;background:#F2910C;padding:0 1em;text-transform:lowercase;color:#fff;border:none;border-radius:12px 0 4px 0;cursor:pointer;transition:all ease .4s}
 #userTrips li .fs1.quote-it:hover{background:#ffa831;padding:0 1.5em}
 #userTrips li .fs1.quote-it::before{margin:0 .5em 0 0}
@@ -236,6 +252,24 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float:none;p
 #userTrips li .fs1.js-delete-user-trip:hover{color:#fafafa;padding:0 8px;box-shadow:0 1px 1px #8C1D1D}
 #userTrips li .fs1.js-delete-user-trip{transition:all .5s ease;float:right;color:#fff;padding:0;margin:0;cursor:pointer;text-transform:uppercase;line-height:32px;padding:0;font-size:12px}
 #userTrips li .head{background:#6D6D6D;color:#fff;padding:.5em 2em;margin:0 0 1em}
+.in-progress{
+    clear: both;
+    display: block;
+    width: 90%;
+    height: 10px;
+    background: #fff;
+    border: 1px solid #D6D6D6;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.in-progress span{
+    width: 50%;
+    display: block;
+    float: left;
+    background: #FFCD00;
+    height: 10px;
+}
+.in-progress.s-1 span{}
 #on-settings{background-color:#F5F5F5;margin:0 0 1em -1em;padding:2em 1em 1em;box-shadow:0 2px 2px rgba(144,144,144,0.51)}
 #on-settings .on-field{padding:0 0 10px}
 #on-settings #slider-field label{padding:0;text-align:center}

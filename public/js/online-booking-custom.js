@@ -1178,11 +1178,21 @@ function the_activites(){
 
 
 jQuery(function () {
-
- $("#side-stick").sticky({
+	//DATEPICKER settings
+	$.datepicker.setDefaults($.datepicker.regional["fr"]);
+	
+	//forms settings
+	$('.date-picker').datepicker({
+		dateFormat: "dd/mm/yy",
+		altFormat: "dd/mm/yy"
+	});
+	$('.wpcf7-range').slider();
+	//sidebar
+ 	$("#side-stick").sticky({
 	 topSpacing:70,
 	 bottomSpacing:530
 	 });
+	 //select 2
 	$('.postform').select2({
 		'width' : '96%'
 	});
@@ -1212,8 +1222,7 @@ jQuery(function () {
 		}
 	});
 
-	//DATEPICKER settings
-	$.datepicker.setDefaults($.datepicker.regional["fr"]);
+	
 
 	$("#arrival").datepicker({
 		defaultDate: "+1w",
@@ -1260,7 +1269,7 @@ jQuery(function () {
 			$("#arrival-form").val(selectedDate);
 		}
 	});
-
+	
 	$("#departure").datepicker({
 		defaultDate: "+1w",
 		dateFormat: "dd/mm/yy",

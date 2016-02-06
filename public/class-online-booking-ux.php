@@ -7,6 +7,7 @@ class online_booking_ux  {
 	
 
 	
+	
 	/*
 		Provide a slider template
 	*/

@@ -57,8 +57,9 @@ class online_booking_user  {
 	
 	/*
 		retrieve trips
+		@param integer ($validation)
 	*/
-	public static function get_user_booking(){
+	public static function get_user_booking($validation){
 
 			global $wpdb;
 			$userID = get_current_user_id();
@@ -67,10 +68,14 @@ class online_booking_user  {
 						SELECT *
 						FROM ".$wpdb->prefix."online_booking a	
 						WHERE a.user_ID = %d
-						",$userID); 
-					
+						AND a.validation = %d
+						ORDER BY a.ID DESC
+						",$userID,$validation); 
+				
 			$results = $wpdb->get_results($sql);
-			//var_dump($results);
+			//var_dump($results);	
+			$obp = new Online_Booking_Public('ob',1);		
+			
 			echo '<ul id="userTrips">';
 			foreach ( $results as $result ) 
 				{
@@ -81,32 +86,51 @@ class online_booking_user  {
 					$tripDate = $result->booking_date;
 					$newDate = date("d/m/y", strtotime($tripDate));
 					$newDateDevis = date("dmy", strtotime($tripDate));
+					$uri = get_bloginfo("url").'/public/?ut=';
+					$uri_var = $tripID.'-'.$userID;
+					$public_url = $uri.$obp->encode_str($uri_var);
+					
 					
 					echo '<li id="ut-'.$tripID.'">';
 					echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
 					
 					
-					echo '<div class="pure-g head"><div class="pure-u-1" title="'.__('Voir votre évènement','online-booking').'" >';				
+					echo '<div class="pure-g head"><div class="pure-u-1">';				
 					echo $tripName;
+					if($validation == 0){
 					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer ce devis</div>';
+					}
 					echo '</div>';
 					echo '</div>';
 					
 					echo '<div class="pure-g">';
 					echo '<div class="pure-u-14-24"><div class="padd-l">';
 					//BUDGET
+					if($validation == 0){
 					online_booking_user::the_budget($tripID, $booking,$tripDate);
+					} else {
+						echo 'Commande n°'.$tripID;
+					}
 					
 					echo '<div class="sharetrip">'.__('Partager/Voir votre évènement :','online-booking');
-					echo ' <pre><div class="btn fs1" aria-hidden="true" data-icon=""></div>'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'<a target="_blank" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"></a></pre>';
-					echo '<em>'.__('Cette adresse publique,mais anonyme, vous permet de partage votre event','online-booking').'</em>';
+					echo '<br /><a target="_blank" href="'.$public_url.'"><div class="btn fs1" aria-hidden="true" data-icon=""></div></a><input type="text" value="'.$public_url.'" readonly="readonly" />';
+					echo '<br /><em>'.__('Cette adresse publique,mais anonyme, vous permet de partage votre event','online-booking').'</em>';
 					echo '</div></div>';
 					echo '</div>';
 					echo '<div class="pure-u-5-24">';
+					if($validation == 0){
 					echo '<div class="btn btn-border" onclick="loadTrip(trip'.$result->ID.',true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Voir le détail ou Modifier','online-booking').'</div>';
+					}else {
+						echo __('En cours de traitement','online-booking').'<br />';
+						echo '<div class="in-progress s-'.$validation.'"><span></span></div>';
+					}
 					echo '</div>';
 					echo '<div class="pure-u-5-24">';
-					echo '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')">Valider ma demande</div>';
+					if($validation == 0){
+						echo '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')">Valider ma demande</div>';
+					} else  {
+						echo '<a class="btn btn-border" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><i class="fa fa-search"></i>'.__('Voir le détail','online-booking').'</a>';
+					}
 					echo '</div></div>';
 					echo '</li>';
 				}
