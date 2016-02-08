@@ -22,11 +22,9 @@
 
 			<?php /* The loop */ ?>
 			<?php while ( have_posts() ) : the_post(); ?>
-				
 
-				
 				<div class="entry-content default-page">
-					<?php the_content(); ?>
+					<?php the_content(); ?> 
 				</div>
 				<?php 
 					//get user && trip data
@@ -55,12 +53,16 @@
 			if($results){
 				$booking = $results[0]->booking_object; 
 				echo '<div id="page-header">';
-				echo $ux->socialShare();
+
+				echo '<div class="pure-g"><div class="pure-u-1">';
 				echo '<h1>'.$results[0]->booking_ID.'</h1></div>';
+				echo '</div></div>';
 				echo '<script>var trip = '.$booking.'</script>';
 				$online_booking_budget = new online_booking_budget();
 				online_booking_budget::the_trip($results[0]->booking_ID , $booking);
 				echo $ux->socialShare();
+				
+				
 			} else {
 				_e('Désolé, nous ne parvenons pas à retrouver cette reservation','online-booking');
 			}

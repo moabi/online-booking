@@ -708,7 +708,7 @@ public static function wp_query_thumbnail_posts(){
 	if ( $the_query->have_posts()) {
 	        
 	        $count_post = 0;
-            $posts = '<div id="selectedOne" class="blocks selectedOne animated shake">';
+            $posts = '<div id="selectedOne" class="blocks selectedOne">';
             while ( $the_query->have_posts() ) {
 	            if($count_post == 0 && !isset($_GET['addId'])): 
 		            $posts .= '<h4 class="ajx-fetch">';
@@ -718,7 +718,6 @@ public static function wp_query_thumbnail_posts(){
                 $the_query->the_post();
                 global $post;
                 $postID = $the_query->post->ID;
-                $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
                 $term_list = wp_get_post_terms($post->ID, 'reservation_type');
                 $type = json_decode(json_encode($term_list), true);
                 //var_dump($type);
@@ -754,11 +753,28 @@ public static function wp_query_thumbnail_posts(){
                 
                 $posts .= get_the_post_thumbnail($postID, 'square');
                 
-                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order_val.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
-                
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').' <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
+                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\','.$data_order_val.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 
-                $posts.= '</div>';
+                
+                
+                $posts	.= '</div>';
+                $posts 	.= '<script>jQuery(function(){';
+                $posts  .= "var selectedOne = $('#selectedOne');";
+                $posts	.= "$.magnificPopup.open({
+  items: {
+      src: selectedOne,
+      type: 'inline'
+  },
+  callbacks: {
+	  afterClose: function() {
+	  	console.log('Popup is completely closed');
+	  	var originalURL = window.location.href ;
+	  	removeParam('addId', originalURL);
+	}
+  }
+});";
+                $posts  .= '});</script>';
                 
                 $count_post++;
                 
@@ -913,7 +929,6 @@ public function get_reservation_content($args,$reservation_type_slug,$reservatio
                 $the_query->the_post();
                 global $post;
                 $postID = $the_query->post->ID;
-                $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
                 $term_list = wp_get_post_terms($post->ID, 'reservation_type');
                 $type = json_decode(json_encode($term_list), true);
                 //var_dump($type);
@@ -948,7 +963,7 @@ public function get_reservation_content($args,$reservation_type_slug,$reservatio
                 
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').'<span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 if($onbookingpage == true){
-	                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\',\' '.$url.' \','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+	                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 } else{
 	                $posts .= '<a href="'.site_url().'/'.BOOKING_URL.'?addId='.$postID.'" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 }
@@ -1167,12 +1182,12 @@ public static function the_sejours($nb = 5,$onBookingPage = false){
 						        	
 						        	if(isset($type[0])):
 						        		$type_slug = $type[0]['slug'];
-						        		$dayTrip .= '"type": "'.$type[0]['slug'].'","';
+						        		$dayTrip .= '"type": "'.$type[0]['slug'].'"';
 						        	else:
 										$type_slug = (isset($type_slug)) ? $type_slug : "undefined var";
-						        		$dayTrip .= '"type": "'.$type_slug.'","';
+						        		$dayTrip .= '"type": "'.$type_slug.'"';
 						        	endif;
-						        	$dayTrip .= 'img": "'.$url.'"}'.$comma;
+						        	$dayTrip .= '}'.$comma;
 						        	$i++;
 					        	}
 					        endwhile;
@@ -1271,12 +1286,12 @@ public static function the_sejour_btn($postid, $single_btn = false){
 						        	
 						        	if(isset($type[0])):
 						        		$type_slug = $type[0]['slug'];
-						        		$dayTrip .= '"type": "'.$type[0]['slug'].'","';
+						        		$dayTrip .= '"type": "'.$type[0]['slug'].'"';
 						        	else:
 										$type_slug = (isset($type_slug)) ? $type_slug : "undefined var";
-						        		$dayTrip .= '"type": "'.$type_slug.'","';
+						        		$dayTrip .= '"type": "'.$type_slug.'"';
 						        	endif;
-						        	$dayTrip .= 'img": "'.$url.'"}'.$comma;
+						        	$dayTrip .= '}'.$comma;
 						        	
 						        	//var_dump($type[0]);
 						        	$i++;

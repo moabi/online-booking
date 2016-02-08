@@ -92,7 +92,9 @@ class online_booking_user  {
 					
 					
 					echo '<li id="ut-'.$tripID.'">';
-					echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
+					if($validation == 0){
+						echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
+					}
 					
 					
 					echo '<div class="pure-g head"><div class="pure-u-1">';				
@@ -104,7 +106,7 @@ class online_booking_user  {
 					echo '</div>';
 					
 					echo '<div class="pure-g">';
-					echo '<div class="pure-u-14-24"><div class="padd-l">';
+					echo '<div class="pure-u-md-10-24"><div class="padd-l">';
 					//BUDGET
 					if($validation == 0){
 					online_booking_user::the_budget($tripID, $booking,$tripDate);
@@ -117,19 +119,19 @@ class online_booking_user  {
 					echo '<br /><em>'.__('Cette adresse publique,mais anonyme, vous permet de partage votre event','online-booking').'</em>';
 					echo '</div></div>';
 					echo '</div>';
-					echo '<div class="pure-u-5-24">';
+					echo '<div class="pure-u-md-7-24">';
 					if($validation == 0){
 					echo '<div class="btn btn-border" onclick="loadTrip(trip'.$result->ID.',true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Voir le détail ou Modifier','online-booking').'</div>';
 					}else {
-						echo __('En cours de traitement','online-booking').'<br />';
-						echo '<div class="in-progress s-'.$validation.'"><span></span></div>';
+						echo '<div class="progress-step">'.__('En cours de traitement','online-booking').'<br />';
+						echo '<div class="in-progress s-'.$validation.'"><span></span></div></div>';
 					}
 					echo '</div>';
-					echo '<div class="pure-u-5-24">';
+					echo '<div class="pure-u-md-7-24">';
 					if($validation == 0){
-						echo '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')">Valider ma demande</div>';
+						echo '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')"><i class="fa fa-check"></i>Valider ma demande</div>';
 					} else  {
-						echo '<a class="btn btn-border" href="'.get_bloginfo("url").'/public/?ut='.$tripID.'-'.$userID.'"><i class="fa fa-search"></i>'.__('Voir le détail','online-booking').'</a>';
+						echo '<a class="btn btn-border" href="'.$public_url.'"><i class="fa fa-search"></i>'.__('Voir le détail','online-booking').'</a>';
 					}
 					echo '</div></div>';
 					echo '</li>';

@@ -131,22 +131,33 @@ class online_booking_budget  {
 		//var_dump($budget);
 		echo '<div id="event-trip-planning" class="trip-public">';
 		echo '<div class="trip-public-user">';
-		echo '<h4>'.__('Détails de votre event','online-booking').' : </h4>';
+
 		$trips = $budget['tripObject'];
 		$budgetSingle = array();
 		//var_dump(is_array($trips));
+		//var_dump($budget);
+		$days = ($budget['days'] > 1) ? $budget['days'].' jours' : $budget['days'].' jour';
+		$place_id = $budget['lieu'];
+		$place_trip = get_term_by('id', $place_id, 'lieu');
+		$dates = ($budget['arrival'] == $budget['departure']) ? $budget['arrival'] : ' du '.$budget['arrival'].' au '.$budget['departure'];
+		
 		echo '<div class="activity-budget-user pure-g">';
-		            echo '<div class="pure-u-1-3">'.$budget['participants'].' personnes</div>';
+			echo '<div class="pure-u-6-24"><i class="fa fa-map-marker"></i>Lieu: '.$place_trip->name.'</div>';
+		    echo '<div class="pure-u-6-24"><i class="fa fa-users"></i>Participants: '.$budget['participants'].' personnes</div>';
+		    echo '<div class="pure-u-6-24"><i class="fa fa-clock-o"></i>Durée : '.$days.'</div>';
+		    echo '<div class="pure-u-6-24"><i class="fa fa-calendar"></i>Date : '.$dates.'</div>';
+		    
+		             
 		echo '</div>';
 		
 		$trip_dates =  array_keys($trips);
 		$days_count = 0;
 		foreach ($trips as $trip) {
+			$dayunit = $days_count + 1;
 			echo '<div class="event-day day-content">';
 			echo '<div class="etp-day">';
-			echo '<div class="day-title"';
-			echo '<span class="fs1" aria-hidden="true" data-icon=""></span><br />';
-			echo $trip_dates[$days_count].'</div>';
+			echo '<div class="day-title">';
+			echo 'Journée '. $dayunit .' - '.$trip_dates[$days_count].'</div>';
 			echo '</div>';
 			
 		    //  Check type
@@ -162,12 +173,14 @@ class online_booking_budget  {
 			        array_push($budgetSingle, $value['price']);
 			        //html
 			        echo '<div data-id="'.$trip_id[$i].'" class="pure-u-1 single-activity-row">';
-			        echo '<div class="sejour-type">';
-					echo $ux->get_reservation_type($trip_id[$i]);
-					echo '</div>';
+			        
 										
-			        echo '<div class="pure-u-1 pure-u-md-7-24">';
+			        echo '<div class="pure-u-1 pure-u-md-3-24">';
 			        echo get_the_post_thumbnail($trip_id[$i],'thumbnail');
+			        echo'</div>';
+			        
+			        echo '<div class="pure-u-1 pure-u-md-3-24 sejour-type">';
+			        	echo $ux->get_reservation_type($trip_id[$i]);
 			        echo'</div>';
 			        
 			        echo '<div class="pure-u-1 pure-u-md-17-24">';

@@ -65,19 +65,16 @@ if ( in_array( 'partner', (array) $user->roles ) ) {
 
 	<div class="single-el">
 		<div class="comprend">
-			<h2><?php _e('Mes devis', 'online-booking'); ?></h2>
 			<?php online_booking_user::get_user_booking(0); ?>
 		</div>
 	</div>
 	<div class="single-el">
 		<div class="comprend">
-			<h2><?php _e('Mes commandes', 'online-booking'); ?></h2>
 			<?php online_booking_user::get_user_booking(1); ?>
 		</div>
 	</div>
 	<div class="single-el">
 		<div class="comprend">
-			<h2><?php _e('Mon profil', 'online-booking'); ?></h2>
 			<?php echo do_shortcode('[userpro template=edit]'); ?>
 		</div>
 	</div>

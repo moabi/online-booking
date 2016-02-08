@@ -50,6 +50,7 @@ class Online_Booking_Mailer {
 
 	}
 	
+	
 	/*
 	 * send_mail
 	 *

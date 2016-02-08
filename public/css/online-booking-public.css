@@ -1,5 +1,8 @@
 .cdnoty{text-align:center;width:auto;padding:1em 0;font-size:16px}
-.btn.btn-border{background:#EFEFEF;color:#000;border: 1px solid;padding: .5em 1em;font-size: 14px;}
+.progress-step{font-size:12px;margin:3em auto 0;max-width:90%;}
+.btn.btn-border{background:#EFEFEF;color:#000;border: 1px solid #CECECE;padding: .5em 0;font-size: 12px;width: 90%;margin: 3em auto 0;}
+.btn.btn-border:hover{background:inherit;color: #F2910C;}
+.btn.btn-border i{margin-right:.5em}
 div.userpro form{margin:0 auto!important}
 #login-popup .userpro-right a{background:#F2910C;color:#fff;padding:.5em 3em}
 .mfp-auto-cursor .mfp-content{max-width:600px}
@@ -42,7 +45,7 @@ form.wpcf7-form{width:100%;max-width:100%;padding:0;float:left}
 .noty_buttons .btn.btn-reg{float:none;display:inline-block;width: 40%;margin:auto;padding: .5em 0;line-height: 1.4;font-size: 11px;}
 .btn.btn-danger{background:#f2910c;clear:both;width:80%;margin:auto;padding:.5em 0}
 .btn.btn-orange{background: #F2910C;}
-.day-content .dc::before{font-family:Flaticon;font-size:20px;font-style:normal;position:absolute;top:2px;left:8px;color:#f2910c;margin:0;float:none;text-align:center;text-indent:0}
+.day-content .dc::before{font-family:Flaticon;font-size: 14px;font-style:normal;position:absolute;top: 1px;left: 8px;color:#f2910c;margin:0;float:none;text-align:center;text-indent:0}
 .select2-container--default .select2-selection--single{background-color:#fff;border:1px solid #DFDFDF;border-radius:1px;line-height:50px;height:50px}
 .select2-container--default .select2-selection--single .select2-selection__rendered{color:#444;line-height:50px}
 #site-wrapper #masthead{border:1px solid #DDD;height:70px}
@@ -68,7 +71,7 @@ h1.archive-title{padding-top:0}
 .addThis{color:#fff;background:#2EAADD}
 .addThis:hover,.booking-details:hover{background:#F2910C;color:#fff}
 #activities-content.blocks{margin:2em 0 0;clear:both;float:left;width:100%;padding:0}
-#selectedOne{margin:0;padding:0;clear:both;width:100%}
+#selectedOne{margin: auto;padding:0;clear:both;width: auto;}
 #activities-content.blocks .block h2,#selectedOne h2{line-height:30px;float:left;padding:0 2%;font-weight:700;font-size:12px;margin:0;color:#7f7267;clear:both;height:30px;overflow:hidden;text-transform:none}
 #activities-content.blocks .block span.price-u,#selectedOne .price-u{position:absolute;width:70px;background:rgba(255,255,255,0.9);line-height:40px;font-size:16px;display:block;color:#7f7267;right:0;top:31px}
 #activities-content.blocks .presta h3,#selectedOne h3{font-weight:400;font-size:14px}
@@ -80,9 +83,9 @@ h1.archive-title{padding-top:0}
 #activities-content.blocks .block .head,#selectedOne .head{padding:0;text-align:center;top:-32px;position:absolute;left:0;right:0;opacity:1}
 #activities-content.blocks .block,#selectedOne .block{background:#fff;float:inherit;margin:30px 1% 1em;width:270px;float:left;position:relative}
 #activities-content.blocks .block img,#selectedOne .block img{width:270px;height:220px}
-#selectedOne .block{float:right;box-shadow:0 2px 8px #C7C7C7;margin:30px 50px}
-#selectedOne .block .head{background:#FF4C4C}
-#selectedOne .block .head h2{font-weight:700;color:#fff}
+#selectedOne .block{float: none;margin: 30px auto;}
+#selectedOne .block .head{}
+#selectedOne .block .head h2{/* font-weight:700; *//* color:#fff */}
 .future-flying-img{border-radius:50%;margin:-260px;z-index:99;position:absolute;top:0;left:0}
 #front-form .date-wrapper,#front-form .people-wrapper{position:relative}
 #front-form .date-wrapper .fs1{color:#25A0E8;position:absolute;top:9px;left:10%}
@@ -153,9 +156,9 @@ hr.clearfix{display:block}
 .day-wrapper .js-change:hover{color:red;z-index:0}
 .day-wrapper .js-change::before{display:none}
 .dayblock.current .day-wrapper .fs1{color:#fff}
-.day-content > div:nth-child(even){background:#fcfcfc}
-.day-content .dc .dp{position:absolute;font-size:10px;display:inline-block;padding:0;line-height:40px;right:40px}
-.day-content .dc{line-height:40px;text-align:left;padding:0;color:rgba(0,0,0,0.7);font-weight:300;font-size:14px;position:relative;overflow:visible;text-overflow:ellipsis;display:block;float:left;width:100%;height:40px;overflow:visible;text-indent:3em}
+.day-content > div:nth-child(even),.day-content > div:nth-child(even) .dp,.day-content > div:nth-child(even) .fs1{background:#fcfcfc}
+.day-content .dc .dp{position:absolute;font-size:10px;display:inline-block;padding:0;line-height:40px;right: 20px;background: #EDEDED;text-align: center;text-indent: 0;width: 45px;}
+.day-content .dc{line-height:40px;text-align:left;padding: 0;color:rgba(0,0,0,0.7);font-weight:300;font-size: 12px;position:relative;text-overflow:ellipsis;display:block;float:left;width:100%;height:40px;overflow:visible;text-indent: 2.6em;}
 .day-content .dc .popit{display:none;position:absolute;width:175px;background-color:#fff;left:-206px;border:1px solid #2DA9DC;padding:10px;line-height: 1.3;font-size: 13px;}
 .dc .popit:after,.dc .popit:before{left:100%;top: 20px;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none}
 .dc .popit:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:5px;margin-top:-5px}
@@ -164,7 +167,7 @@ hr.clearfix{display:block}
 .popit h3{text-align:left;clear: both;font-size: 16px;text-indent: 0;margin: 0;}
 .day-content .dc img{width: auto;display:block;float:left;margin:0;}
 .day-content{height:100%;display:block;width:100%;float:left;clear:none;background:#ededed;padding:0;margin:0}
-.day-content .fs1{color:rgba(79,79,79,0.77);position:relative;display:inline-block;float:right;text-align:center;padding:0 1em;width:20px;text-indent:0}
+.day-content .fs1{color:rgba(79,79,79,0.77);position:relative;display:inline-block;float:right;text-align:center;padding: 0 5px 0 0;width:20px;text-indent:0;background: #EDEDED;z-index: 1;}
 .day-content .fs1:hover{color:#e51b1b;cursor:pointer;transform:scale(1.05)}
 .dayblock{background:#FCFCFB;width:96%;margin:1% 1% 1.5em;padding:0;float:left;box-shadow:0 1px 2px rgba(0,0,0,0.36);text-align:center;font-size:12px;position:relative;opacity:.8;transition:all .4s ease}
 .dayblock::before,.dayblock.current::before{top:7px}
@@ -221,17 +224,19 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float:none;p
 #secondary h2{text-align:center;font-size:18px}
 .home #page-wrapper{padding:0}
 .home .post-onepage.notFullWidth{width:100%;max-width:100%}
-#logger{position:fixed;top:0;right:0;color:#2da9dc;border-radius:4px;padding:0;z-index:991}
+#logger{position:fixed;top:0;right:0;padding:0;z-index:991}
 #logger a{color:#F2910C;padding:0 1em;font-size:16px;line-height:70px}
 .hidden{display:none}
 .event-name{background:#37ABDB;display:inline-block;padding:0 0 0 1em;color:#fff;text-transform:uppercase;line-height:32px;margin:0}
 .event-name span{background:#fff;color:rgba(0,0,0,0.77);text-transform:none;padding:0 1em;font-size:12px;line-height:32px;display:inline-block;margin:0 0 0 2em;float:right}
 #userTrips{list-style:none}
+#userTrips .btn.btn-orange {width:90%;margin: 3em auto 0;padding: .5em 0;font-size: 12px;}
+#userTrips .btn.btn-orange i{margin-right:1em;}
 #userTrips .user-date-invoice{margin:.5em 0;clear:both;display:block;color:#2EAADD}
 #userTrips .user-date-invoice a{color:rgba(0,0,0,0.68)}
 #userTrips .user-date-invoice a:hover{color:#F39C25}
-#userTrips .sharetrip a{color:#FFF;background: #6D6D6D;padding: 0;border-radius:4px 0 0 4px;width: 8%;display: block;float: left;line-height: 33px;height: 33px;border: 1px solid;border-right: 0px;}
-#userTrips .sharetrip a .fs1{width:100%;float:left;display:block;line-height: 32px;padding: 0;margin: 0;}
+#userTrips .sharetrip a{color:#FFF;padding: 0;width: 8%;display: block;float: left;line-height: 32px;height: 32px;border: 1px solid #CCCCCC;border-right: 0;}
+#userTrips .sharetrip a .fs1{width:100%;float:left;display:block;line-height: 32px;padding: 0;margin: 0;background: #fff;color: #000;}
 #userTrips .sharetrip input{
     float: left;
     width: 60%;
@@ -283,7 +288,8 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float:none;p
 #event-trip-planning .single-activity-row img{width:auto;height:auto;display:block;max-height:120px}
 #event-trip-planning .etp-day{background:#EDEDED;color:#37ABDB;line-height:30px;display:block;margin:0;text-transform:none;padding:0;width:15%;text-align:center;font-size:18px;font-weight:700;float:left}
 .day-title{font-weight:500;font-size:16px;padding:1em 0}
-.sejour-type{font-size:18px;padding:.5em 2em;position:relative;float:right;clear:right}
+.sejour-type{font-size:18px;padding: .5em 0;position:relative;text-align: center;}
+.sejour-type .fa{color: #F38E12;font-size: 32px;clear: both;display: block;text-align: center;margin: .5em 0 .2em;}
 .tags-s{position:relative}
 .tags-s span.fs1{background:none}
 .dcicons{font-family:Flaticon;font-size:22px;font-style:normal;position:relative;color:#F2910C;margin:0 10px 0 0;float:none;text-align:center}
@@ -291,12 +297,22 @@ a#CTA{background:#2eaadd;color:#fff;border-radius:4px;display:block;float:none;p
 #event-trip-planning .etp-days{float:right;padding:5em 0 1em;background:#fff;width:85%}
 #event-trip-planning .etp-days li{width:100%;display:block;clear:both}
 #event-trip-planning .etp-days h3{font-size:16px;margin:1em 0 .5em}
+#event-trip-planning.trip-public .etp-day{width: 96%;text-align:left;color: #FFF;background: #A0A0A0;padding: 0 2%;}
+#event-trip-planning.trip-public .etp-days{width:100%;padding:0;float: left;}
+#event-trip-planning.trip-public .single-activity-row{
+    margin: 0 0;
+    width: 100%;
+    border-right: 0;
+    border-left: 0;
+}
+#event-trip-planning.trip-public .etp-days img{margin:0;}
 h3 .fa{margin:0 .5em 0 0}
 #event-trip-planning .etp-days h3 a{font-size:16px;text-align:left;color:#2EAADD;position:relative;padding:0;margin:1em 0 .5em;font-weight:700}
 #event-trip-planning .etp-days img{margin:15px auto 0;display:block;max-width:88%;max-height:none}
 .activity-budget-user.total-line{color:#191919;font-weight:700}
 .bdg{position:relative;width:20px;display:block;float:left;height:20px;margin:0 10px 0 4px}
-.activity-budget-user{background-color:#FFF;color:#353535;margin:10px 0}
+.activity-budget-user{color:#8A8A8A;margin:10px 0;background:#ededed;border-top: 1px solid #F0F0F0;border-bottom: 1px solid #F0F0F0;padding:1em 0;}
+.activity-budget-user .fa{color:#F38E12;font-size:20px;display:inline-block;margin:0 .4em 0 1em}
 .budget-day{background:#ededed;padding:2px 8px;margin:8px 0 4px}
 .trip-budget-user{max-width:800px;display:block;margin:auto;float:none;clear:both}
 #sejour-content{clear:both;display:block;float:left;width:100%;margin:30px 0 0;padding:0}
@@ -358,6 +374,17 @@ h3 .fa{margin:0 .5em 0 0}
 #phone-side{font-weight:700;color:#9C938A;font-size:17px;clear:none}
 #phone-icon{position:relative}
 #pre-xs{font-size:14px;text-align:center;padding:0}
+}
+@media screen and (max-width:1024px){
+    #site-wrapper #site-navigation ul li a,#logger a{font-size:12px;padding: 0 .6em;}
+}
+@media screen and (max-width: 955px){
+    #logger{
+    height: 30px;
+    margin: 0;
+    padding: 0;
+}
+    #logger a{font-size:14px;line-height: 30px;}
 }
 @-webkit-keyframes anim-effect-boris {
 0%{-webkit-transform:scale3d(0.3,0.3,1);transform:scale3d(0.3,0.3,1)}

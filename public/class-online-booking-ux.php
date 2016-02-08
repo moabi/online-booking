@@ -65,13 +65,16 @@ class online_booking_ux  {
 		$data = '';
 		
 		if(!empty($term_reservation_type) && $id):
-			$i = 0;
+
 			foreach($term_reservation_type as $key=>$value){
-			  $i++;
-			  if($i == 1):
-			  $data .= '<span class="dcicons '.$value->slug.'"></span>';
+				//get only top taxonomy
+			  if(intval($value->parent) == 0):
+			  	//get fa icon linked to taxonomy in the custom field
+			  	$id_term = 'reservation_type_'.$value->term_id;
+			  	$icon =  get_field('fa_icon', $id_term);
+			  	$data .= '<i class="fa '.$icon.'"></i>'.$value->name;
 			  endif;
-			  $data .= $value->name.' ';
+
 			  
 			}
 		endif;
