@@ -53,26 +53,49 @@ class online_booking_ux  {
 		return $content;
 	}
 	
-	
+	public function get_activity_time(){
+		$time = get_field('duree');
+		$time_s = get_field('duree-s');
+		if( is_int($time) ){
+			
+			$duree = $time.' '.$time_s;
+			
+		}else{
+			
+			$timeduration = explode('.', $time);
+			$mn = (isset($timeduration[1])) ? $timeduration[1] : '';
+			$firsttable = ($timeduration[0] == 0 )? '' : $timeduration[0];
+			$duree = $firsttable.' '.$time_s.' '.$mn;
+		}
+
+		 return $duree;
+	}
 	
 	/*
 		get_reservation_type()
 		get the location for an activity
 		@param integer ($ID) post ID
+		@param bolean ($class) if true, output only class
 	*/
-	public function get_reservation_type($id){
+	public function get_reservation_type($id, $class = false){
 		$term_reservation_type = wp_get_post_terms($id, 'reservation_type');
 		$data = '';
 		
 		if(!empty($term_reservation_type) && $id):
-
+			$i = 0;
 			foreach($term_reservation_type as $key=>$value){
 				//get only top taxonomy
-			  if(intval($value->parent) == 0):
+			  if(intval($value->parent) == 0 && $i == 0):
+			  	$i++;
 			  	//get fa icon linked to taxonomy in the custom field
 			  	$id_term = 'reservation_type_'.$value->term_id;
 			  	$icon =  get_field('fa_icon', $id_term);
-			  	$data .= '<i class="fa '.$icon.'"></i>'.$value->name;
+			  	if($class == false ){
+				  	$data .= '<i class="fa '.$icon.'"></i>'.$value->name;
+			  	} else {
+				  	$data .= $icon;
+			  	}
+			  	
 			  endif;
 
 			  
@@ -155,7 +178,7 @@ class online_booking_ux  {
 		$data = '';
 		$price = get_field('prix',$id);
 		$object_name = 'Uniquesejour'.$post->ID;
-		$data = '<div onclick="deleteSejourActivity('.$day_number.','.$id.','.$price.','.$object_name.');" class="fs1" aria-hidden="true" data-icon=""></div>';
+		$data = '<i title="Supprimer cette activité" onclick="deleteSejourActivity('.$day_number.','.$id.','.$price.','.$object_name.');" class="fa fa-trash-o"></i>';
 		
 		return $data;
 		
@@ -169,11 +192,11 @@ class online_booking_ux  {
 					echo '<div id="event-trip-planning">';
 					$i = 1;
 					while( have_rows('votre_sejour') ): the_row();
-					
+								
 								echo '<div class="event-day day-content">';
 								echo '<div class="etp-day">';
-								echo '<div class="day-title"';
-								echo '<span class="fs1" aria-hidden="true" data-icon=""></span><br />';
+								echo '<div class="day-title">';
+								echo '<i class="fa fa-calendar"></i><br />';
 								_e('Journée','online-bookine');
 								
 								echo ' '.$i.'</div></div>';
@@ -195,15 +218,19 @@ class online_booking_ux  {
 										
 										if($post_status == "publish"):
 											
-
+										
 										echo '<div data-id="'.$data->ID.'" class="pure-u-1 single-activity-row">';
+										echo '<span class="round"></span><span class="trait s-'.$i.'"></span>';
 										
-										
+										echo '<div class="pure-g"><div class="pure-u-1 head">';
+										echo '<div class="tags">'.$this->get_reservation_type($data->ID).'</div>';
+										echo $this->get_trash_btn($i - 1, $data->ID);
+										echo '</div></div>';
 										
 										echo '<div class="pure-g">';
 										echo '<div class="pure-u-1 pure-u-md-7-24">';
 										echo '<a href="'.get_permalink($data->ID).'">';
-										echo get_the_post_thumbnail( $data->ID, 'square' );
+										echo get_the_post_thumbnail( $data->ID, array(250,180) );
 										echo '</a>';
 										echo '</div>';
 										
@@ -211,9 +238,9 @@ class online_booking_ux  {
 											echo '<h3>';
 											echo '<a href="'.get_permalink($data->ID).'"><i class="fa fa-search"></i>';
 											echo $data->post_title;
-											echo '</a>'.$this->get_trash_btn($i - 1, $data->ID).'</h3>';
+											echo '</a></h3>';
 											echo get_field('la_prestation_comprend', $data->ID);
-											echo '<div class="tags"><i class="fa fa-tags"></i>'.$this->get_reservation_type($data->ID).'</div>';
+											
 											
 										echo '</div>';
 										echo '</div>';

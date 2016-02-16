@@ -140,16 +140,21 @@ get_header(); ?>
 
 <div class="pure-u-1 pure-u-md-8-24 on-field">
 	<div class="pure-g">
+		
 		<div class="pure-u-1 pure-u-xl-12-24">	
+			<div class="xs-field">
 			<label class="floating-label" for="arrival">
 				 
 				<?php _e('Arrivée sur place','online-booking'); ?>
 			</label>	
+			</div>
 		</div>
-		<div class="pure-u-1 pure-u-xl-12-24">		
+		<div class="pure-u-1 pure-u-xl-12-24">	
+			<div class="xs-field">	
 			<div class="fs1 input-box" aria-hidden="true" data-icon="">		
 			<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
 			</div>	
+		</div>
 		</div>
 	</div>
 </div>
@@ -189,7 +194,7 @@ get_header(); ?>
 <div id="slider-field" class="pure-u-1 pure-u-md-8-24 on-field">
 	<div class="padd-l">
 			<label for="">
-			<span id="budget-icon" class="fs1" aria-hidden="true" data-icon=""></span>
+			<i id="budget-icon" class="fa fa-euro" ></i>
 			<?php _e('Budget par participant','online-booking'); ?><em>
 			(entre <span id="st"><?php echo $min_defined_budget; ?></span> <?php _e('et','online-booking'); ?> <span id="end"><?php echo $max_defined_budget; ?></span> €)</em>
 			</label>
@@ -203,15 +208,19 @@ get_header(); ?>
 <div class="pure-u-1 pure-u-md-8-24 on-field">
 	<div class="pure-g">
 		<div class="pure-u-1 pure-u-xl-12-24">
+			<div class="xs-field">
 		<label class="floating-label" for="days">
 		<?php //<span class="fs1" aria-hidden="true" data-icon=""></span>  ?>
 		<?php _e('Nombre de jours',''); ?>
 		</label>	
+			</div>
 		</div>
 		<div data-max="<?php echo esc_attr( get_option('ob_max_days',4) ); ?>" id="days-modifier" class="pure-u-1 pure-u-xl-12-24">
+			<div class="xs-field">
 			<button onclick="removeLastDay();">-</button>
 			<input id="daysCount" readonly name="daysCount" type="text" value="2" />
 			<button onclick="addADay();">+</button>	
+		</div>
 		</div>
 	</div>
 </div>
@@ -293,6 +302,7 @@ $terms = get_terms($taxonomies, $args);
 		echo '</li>';
         
      }
+     echo '<li id="search-filter"><span class="fa fa-search"><input type="text" value="" placeholder="Rechercher" /></span></li>';
      echo '</ul>';
  }
 	
@@ -333,7 +343,7 @@ $terms = get_terms($taxonomies, $args);
       	    <div id="caller-side" class="pure-g">
 		    <div class="pure-u-1 pure-u-xl-1-2">
 			    	<div id="pre-padd">
-			    		<img id="phone-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACMElEQVRYR7WXwXHaUBCG/zXY17iDlBBTgXEHTgdoIuXiEUGHiGPwEeUAFpNLxAykAzqw3AElkArss2NYjySEJZD0FkePo/jf7sf/dlcLoeAT+MMREfUYfGvZ/UGRpq5ntB9o6nszEDrp880JWl9v3GVdCffj5AD2k2/FoWm7V9oBSpLHeRl0ZdnfQx0QsQNVyXW7QMFkOCDQD9Wv0+UCTX3vEYRzNQCWlu22VLpjv6fpxGPpIWIYX7ruXKqX6I4CYMaD1XXbksBSDQW+FxLhUnKAmR2r2x9LtFJN5EAU8Jv6AP8x7f5uQKn1MgUFk59tAt9Xy/Ukj3Imc2DirQB8LIPQUXxprhhAMAu0jeMYYDYanb80n1cE+lDmgrZBlCZUusC8aqzPWobjPMnKS6bKvw0VtQDwwrT7n2WhZaocgKgjGHOz6xqy8GrV4UIimQs1QhwAJG05XAL0qZK/JohCAElXJHC8aLycGUWFGe+VoA4ISwbdli00hQBR6N+/vAvacFjVmgkDr5hOjGyCwgWHMW+sT5192FKAoyASO0Le0JiIr7NLbe4aGU8gDEzbvctNwqq7FjuhLvidgoGoxpzItUoH0hM6ILax70QA77gOsR9igN07o/FvIV1gBBRyB7LBlO8NQWYg2TGOciAPES0ym7FyYBXCvC047wZI4wb+sBe1lnJevPVAbrX7b4BdbTSfe/Hkq9isUtuzptQCkA24bdlrMLVBfLF15i+D50V/9V8BtLHxa2YLzj4AAAAASUVORK5CYII="/>
+			    		<i id="phone-icon" class="fa fa-phone"></i>
 Des questions ?
 <span id="phone-side">
 0811 202 101
@@ -357,6 +367,7 @@ Des questions ?
 <!-- JOURNEES -->
 <div id="side-stick">
 	<h2 class="upptitle"><i class="fa fa-pencil"></i><input maxlength="20" id="tripName" type="text" value="" placeholder="Nom de votre reservation" /></h2>
+		<a class="reset-resa" href="#" onclick="resetReservation();">Recommencer depuis le début.</a>
 	<div id="daysTrip"></div>
 	<div class="cleafix"></div>
 	<?php  if ( !is_user_logged_in() ): ?>

@@ -54,6 +54,24 @@ class online_booking_user  {
 			return false;
 		}
 	}
+	 public function get_invoiceID($bookingObject){
+		//var_dump($bookingObject);
+		$trip_id = $bookingObject->ID;
+		$user_id = $bookingObject->user_ID;
+		$tripDate = $bookingObject->booking_date;
+		$newDate = date("d/m/y", strtotime($tripDate));
+		$newDateDevis = date("dmy", strtotime($tripDate));
+		$invoiceID = $newDateDevis.$trip_id;
+		
+		return $invoiceID;
+	 }
+	 
+	 public function get_invoice_date($bookingObject){
+		 $tripDate = $bookingObject->booking_date;
+		 $newDate = date("d/m/y", strtotime($tripDate));
+		 
+		 return $newDate;
+	 }
 	
 	/*
 		retrieve trips
@@ -109,7 +127,8 @@ class online_booking_user  {
 					echo '<div class="pure-u-md-10-24"><div class="padd-l">';
 					//BUDGET
 					if($validation == 0){
-					online_booking_user::the_budget($tripID, $booking,$tripDate);
+					//online_booking_user::the_budget($tripID, $booking,$tripDate,$result);
+					echo '<span class="user-date-invoice"><a href="'.$public_url.'">'.__('Devis n°','online-booking').''.$newDateDevis.$tripID.' (daté du '.$newDate.')</a></span>';
 					} else {
 						echo 'Commande n°'.$tripID;
 					}
@@ -121,9 +140,13 @@ class online_booking_user  {
 					echo '</div>';
 					echo '<div class="pure-u-md-7-24">';
 					if($validation == 0){
-					echo '<div class="btn btn-border" onclick="loadTrip(trip'.$result->ID.',true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Voir le détail ou Modifier','online-booking').'</div>';
-					}else {
+					echo '<div class="btn btn-border twobtn" onclick="loadTrip(trip'.$result->ID.',true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Modifier votre séjour','online-booking').'</div>';
+					echo '<a class="btn btn-border scnd" href="'.$public_url.'"><i class="fa fa-book"></i>'.__('Voir votre devis','online-booking').'</a>';
+					}elseif($validation == 1) {
 						echo '<div class="progress-step">'.__('En cours de traitement','online-booking').'<br />';
+						echo '<div class="in-progress s-'.$validation.'"><span></span></div></div>';
+					}elseif($validation == 2) {
+						echo '<div class="progress-step">'.__('Terminée','online-booking').'<br />';
 						echo '<div class="in-progress s-'.$validation.'"><span></span></div></div>';
 					}
 					echo '</div>';
@@ -139,7 +162,15 @@ class online_booking_user  {
 			echo '</ul>';
 	}
 	
-	private static function the_budget($tripID , $item, $tripDate){
+	/*
+		the_budget
+		
+		
+		$tripID integer
+		$item
+		$tripDate
+	*/
+	private static function the_budget($tripID , $item, $tripDate,$bookingObject){
 		
 
 		$budget = json_decode($item, true);
@@ -147,9 +178,12 @@ class online_booking_user  {
 		
 		$newDate = date("d/m/Y", strtotime($tripDate));
 		$newDateDevis = date("dmy", strtotime($tripDate));
+		//var_dump($bookingObject);
+		
+		//$this::get_user_invoiceID($bookingObject);
 		
 		//VISIBLE LINK
-		echo '<span class="user-date-invoice"> <span class="fs1" aria-hidden="true" data-icon=""></span><a class="open-popup-link" href="#tu-'.$tripID.'">'.__('Voir votre devis n°','online-booking').''.$newDateDevis.$tripID.' (daté du '.$newDate.')</a></span>';
+		echo '<span class="user-date-invoice"><a class="open-popup-link" href="#tu-'.$tripID.'">'.__('Devis n°','online-booking').''.$newDateDevis.$tripID.' (daté du '.$newDate.')</a></span>';
 		
 		
 		//var_dump($budget);

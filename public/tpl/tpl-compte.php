@@ -71,6 +71,7 @@ if ( in_array( 'partner', (array) $user->roles ) ) {
 	<div class="single-el">
 		<div class="comprend">
 			<?php online_booking_user::get_user_booking(1); ?>
+			<?php online_booking_user::get_user_booking(2); ?>
 		</div>
 	</div>
 	<div class="single-el">
@@ -100,7 +101,8 @@ if ( in_array( 'partner', (array) $user->roles ) ) {
 		  infinite: true,
 		  speed: 500,
 		   slidesToShow: 1,
-		  slidesToScroll: 1
+		  slidesToScroll: 1,
+		  draggable:false
 		});
 				
 		$('.tabsto').on('click', function() {

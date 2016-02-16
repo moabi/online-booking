@@ -10,6 +10,13 @@ if( ! class_exists( 'WP_List_Table' ) ) {
 class Quotation_Table extends WP_List_Table
 {
 	
+	
+	/*
+		$validation state 
+		0 = nouveau devis
+		1 = devis validé
+		2 = payé
+	*/
 	var $validation_state;
 
    public function __construct($args) {
@@ -229,6 +236,8 @@ class Quotation_Table extends WP_List_Table
 	            	$state = 'Nouveau devis';
             	}elseif($item['validation'] == 1){
 	            	$state = 'Devis validé';
+            	}elseif($item['validation'] == 2){
+	            	$state = 'Cloturé';
             	}else{
 	            	$state = 'Facturation';
             	}
@@ -283,8 +292,9 @@ class Quotation_Table extends WP_List_Table
 	public function get_bulk_actions() {
 	  $actions = [
 		'bulk-validate' => "Valider Devis",
-	    'bulk-delete' => 'Supprimer',
+	    'bulk-delete' => 'SUPPRIMER',
 	    'bulk-callback' => 'Mail rappel',
+	    'bulk-terminate' => 'Cloturer',
 	    
 	  ];
 	
@@ -326,7 +336,8 @@ class Quotation_Table extends WP_List_Table
 	    foreach ( $order_ids as $id ) {
 	      //self::delete_customer( $id );
 	      $sender = new Online_Booking_Mailer;
-	      $sender->send_mail('confirmation','moabi31@gmail.com','Hello world'. $id);
+	      $sender->send_mail('confirmation','moabi31@gmail.com','Suppresion du séjour :'. $id);
+	      $this::deleteItems($id);
 	
 	    }
 	
@@ -361,7 +372,56 @@ class Quotation_Table extends WP_List_Table
 		    }
 	
 		     wp_die('Settings updated');
+	  } elseif( ( isset( $_POST['action'] ) && $_POST['action'] == 'bulk-terminate' )
+	  		|| ( isset( $_POST['action2'] ) && $_POST['action2'] == 'bulk-terminate') 
+	  ){
+		  
+			$order_ids = esc_sql( $_POST['order'] );
+			global $wpdb;
+
+		    // loop over the array of record IDs and delete them
+		    foreach ( $order_ids as $id ) {
+		      $table = $wpdb->prefix.'online_booking';
+				$rowToEstimate = $wpdb->update( 
+						$table, 
+						array(
+							'validation'	=> 2
+						),
+						array( 
+							'ID' 			=> $id,
+						),
+						array(
+							'%d'
+						),
+						array( '%d' ) 
+				 );
+				$sender = new Online_Booking_Mailer;
+				//change mail status
+				//$sender->send_mail('confirmation','moabi31@gmail.com','Hello world'. $id);
+		
+		    }
+	
+		     wp_die('Settings updated');
 	  }
 	}
+	
+	/*
+		@param integer ($id)
+	*/
+	public function deleteItems($id){
+	  global $wpdb;
+      $table = $wpdb->prefix.'online_booking';
+		$rowToEstimate = $wpdb->delete( 
+				$table, 
+				array( 
+					'ID' 			=> $id,
+				),
+				array(
+					'%d'
+				)
+		);
+	}
+		
+	
 
 }

@@ -78,7 +78,7 @@ get_header(); ?>
 			
 </div>
 
-	<div class="pure-g">
+	<div class="pure-g modify-trip">
 		<div class="pure-u-1-2">
 			<div class="pack-perso">
 				<div class="fs1" aria-hidden="true" data-icon="p"></div>

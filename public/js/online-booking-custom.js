@@ -175,7 +175,12 @@ function ajaxPostRequest( id,target ){
 }
 //BOOKING FN
 
-
+function resetReservation(){
+	//clear cookie
+	delete_cookie( 'reservation' );
+	//reload page
+	location.reload();
+}
 /**
  * Storage -- cookies
  * 
@@ -192,6 +197,13 @@ function setCookie(cname, cvalue, exdays) {
 	console.log(reservation);
 }
 
+
+/*
+	deleteCookie
+*/
+function delete_cookie( name ) {
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 /**
  * getCookie
  * 
@@ -338,7 +350,7 @@ function deleteUserTrip(tripID){
 function saveTrip(existingTripId){
 	tripName = $('#tripName').val();
 	if(tripName === ''){
-		$('#tripName').addClass('required').attr('placeholder','champs obligatoire');
+		$('#tripName').addClass('required').attr('placeholder','Nom de votre reservation');
 	} else{
 		$('#tripName').removeClass('required');
 		//set name and store it in reservation object
@@ -382,6 +394,10 @@ function saveTrip(existingTripId){
 						template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
 					});
 				}
+				setTimeout(function(){
+					window.location = '/compte';
+				}, 1200)
+				
 
 
 			},
@@ -435,21 +451,21 @@ function addActivityAnimation(id){
  * @param img featured thumbnail
  * @param integer order   
  */
-function addActivity(id,activityname,price,type,order){
+function addActivity(id,activityname,price,icon,order){
 
 	getLength = reservation.tripObject[reservation.currentDay][id];
 	if(!getLength){
 		reservation.tripObject[reservation.currentDay][id] = {
 			name  : activityname,
 			price : price,
-			type  : type,
+			type  : icon,
 			order : order
 		};
 		//console.log('obj price : ' + price);
 		reservation.currentBudget = parseInt(reservation.currentBudget,10) + parseInt(price,10);
-		tripType = (type) ? type : 'notDefined';
+		tripType = (icon) ? icon : 'notDefined';
 		$htmlDay = $('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content');
-		$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc '+tripType+'"><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' € </span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
+		$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc"><i class="fa '+tripType+'"></i><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' € </span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
 
 		$htmlDay.find('div.dc').sort(function (a, b) {
 					return +a.getAttribute('data-order') - +b.getAttribute('data-order');
@@ -995,10 +1011,9 @@ function setNumberOfPersonns(personNb){
 	tripToCookie(reservation);
 }
 function setTripName(name){
-	if(!name){
-		name = reservation.sejour;
+	if(!name || name == ""){
+		name = reservation['name'];
 	}
-	console.log('name',name);
 	$('#tripName').val(name);
 }
 
@@ -1025,6 +1040,7 @@ function createdayTrip(id,day){
  * gotoBookingPage - bolean - are we on the booking page
  */
 function loadTrip($trip,gotoBookingPage){
+	console.log('load trip');
 	reservation = {};
 	reservation = $trip;
 	reservation.user = USERID;
@@ -1076,17 +1092,21 @@ function loadTrip($trip,gotoBookingPage){
 		if(reservation.name){
 			$('#tripName').val(reservation.name);
 		}
+
 		if( $("#lieu").length ){
-			$("#lieu").select2("val", reservation.lieu);
-			$("#theme").select2("val", reservation.theme);
+			$("#lieu").select2("val", reservation.lieu);	
 		}
+		console.log(reservation.theme);
+		if( $("#theme").length ){
+			$("#theme").select2("val", reservation.theme);	
+		}		
 
 		defineTripDates();
 		setTripName();
 		setdaysCount();
 		the_activites();
 		checkBudget();
-
+		console.log(reservation.theme);
 		var n = noty({text: 'Chargement de votre voyage'});
 	}
 
@@ -1100,17 +1120,21 @@ function checkBudget(){
 	actualCost = parseInt(reservation.currentBudget,10);
 	if( globalBudget < actualCost){
 		console.log('budget is too high');
-		$('#budget-icon').css('color','red');
+		$('#budget-icon').addClass('exceeded').removeClass('ok');
 
 	} else {
 		console.log('budget is ok');
-		$('#budget-icon').css('color','green');
+		$('#budget-icon').addClass('ok').removeClass('exceeded');
 	}
 }
 
 function loadPostsFromScratch(){
 	console.log('loadPostsFromScratch');
 	var theme = $('#theme').val();
+	if(theme === null){
+		theme = $('select#theme option:first-child').attr('value');
+		$("select#theme").val(theme).trigger("change");
+	} 
 	var lieu = $('#lieu').val();
 	if(lieu === null){
 		lieu = $('select#lieu option:first-child').attr('value');
@@ -1185,7 +1209,7 @@ function the_activites(){
 							tripType = (type) ? type : 'notDefined';
 							$htmlDay = $('.dayblock[data-date="'+ day +'"]').find('.day-content');
 							//build html
-							$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc '+type+'"><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' €</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+							$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc"><i class="fa '+type+'"></i><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' €</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
 							$htmlDay.find('div.dc').sort(function (a, b) {
 										return +a.getAttribute('data-order') - +b.getAttribute('data-order');
 									})
@@ -1207,12 +1231,14 @@ function the_activites(){
 jQuery(function () {
 	//DATEPICKER settings
 	$.datepicker.setDefaults($.datepicker.regional["fr"]);
-	
+	$.datepicker.regional[ "fr" ]
 	//forms settings
 	$('.date-picker').datepicker({
 		dateFormat: "dd/mm/yy",
-		altFormat: "dd/mm/yy"
+		altFormat: "dd/mm/yy",
+		showOptions: { direction: "up" },
 	});
+	
 	$('.wpcf7-range').slider();
 	//sidebar
  	$("#side-stick").sticky({
@@ -1252,6 +1278,16 @@ jQuery(function () {
 	
 
 	$("#arrival").datepicker({
+		closeText: 'Fermer',
+prevText: 'Précédent',
+nextText: 'Suivant',
+currentText: 'Aujourd\'hui',
+monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+weekHeader: 'Sem.',
 		defaultDate: "+1w",
 		dateFormat: "dd/mm/yy",
 		altFormat: "dd/mm/yy",
@@ -1283,6 +1319,16 @@ jQuery(function () {
 		}
 	});
 	$("#arrival-form").datepicker({
+		closeText: 'Fermer',
+prevText: 'Précédent',
+nextText: 'Suivant',
+currentText: 'Aujourd\'hui',
+monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+weekHeader: 'Sem.',
 		defaultDate: "+1w",
 		dateFormat: "dd/mm/yy",
 		altFormat: "dd/mm/yy",
@@ -1407,6 +1453,7 @@ jQuery(function () {
 			slidesToShow: 1,
 			slidesToScroll: 1,
 			adaptiveHeight: false
+			
 		});
 	}
 	$('.img-pop').magnificPopup({

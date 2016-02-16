@@ -57,7 +57,7 @@ get_header(); ?>
 							$duree = $timeduration[0].' '.$time_s.' '.$mn;
 						}
 						?>
-					Durée : <strong><?php echo $duree; ?></strong>
+					Durée : <strong><?php echo $ux->get_activity_time(); ?></strong>
 				</div>	
 				<?php endif; ?>
 				<?php if(get_field('nombre_de_personnes',$post->ID)): ?>
@@ -219,7 +219,7 @@ get_header(); ?>
 	
 <h2 class="related-title"><div class="fs1" aria-hidden="true" data-icon=""></div>
 <?php _e('Vous aimerez également','online-booking'); ?></h2>
-<div id="activities-content" class="blocks">
+<div id="activities-content" class="blocks related-activities">
 <?php $single_lieu = $ux->get_place($post->ID); 
 	  $term_reservation_type = wp_get_post_terms($post->ID, 'reservation_type');
 	  //var_dump($term_reservation_type);

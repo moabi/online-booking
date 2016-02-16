@@ -45,6 +45,7 @@ class Online_Booking_Public {
 	 */
 	private $version;	
 	private $mdkey = "dql103s789fs7d";
+	private $secret_iv = 'EPDIjepD8E9DP31JDM';
 
 	/**
 	 * Initialize the class and set its properties.
@@ -70,7 +71,11 @@ class Online_Booking_Public {
 	}
 
 	public function encode_str($data){
+		
 		$key = $this->mdkey;
+		$iv = $this->secret_iv;
+		$iv = substr(hash('sha256', $iv), 0, 16);
+		/*
 		if(16 !== strlen($key)) $key = hash('MD5', $key, true);
   $padding = 16 - (strlen($data) % 16);
   $data .= str_repeat(chr($padding), $padding);
@@ -78,17 +83,29 @@ class Online_Booking_Public {
     
 		
 		$encoded = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($this->mdkey), $str, MCRYPT_MODE_CBC, md5(md5($this->mdkey))));
-		
 		return $encoded;
+		*/
+		
+		$ciphertext = openssl_encrypt($data,  'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);
+		
+		return $data;
 	}
 	
 	public function decode_str($data){
 		$key = $this->mdkey;
+		$iv = $this->secret_iv;
+		$iv = substr(hash('sha256', $iv), 0, 16);
+		/*
 		$data = base64_decode($data);
-  if(16 !== strlen($key)) $key = hash('MD5', $key, true);
-  $data = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, str_repeat("\0", 16));
-  $padding = ord($data[strlen($data) - 1]); 
-  return substr($data, 0, -$padding); 
+		var_dump($data);
+		$key = hash('MD5', $key, true);
+		$data = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, str_repeat("\0", 16));
+		$padding = ord($data[strlen($data) - 1]); 
+  
+		return substr($data, 0, -$padding); 
+		*/
+		$plaintext  = openssl_decrypt($data, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);
+		return $data;
 		
 	}
 	
@@ -625,8 +642,9 @@ public function ajxfn(){
 		  if ($page_data) {
 			if($page_data->post_status == "publish"){
 				//post_name
+				//var_dump($page_data);
 				$content = get_the_post_thumbnail($post_id);
-				$content .= '<h3><a href="'.get_permalink($post_id).'">'.$page_data->post_name.'</a></h3>';
+				$content .= '<h3><a href="'.get_permalink($post_id).'">'.$page_data->post_title.'</a></h3>';
 				$content .= substr($page_data->post_content, 0, 200).'...' ;
 				$output = $content;
 			} else {
@@ -675,12 +693,15 @@ public function ajxfn(){
 		
 		
 /*
+	wp_query_thumbnail_posts
+	place : tpl-booking
 	wp_query_thumbnail_posts function
 	SHOULD be merged with ajax_get_latest_posts
 	display selected post with GET var 'addId' in the thumbnail way
 */
 
 public static function wp_query_thumbnail_posts(){
+	$ux = new online_booking_ux;
 	
 	if(isset($_GET['addId'])){
 			wp_reset_query();
@@ -720,6 +741,7 @@ public static function wp_query_thumbnail_posts(){
                 $postID = $the_query->post->ID;
                 $term_list = wp_get_post_terms($post->ID, 'reservation_type');
                 $type = json_decode(json_encode($term_list), true);
+                $icon = $ux->get_reservation_type($postID,true);
                 //var_dump($type);
                 $termstheme = wp_get_post_terms($postID,'theme');
                 $terms = wp_get_post_terms($postID,'lieu');
@@ -754,7 +776,7 @@ public static function wp_query_thumbnail_posts(){
                 $posts .= get_the_post_thumbnail($postID, 'square');
                 
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').' <span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
-                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\','.$data_order_val.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$icon.'\','.$data_order_val.')" class="addThis">Ajouter <span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 
                 
                 
@@ -800,7 +822,7 @@ public static function wp_query_thumbnail_posts(){
 		[ob-activities]
 	*/
 	public function home_activites($atts){
-		
+		$obp = new online_booking_ux;
 		/* Restore original Post Data */
 		wp_reset_postdata();
 		
@@ -830,9 +852,11 @@ public static function wp_query_thumbnail_posts(){
 				$output .= '<div class="head-img">'.get_the_title().'</div>';
 				$output .= '</a>';
 				$output .= '<div class="presta">';
-				$output .= '<div class="exc">'.substr($exc, 0, 70) . '...</div>';
-				$output .= '<span class="fs1" aria-hidden="true" data-icon=""></span>'.get_field('nombre_de_personnes');
-				$output .= '<span class="fs1" aria-hidden="true" data-icon="}"></span>'.get_field('duree').'h';
+				//$output .= '<div class="exc">'.substr($exc, 0, 70) . '...</div>';
+				$output .= '<a href="'.get_the_permalink().'">';
+				$output .= '<i class="fa fa-users"></i>'.get_field('nombre_de_personnes');
+				$output .= '<i class="fa fa-clock-o"></i>'.$obp->get_activity_time();
+				$output .= '</a>';
 				$output .= '</div>';
 				$output .= '</div>';
 				
@@ -913,7 +937,10 @@ public static function wp_query_thumbnail_posts(){
 */
 public function get_reservation_content($args,$reservation_type_slug,$reservation_type_name,$data_order,$onbookingpage = true){
 	
+	$term_reservation = get_term_by('name', $reservation_type_name, 'reservation_type');
+	$fa_icon = get_field('fa_icon', $term_reservation->taxonomy.'_'.$term_reservation->term_id);
 	$posts = '';
+	$ux = new online_booking_ux;
 	$the_query = new WP_Query( $args );
         // The Loop
         if ( $the_query->have_posts() ) {
@@ -922,7 +949,7 @@ public function get_reservation_content($args,$reservation_type_slug,$reservatio
             
             while ( $the_query->have_posts() ) {
 	            if($count_post == 0 && $onbookingpage == true): 
-		            $posts .= '<h4 class="ajx-fetch">';
+		            $posts .= '<h4 class="ajx-fetch"><i class="fa '.$fa_icon.'"></i>';
 					$posts .= $reservation_type_name;
 					$posts .= '</h4><div class="clearfix"></div>';
 	            endif;
@@ -934,7 +961,7 @@ public function get_reservation_content($args,$reservation_type_slug,$reservatio
                 //var_dump($type);
                 $termstheme = wp_get_post_terms($postID,'theme');
                 $terms = wp_get_post_terms($postID,'lieu');
-                
+                $icon = $ux->get_reservation_type($postID,true);
                 $price = get_field('prix');
                 $termsarray = json_decode(json_encode($terms), true);
                 $themearray = json_decode(json_encode($termstheme), true);
@@ -963,7 +990,7 @@ public function get_reservation_content($args,$reservation_type_slug,$reservatio
                 
                 $posts .= '<a class="booking-details" href="'.get_permalink().'">'.__('Détails','online-booking').'<span class="fs1" aria-hidden="true" data-icon="U"></span></a>';
                 if($onbookingpage == true){
-	                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$typearray.'\','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
+	                $posts .= '<a href="javascript:void(0)" onmouseover="selectYourDay(this)" onClick="addActivity('.$postID.',\''.get_the_title().'\','.$price.',\''.$icon.'\','.$data_order.')" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 } else{
 	                $posts .= '<a href="'.site_url().'/'.BOOKING_URL.'?addId='.$postID.'" class="addThis">'.__('Ajouter','online-booking').'<span class="fs1" aria-hidden="true" data-icon="P"></span></a>';
                 }
