@@ -194,7 +194,7 @@ get_header(); ?>
 <div id="slider-field" class="pure-u-1 pure-u-md-8-24 on-field">
 	<div class="padd-l">
 			<label for="">
-			<i id="budget-icon" class="fa fa-euro" ></i>
+			<i id="budget-icon" class="fa fa-euro" data-exceeded="budget dépassé !"></i>
 			<?php _e('Budget par participant','online-booking'); ?><em>
 			(entre <span id="st"><?php echo $min_defined_budget; ?></span> <?php _e('et','online-booking'); ?> <span id="end"><?php echo $max_defined_budget; ?></span> €)</em>
 			</label>

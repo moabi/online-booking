@@ -216,7 +216,7 @@ get_header(); ?>
 <!-- #tabs -->
 </div>
 	</div>
-	
+
 <h2 class="related-title"><div class="fs1" aria-hidden="true" data-icon=""></div>
 <?php _e('Vous aimerez également','online-booking'); ?></h2>
 <div id="activities-content" class="blocks related-activities">

@@ -203,6 +203,7 @@ class Online_Booking {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		
 		$this->loader->add_filter( 'single_template', $plugin_public, 'get_custom_post_type_template' );
+		$this->loader->add_filter( 'body_class', $plugin_public, 'my_body_class_names' );
 		
 		$this->loader->add_filter( 'page_template', $plugin_public, 'booking_page_template' );
 		//$this->loader->add_filter( 'template_include', $plugin_public,'portfolio_page_template', 99 );

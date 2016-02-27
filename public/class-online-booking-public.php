@@ -182,6 +182,17 @@ public function remove_medialibrary_tab($tabs) {
     return $tabs;
 }
 
+/*add specific classes to body*/
+public function my_body_class_names( $classes ) {
+	global $post;
+	if ( !is_home() ) {
+        $classes[] = 'tpl-booking';
+    }
+	$classes[] = 'tpl-booking';
+	// return the $classes array
+	return $classes;
+}
+
 /*
  * add page templates
 */
@@ -189,6 +200,7 @@ public function booking_page_template( $page_template )
 {
     if ( is_page( BOOKING_URL ) ) {
         $page_template = plugin_dir_path( __FILE__ ) .'tpl/tpl-booking.php';
+        $this::my_body_class_names(array('booking-app','tpl-booking'));
         
     }
     elseif ( is_page( SEJOUR_URL ) ) {

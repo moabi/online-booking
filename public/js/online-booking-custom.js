@@ -3,8 +3,9 @@ var $ = jQuery;
 var bookingPage = '/reservation-service/';
 var isBookingTpl = $('#booking-wrapper').length;
 var USERID = $('#user-logged-in-infos').attr("data-id");
-var daysSelector = $('#daysSelector');
-var sliderRange = $("#slider-range");
+var daysSelector = $('#daysSelector'),
+	sliderRange = $("#slider-range"),
+	tripNameInput = $('#tripName');
 var minBudget = sliderRange.data('min');
 var maxBudget = sliderRange.data('max');
 var maxDefinedDaysOption = $('#days-modifier').data('max');
@@ -60,6 +61,41 @@ $.noty.defaults = {
 };
 
 
+/**
+ * notyAction
+ *
+ * @param action
+ * @param msg
+ * @param btnTxt
+ * @param btnDecline
+ * @param confirmationMsg
+ */
+function notyAction(action,msg,btnTxt,btnDecline, confirmationMsg){
+	var n = noty ({
+		layout: 'center',
+		modal: true,
+		text: msg,
+		template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+		closeWith:['button'],
+		buttons: [
+			{addClass: 'btn-reg btn btn-primary', text: btnTxt, onClick: function($noty) {
+
+				$noty.close();
+				doAction = action;
+				var n = noty({text: confirmationMsg});
+
+			}
+			},
+			{addClass: 'btn-reg btn btn-danger', text: btnDecline, onClick: function($noty) {
+				$noty.close();
+			}
+			}
+		],
+		type: 'confirm',
+
+	});
+}
+
 /*
 	utility
 	remove get param from url
@@ -86,23 +122,22 @@ function removeParam(key, sourceURL) {
     return rtn;
 }
 
-/*
- doAjaxRequest function
- retrieve post from filtering
- */
 
 /**
  * doAjaxRequest
  * wp ajax request
+ * retrieve post from filtering
  * 
  * @param theme
  * @param geo
  * @param type
+ *
+ * @return string
  */
 function doAjaxRequest( theme , geo, type ){
 	//console.log(type);
 	jQuery.ajax({
-		url: '/wp-admin/admin-ajax.php',
+		url: '/onlyoo/wp-admin/admin-ajax.php',
 		settings:{
 			cache : true
 		},
@@ -119,6 +154,8 @@ function doAjaxRequest( theme , geo, type ){
 			jQuery('#activities-content').empty().append(jQuery('<div>', {
 				html : data
 			}));
+			//once data is loaded
+			changingTerms();
 			//console.log(data);
 		},
 		error: function(errorThrown){
@@ -134,18 +171,17 @@ function doAjaxRequest( theme , geo, type ){
 
 }
 
+
 /**
  * doAjaxRequest
  * wp ajax request
- * 
- * @param theme
- * @param geo
- * @param type
+ * @param id integer post->ID
+ * @param target string class/ID to append data
  */
 function ajaxPostRequest( id,target ){
 	//console.log(type);
 	jQuery.ajax({
-		url: '/wp-admin/admin-ajax.php',
+		url: '/onlyoo/wp-admin/admin-ajax.php',
 		settings:{
 			cache : true
 		},
@@ -341,18 +377,18 @@ function deleteUserTrip(tripID){
  Global functions
  */
 
-
 /**
- *  saveTrip 
+ *  saveTrip
  *  to DB, ajax request
+ *
  * @param existingTripId unique ID if exist, will perform an update of the trip (mandatory)
  */
 function saveTrip(existingTripId){
-	tripName = $('#tripName').val();
+	tripName = tripNameInput.val();
 	if(tripName === ''){
-		$('#tripName').addClass('required').attr('placeholder','Nom de votre reservation');
+		tripNameInput.addClass('required').attr('placeholder','Nom de votre reservation');
 	} else{
-		$('#tripName').removeClass('required');
+		tripNameInput.removeClass('required');
 		//set name and store it in reservation object
 		reservation.name = tripName;
 		tripToCookie(reservation);
@@ -740,21 +776,66 @@ function setdaysCount(){
 	}
 
 }
-/*
- remove Last day
- decrement number of days
- decrement departure day
- add a delete button to new last day
- */
 
+/**
+ * reservationHasActivity
+ * Check if reservation object or a single day has activity
+ *
+ * @param dayObj format:20/02/2010
+ *
+ * return integer (number of activities)
+ */
+function reservationActivityCounter(dayObj){
+	if(dayObj){
+		selectedDay = reservation.tripObject[dayObj];
+		return Object.getOwnPropertyNames(selectedDay).length;
+	}else {
+		//check if reservation.tripObject has activity
+		daysObj = reservation.tripObject;
+		days = Object.keys(daysObj).length;
+
+		if (days !== 0) {
+			$activitiesNumber = [];
+			//iterate thrue days
+			for (var day in daysObj) {
+				if (daysObj.hasOwnProperty(day)) {
+					activities = Object.keys(daysObj[day]).length;
+					if (activities > 0) {
+						for (var id in daysObj[day]) {
+							$activitiesNumber.push(id);
+						}
+					}
+				}
+			}
+		return $activitiesNumber.length;
+
+		}else {
+			return 0;
+		}
+
+	}
+
+}
+/**
+ *
+ *  remove Last day
+ *  decrement number of days
+ *  decrement departure day
+ *  add a delete button to new last day
+ *  warning only if the day has no activity
+ */
 function removeLastDay(){
+
+
+	lastDayObj = reservation.tripObject[reservation.departure];
+
 	if(parseInt(reservation.days,10) < 2){
 		var n = noty({
 			text: 'Nombre minimum de jour atteint',
 			template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
 		});
 	} else{
-				var n = noty ({
+		var n = noty ({
 		layout: 'center',
 		modal: true,
 		text: 'Êtes vous sûr de vouloir supprimer cette journée de votre programme ?',
@@ -1014,7 +1095,7 @@ function setTripName(name){
 	if(!name || name == ""){
 		name = reservation['name'];
 	}
-	$('#tripName').val(name);
+	tripNameInput.val(name);
 }
 
 
@@ -1070,7 +1151,7 @@ function loadTrip($trip,gotoBookingPage){
 				}
 				}
 			],
-			type: 'confirm',
+			type: 'confirm'
 
 		});
 
@@ -1080,23 +1161,23 @@ function loadTrip($trip,gotoBookingPage){
 		$getBudgetMax = ( reservation.budgetPerMax ) ? reservation.budgetPerMax : 300;
 
 		$('#daysTrip').empty();
-		$('#tripName').val(reservation.name);
+		tripNameInput.val(reservation.name);
 		$( "#arrival" ).datepicker( "setDate", reservation.arrival );
 		//$( "#departure" ).datepicker( "setDate", reservation.departure );
 		$( "#slider-range" ).slider( "option", "values", [ reservation.budgetPerMin, reservation.budgetPerMax ] );
-		$( "#budget" ).val( reservation.budgetPerMax + "/" + reservation.budgetPerMax );
+		//$( "#budget").val( reservation.budgetPerMax + "/" + reservation.budgetPerMax );
+		$('#budget').val(reservation.budgetPerMin+'/'+reservation.budgetPerMax);
 		$('#st').html(reservation.budgetPerMin);
 		$('#end').html(reservation.budgetPerMax);
 		$('#participants').val(reservation.participants );
-		$('#budget').val(reservation.budgetPerMin+'/'+reservation.budgetPerMax);
-		if(reservation.name){
-			$('#tripName').val(reservation.name);
-		}
 
+		if(reservation.name){
+			tripNameInput.val(reservation.name);
+		}
+		//set values for terms
 		if( $("#lieu").length ){
 			$("#lieu").select2("val", reservation.lieu);	
 		}
-		console.log(reservation.theme);
 		if( $("#theme").length ){
 			$("#theme").select2("val", reservation.theme);	
 		}		
@@ -1108,6 +1189,8 @@ function loadTrip($trip,gotoBookingPage){
 		checkBudget();
 		console.log(reservation.theme);
 		var n = noty({text: 'Chargement de votre voyage'});
+		loadPostsFromScratch();
+
 	}
 
 
@@ -1147,6 +1230,7 @@ function loadPostsFromScratch(){
 	});
 	setReservationTerms(theme, lieu);
 	doAjaxRequest(theme, lieu, checkedTypes);
+
 }
 
 /*
@@ -1225,6 +1309,23 @@ function the_activites(){
 			}
 		}
 	}
+}
+
+/**
+ * changingTerms
+ * should be triggerd once trip is fully loaded, not before
+ * reload post
+ */
+function changingTerms(){
+	$('.terms-change').change(function () {
+		console.log('place/type triggered');
+		if(reservationActivityCounter() > 0){
+			notyAction(loadPostsFromScratch(),'Recommencer ?','Oui','Non', 'merci');
+		}else {
+			loadPostsFromScratch();
+		}
+
+	});
 }
 
 
@@ -1366,11 +1467,8 @@ weekHeader: 'Sem.',
 		var personNb = $(this).val();
 		setNumberOfPersonns(personNb);
 	});
-	//AJAX REQUEST FOR THE FILTERING ACTIVITIES
-	$('.terms-change').change(function () {
-		console.log('place/type triggered');
-		loadPostsFromScratch();
-	});
+
+
 	//filtering event
 	$('#typeterms input[type=checkbox]').change(function(){
 		loadPostsFromScratch();
