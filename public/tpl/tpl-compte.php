@@ -65,13 +65,13 @@ if ( in_array( 'partner', (array) $user->roles ) ) {
 
 	<div class="single-el">
 		<div class="comprend">
-			<?php online_booking_user::get_user_booking(0); ?>
+			<?php echo online_booking_user::get_user_booking(0); ?>
 		</div>
 	</div>
 	<div class="single-el">
 		<div class="comprend">
-			<?php online_booking_user::get_user_booking(1); ?>
-			<?php online_booking_user::get_user_booking(2); ?>
+			<?php echo online_booking_user::get_user_booking(1); ?>
+			<?php echo online_booking_user::get_user_booking(2); ?>
 		</div>
 	</div>
 	<div class="single-el">

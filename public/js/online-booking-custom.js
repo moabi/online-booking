@@ -5,7 +5,9 @@ var isBookingTpl = $('#booking-wrapper').length;
 var USERID = $('#user-logged-in-infos').attr("data-id");
 var daysSelector = $('#daysSelector'),
 	sliderRange = $("#slider-range"),
-	tripNameInput = $('#tripName');
+	tripNameInput = $('#tripName'),
+		lieuInput = $("#lieu"),
+		themeInput = $("#theme");
 var minBudget = sliderRange.data('min');
 var maxBudget = sliderRange.data('max');
 var maxDefinedDaysOption = $('#days-modifier').data('max');
@@ -81,7 +83,7 @@ function notyAction(action,msg,btnTxt,btnDecline, confirmationMsg){
 			{addClass: 'btn-reg btn btn-primary', text: btnTxt, onClick: function($noty) {
 
 				$noty.close();
-				doAction = action;
+				doAction = action();
 				var n = noty({text: confirmationMsg});
 
 			}
@@ -91,15 +93,19 @@ function notyAction(action,msg,btnTxt,btnDecline, confirmationMsg){
 			}
 			}
 		],
-		type: 'confirm',
+		type: 'confirm'
 
 	});
 }
 
-/*
-	utility
-	remove get param from url
-*/
+
+/**
+ * remove get param from url
+ * used when activity is added with get param
+ * @param key string
+ * @param sourceURL string
+ * @returns {*}
+ */
 function removeParam(key, sourceURL) {
 
     var rtn = sourceURL.split("?")[0],
@@ -134,10 +140,10 @@ function removeParam(key, sourceURL) {
  *
  * @return string
  */
-function doAjaxRequest( theme , geo, type ){
+function doAjaxRequest( theme , geo, type, searchTextTerm ){
 	//console.log(type);
 	jQuery.ajax({
-		url: '/onlyoo/wp-admin/admin-ajax.php',
+		url: '/wp-admin/admin-ajax.php',
 		settings:{
 			cache : true
 		},
@@ -146,6 +152,7 @@ function doAjaxRequest( theme , geo, type ){
 			'theme':theme,
 			'geo' : geo,
 			'type' : type,
+			'search': searchTextTerm,
 			'count':1
 		},
 		//JSON can cause issues on Chrome ? use text instead ?
@@ -173,15 +180,15 @@ function doAjaxRequest( theme , geo, type ){
 
 
 /**
- * doAjaxRequest
- * wp ajax request
+ * ajaxPostRequest
+ * request a post by ID with a target container
  * @param id integer post->ID
  * @param target string class/ID to append data
  */
 function ajaxPostRequest( id,target ){
 	//console.log(type);
 	jQuery.ajax({
-		url: '/onlyoo/wp-admin/admin-ajax.php',
+		url: '/wp-admin/admin-ajax.php',
 		settings:{
 			cache : true
 		},
@@ -198,12 +205,10 @@ function ajaxPostRequest( id,target ){
 			
 		},
 		error: function(errorThrown){
-			console.warn('error');
 			console.log(errorThrown);
-			var n = noty({
-				text: 'Echec du chargement :(',
-				template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
-			});
+			$(target).empty().append($('<div>', {
+				html : 'Erreur du chargement,désolé pour cet inconvénient !'
+			}));
 		}
 	});
 
@@ -212,10 +217,7 @@ function ajaxPostRequest( id,target ){
 //BOOKING FN
 
 function resetReservation(){
-	//clear cookie
-	delete_cookie( 'reservation' );
-	//reload page
-	location.reload();
+	notyAction( deleteAllActivities , 'Souhaitez-vous tout recommencer ?', 'oui', 'non','séjour reinitialisé');
 }
 /**
  * Storage -- cookies
@@ -281,21 +283,28 @@ function read_cookie(cname) {
 	result && (result = JSON.parse(result[1]));
 	return result;
 }
-
+/**
+ * store reservation as a cookie
+ * run this function to momentay store object
+ * @param reservation
+ */
 function tripToCookie(reservation){
 	cookieValue = JSON.stringify(reservation);
 	Cookies.set('reservation', cookieValue, { expires: 1, path: '/' });
 
 }
-//ACTIONS
 
-/*
- User Account functions
- */
+
+
+/************************
+ * User Account functions
+ ***********************/
 
 /**
  * estimateUserTrip
- *
+ * ask for a quote
+ * will change invoice state
+ * @param tripID
  */
 function estimateUserTrip(tripID){
 	$.ajax({
@@ -373,9 +382,10 @@ function deleteUserTrip(tripID){
 
 }
 
-/*
- Global functions
- */
+
+/************************
+ *  Global functions
+ ***********************/
 
 /**
  *  saveTrip
@@ -472,24 +482,22 @@ function addActivityAnimation(id){
 				.fadeOut(500)
 				.remove();
 	}, 1000);
-
-
 }
 
 /**
  * addActivity
  * Add an activity to a selected/default day
- * 
+ *
  * @param id the trip id - post->id
- * @param activityname post->name
+ * @param activityname activityname post->name
  * @param price acf - prix - should be static
- * @param type taxonomy 
- * @param img featured thumbnail
- * @param integer order   
+ * @param icon string fa icon
+ * @param order integer
  */
 function addActivity(id,activityname,price,icon,order){
 
 	getLength = reservation.tripObject[reservation.currentDay][id];
+
 	if(!getLength){
 		reservation.tripObject[reservation.currentDay][id] = {
 			name  : activityname,
@@ -501,7 +509,7 @@ function addActivity(id,activityname,price,icon,order){
 		reservation.currentBudget = parseInt(reservation.currentBudget,10) + parseInt(price,10);
 		tripType = (icon) ? icon : 'notDefined';
 		$htmlDay = $('.dayblock[data-date="'+ reservation.currentDay +'"] .day-content');
-		$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc"><i class="fa '+tripType+'"></i><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' € </span> <div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
+		$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc"><i class="fa '+tripType+'"></i><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' € </span> <div class="fa fa-trash-o" onclick="deleteActivity(\''+ reservation.currentDay +'\', '+ id +', '+ price +')"></div></div>');
 
 		$htmlDay.find('div.dc').sort(function (a, b) {
 					return +a.getAttribute('data-order') - +b.getAttribute('data-order');
@@ -521,10 +529,12 @@ function addActivity(id,activityname,price,icon,order){
 
 }
 
-/*
+
+/**
  * loadSingleActivity
- * @param id integer
-*/
+ * @param el object
+ * @param id integer post->ID
+ */
 function loadSingleActivity(el,id){
 	target = $(el).find('.popit');
 	if(target.hasClass('filled')){
@@ -536,11 +546,14 @@ function loadSingleActivity(el,id){
 	
 	
 }
-/*
- *delete Activity from Obj for Main Booking TPL
- *@param day : string format dd/mm/yyyy
- *@parama id : integer 
- *@param price : integer	
+
+/**
+ * deleteActivity
+ * delete Activity from Obj for Main Booking TPL
+ *
+ * @param day string format dd/mm/yyyy
+ * @param id integer activity ID
+ * @param price integer
  */
 function deleteActivity(day,id,price){
 		var n = noty ({
@@ -580,12 +593,15 @@ function deleteActivity(day,id,price){
 
 }
 
-/*
- *delete Activity from Obj for a SEJOUR
- *@param dayNumber : integer 
- *@parama id : number 
- *@param price : number	
- *@parama obj : unique ID of the sejour
+
+/**
+ * deleteSejourActivity
+ * delete Activity from Obj for a SEJOUR
+ *
+ * @param dayNumber integer
+ * @param id integer
+ * @param price integer
+ * @param obj unique ID of the sejour
  */
 function deleteSejourActivity(dayNumber,id,price,obj){
 	//console.log(day);
@@ -598,11 +614,9 @@ function deleteSejourActivity(dayNumber,id,price,obj){
 
 
 
-
-/**************
- DAYS RELATED FUNCTIONS
- **************/
-
+/************************
+ *   DAYS RELATED FUNCTIONS
+ ***********************/
 
 /**
  * check if arrival is before departure
@@ -717,9 +731,9 @@ function defineTripDates(){
 		}
 		//build html list
 		var currentClass = (i === 0) ? 'current' : 'classic';
-		var removeFn = (i !== reservation.days - 1) ? '' : '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q">';
+		var removeFn = (i !== reservation.days - 1) ? '' : '<i onclick="removeLastDay();" class="fa fa-times rd"></i>';
 
-		$('#daysTrip').append('<div class="dayblock '+currentClass+'" data-date="'+ dayIs +'" ><div class="day-wrapper">'+removeFn+'</span><span onclick="changeCurrentDay(\''+ dayIs+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
+		$('#daysTrip').append('<div class="dayblock '+currentClass+' fa fa-star" data-date="'+ dayIs +'" ><div class="day-wrapper">'+removeFn+'<span onclick="changeCurrentDay(\''+ dayIs+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
 		i++;
 	});
 }
@@ -743,7 +757,7 @@ function addADay(){
 		});
 
 	} else {
-		$('.fs1.rd').remove();
+		$('.rd').remove();
 		//define last day
 		lastDay = moment(reservation.departure, "DD/MM/YYYY");
 		reservation.departure = lastDay.add(1, 'days').format("DD/MM/YYYY");
@@ -752,9 +766,9 @@ function addADay(){
 		dayIs = reservation.departure;
 		reservation.days++;
 		reservation.tripObject[dayIs] = {};
-		var removeFn = '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q">';
+		var removeFn = '<i onclick="removeLastDay();" class="fa fa-times rd"></i>';
 		//html append Day
-		$('#daysTrip').append('<div class="dayblock" data-date="'+ reservation.departure +'" ><div class="day-wrapper">'+removeFn+'</span><span onclick="changeCurrentDay(\''+ reservation.departure+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
+		$('#daysTrip').append('<div class="dayblock  fa fa-star" data-date="'+ reservation.departure +'" ><div class="day-wrapper">'+removeFn+'<span onclick="changeCurrentDay(\''+ reservation.departure+'\');" class="js-change fs1" aria-hidden="true" data-icon=""></span>'+ niceDayIs +'</div><div class="day-content"></div></div>');
 
 		//store the day added
 		tripToCookie(reservation);
@@ -777,6 +791,33 @@ function setdaysCount(){
 
 }
 
+/**
+ * Delete all activites for each day
+ */
+function deleteAllActivities(){
+	//check if reservation.tripObject has activity
+	daysObj = reservation.tripObject;
+	days = Object.keys(daysObj).length;
+
+	if (days !== 0) {
+		//iterate thrue days
+		for (var day in daysObj) {
+			if (daysObj.hasOwnProperty(day)) {
+				activities = Object.keys(daysObj[day]).length;
+				if (activities > 0) {
+					for(var id in daysObj[day]){
+						delete daysObj[day][id];
+						$('.dayblock[data-date="'+ day +'"]').find('.dc[data-id="'+id+'"]').remove();
+					}
+
+				}
+			}
+		}
+	}
+	//store the day added
+	tripToCookie(reservation);
+	var n = noty({text: 'remise à zero'});
+}
 /**
  * reservationHasActivity
  * Check if reservation object or a single day has activity
@@ -816,6 +857,34 @@ function reservationActivityCounter(dayObj){
 	}
 
 }
+
+/**
+ *
+ * linked to removeLastDay()
+ * perform the last day removal
+ */
+function removeLastDayAction(){
+	lastDay = moment(reservation.departure, "DD/MM/YYYY");
+	reservation.days--;
+	lastDayString = lastDay.format("DD/MM/YYYY");
+	//console.log(lastDayString);
+	delete reservation.tripObject[lastDayString];
+	$(".dayblock[data-date='"+ lastDayString +"']").remove();
+	newDeparture = lastDay.subtract(1, 'days').format("DD/MM/YYYY");
+	reservation.departure = newDeparture;
+	reservation.currentDay = reservation.arrival;
+	$(".dayblock[data-date='"+ reservation.currentDay +"']").addClass('current');
+	//$( "#departure" ).datepicker( "setDate", reservation.departure );
+	//add a del button
+	var spanBtn = '<i onclick="removeLastDay();" class="fa fa-times rd"></i>';
+	$(".dayblock:last-child").find('.day-wrapper').append(spanBtn);
+	//store the day added
+	//console.log(reservation);
+	checkBudget();
+	tripToCookie(reservation);
+	setdaysCount();
+	var n = noty({text: 'Jour supprimé'});
+}
 /**
  *
  *  remove Last day
@@ -826,14 +895,16 @@ function reservationActivityCounter(dayObj){
  */
 function removeLastDay(){
 
+	lastDay = moment(reservation.departure, "DD/MM/YYYY");
+	lastDayString = lastDay.format("DD/MM/YYYY");
 
-	lastDayObj = reservation.tripObject[reservation.departure];
-
-	if(parseInt(reservation.days,10) < 2){
+	if(parseInt(reservation.days,10) < 2) {
 		var n = noty({
 			text: 'Nombre minimum de jour atteint',
 			template: '<div id="add_success" class="active error"><span class="noty_text"></span><div class="noty_close"></div></div>'
 		});
+	} else if( reservationActivityCounter(lastDayString) === 0){
+		removeLastDayAction();
 	} else{
 		var n = noty ({
 		layout: 'center',
@@ -845,26 +916,7 @@ function removeLastDay(){
 			{addClass: 'btn-reg btn btn-primary', text: 'Poursuivre et supprimer', onClick: function($noty) {
 
 				$noty.close();
-				lastDay = moment(reservation.departure, "DD/MM/YYYY");
-				reservation.days--;
-				lastDayString = lastDay.format("DD/MM/YYYY");
-				//console.log(lastDayString);
-				delete reservation.tripObject[lastDayString];
-				$(".dayblock[data-date='"+ lastDayString +"']").remove();
-				newDeparture = lastDay.subtract(1, 'days').format("DD/MM/YYYY");
-				reservation.departure = newDeparture;
-				reservation.currentDay = reservation.arrival;
-				$(".dayblock[data-date='"+ reservation.currentDay +"']").addClass('current');
-				//$( "#departure" ).datepicker( "setDate", reservation.departure );
-				//add a del button
-				var spanBtn = '<span onclick="removeLastDay();" class="fs1 rd" aria-hidden="true" data-icon="Q"></span>';
-				$(".dayblock:last-child").find('.day-wrapper').append(spanBtn);
-				//store the day added
-				//console.log(reservation);
-				checkBudget();
-				tripToCookie(reservation);
-				setdaysCount();
-				var n = noty({text: 'Jour supprimé'});
+				removeLastDayAction();
 
 			}
 			},
@@ -873,7 +925,7 @@ function removeLastDay(){
 			}
 			}
 		],
-		type: 'confirm',
+		type: 'confirm'
 
 	});
 	
@@ -962,6 +1014,7 @@ function changeCurrentDay(day){
 }
 /*
  * delete full Day
+ * always delete the last day
  * need to calculate number of days and set departure/arrival
  * @param day : string format dd/mm/yyyy
  */
@@ -978,14 +1031,14 @@ function removeDay(day){
 
 }
 
-/*
- Change tripObject
- duplicate key (day) 
- rename it to the new day - add a prefix to make it unique
- delete old key
- rename it correctly (remove prefix)
- rebuild html list
- obj : replace departure && arrival
+
+/**
+ * changeDateRangeEvent
+ * reload reservation Object
+ * duplicate key,rename it,rename it to make it unique,del old key,remove prefix,rebuild html
+ * re-set departure & arrival dates
+ *
+ * @param selectedDate
  */
 function changeDateRangeEvent(selectedDate){
 	obj = reservation.tripObject;
@@ -1054,20 +1107,83 @@ function changeDateRangeEvent(selectedDate){
 		}
 	}
 
+
 	//console.log(reservation);
-	//re-create html days
-	loadTrip(reservation,false);
 	tripToCookie(reservation);
+	reloadSidebar();
 	var n = noty({text: 'date changée'});
 }
 
+/**
+ * changingTerms
+ * should be triggerd once trip is fully loaded, not before
+ * reload post
+ */
+function changingTerms(){
+	$('.terms-change').change(function () {
+		console.log('place/type triggered');
+		if(reservationActivityCounter() > 0){
+			var n = noty ({
+				layout: 'center',
+				modal: true,
+				text: 'recharger les réglages et perdre activités ?',
+				template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+				force: true, // adds notification to the beginning of queue when set to true
+				maxVisible: 1, // you can set max visible notification for dismissQueue true option,
+				killer: true, // for close all notifications before show
+				closeWith:['button'],
+				buttons: [
+					{addClass: 'btn-reg btn btn-primary', text: 'Changer de place', onClick: function($noty) {
+
+						$noty.close();
+						deleteAllActivities();
+						console.warn('need to reload sidebar');
+						var n = noty({text: 'réalisé'});
+
+					}
+					},
+					{addClass: 'btn-reg btn btn-danger', text: 'Garder la configuration', onClick: function($noty) {
+						$noty.close();
+					}
+					}
+				],
+				type: 'confirm'
+
+			});
 
 
+		}else {
+			loadPostsFromScratch();
+		}
+
+	});
+}
+
+/**
+ * checkBudget
+ *
+ */
+function checkBudget(){
+	globalBudget = parseInt(reservation.budgetPerMax,10);
+	actualCost = parseInt(reservation.currentBudget,10);
+	if( globalBudget < actualCost){
+		console.log('budget is too high');
+		$('#budget-icon').addClass('exceeded').removeClass('ok');
+
+	} else {
+		console.log('budget is ok');
+		$('#budget-icon').addClass('ok').removeClass('exceeded');
+	}
+}
+
+/********************
+SET THINGS
+ ********************/
 
 /*
  * set Budget in obj, store it in cookies
- * @param min : number 
- * @parama max : number 
+ * @param min : number
+ * @parama max : number
  */
 function setBudgetPer(min,max){
 	reservation.budgetPerMin = min;
@@ -1086,11 +1202,19 @@ function setReservationTerms(theme, lieu){
 	tripToCookie(reservation);
 }
 
+/**
+ * setNumberOfPersonns
+ * @param personNb Integer
+ */
 function setNumberOfPersonns(personNb){
-	reservation.participants = personNb;
+	reservation.participants = parseIn(personNb,10);
 	checkBudget();
 	tripToCookie(reservation);
 }
+/**
+ * setTripName
+ * @param name
+ */
 function setTripName(name){
 	if(!name || name == ""){
 		name = reservation['name'];
@@ -1099,26 +1223,12 @@ function setTripName(name){
 }
 
 
-//INIT TRIP
-/*
- a useless function
- */
-function createdayTrip(id,day){
-	this.idTrip = id;
-	this.idDay = day;
-	this.animation = animation;
-	this.repasmidi = repasmidi;
-	this.repassoiree = repassoiree;
-	this.soiree = soiree;
-	this.hebergement = hebergement;
-	this.transport = transport;
-	this.createDay = createDay;
-}
 
-/*
- * load trip from a known object
- * $trip : obj - full trip object
- * gotoBookingPage - bolean - are we on the booking page
+/**
+ * INIT TRIP
+ *
+ * @param $trip object the full reservation obj
+ * @param gotoBookingPage bolean - are we on the booking page ?
  */
 function loadTrip($trip,gotoBookingPage){
 	console.log('load trip');
@@ -1175,11 +1285,11 @@ function loadTrip($trip,gotoBookingPage){
 			tripNameInput.val(reservation.name);
 		}
 		//set values for terms
-		if( $("#lieu").length ){
-			$("#lieu").select2("val", reservation.lieu);	
+		if( lieuInput.length ){
+			lieuInput.select2("val", reservation.lieu);
 		}
-		if( $("#theme").length ){
-			$("#theme").select2("val", reservation.theme);	
+		if( themeInput.length ){
+			themeInput.select2("val", reservation.theme);
 		}		
 
 		defineTripDates();
@@ -1187,7 +1297,7 @@ function loadTrip($trip,gotoBookingPage){
 		setdaysCount();
 		the_activites();
 		checkBudget();
-		console.log(reservation.theme);
+		//console.log(reservation.theme);
 		var n = noty({text: 'Chargement de votre voyage'});
 		loadPostsFromScratch();
 
@@ -1195,41 +1305,33 @@ function loadTrip($trip,gotoBookingPage){
 
 
 }
-/*
- Check if budget is too high
+
+/**
+ * loadPostsFromScratch
+ * get terms values
+ * setReservationTerms
+ * reloadPost
  */
-function checkBudget(){
-	globalBudget = parseInt(reservation.budgetPerMax,10);
-	actualCost = parseInt(reservation.currentBudget,10);
-	if( globalBudget < actualCost){
-		console.log('budget is too high');
-		$('#budget-icon').addClass('exceeded').removeClass('ok');
-
-	} else {
-		console.log('budget is ok');
-		$('#budget-icon').addClass('ok').removeClass('exceeded');
-	}
-}
-
 function loadPostsFromScratch(){
 	console.log('loadPostsFromScratch');
 	var theme = $('#theme').val();
 	if(theme === null){
 		theme = $('select#theme option:first-child').attr('value');
-		$("select#theme").val(theme).trigger("change");
-	} 
+		themeInput.val(theme).trigger("change");
+	}
 	var lieu = $('#lieu').val();
 	if(lieu === null){
 		lieu = $('select#lieu option:first-child').attr('value');
-		$("select#lieu").val(lieu).trigger("change");
+		lieuInput.val(lieu).trigger("change");
 	}
 	var type = $('#typeterms input[type=checkbox]').attr('value');
 	checkedTypes = [];
 	$("#typeterms input[type=checkbox]:checked").each(function(){
 		checkedTypes.push($(this).val());
 	});
+	var searchTextTerm = $('input[name="ob_s"]').val();
 	setReservationTerms(theme, lieu);
-	doAjaxRequest(theme, lieu, checkedTypes);
+	doAjaxRequest(theme, lieu, checkedTypes,searchTextTerm);
 
 }
 
@@ -1257,11 +1359,20 @@ function initTrip(){
 
 	//Load Data
 	loadPostsFromScratch();
-	console.log(reservation);
+	console.log('initTrip '+reservation);
 
 }
 
-
+/*
+ * reloadSidebar
+ *
+ *
+ */
+ function reloadSidebar(){
+	$('#daysTrip').empty();
+	defineTripDates();
+	the_activites();
+ }
 
 /*
  * get activites from the obj
@@ -1293,7 +1404,7 @@ function the_activites(){
 							tripType = (type) ? type : 'notDefined';
 							$htmlDay = $('.dayblock[data-date="'+ day +'"]').find('.day-content');
 							//build html
-							$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc"><i class="fa '+type+'"></i><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' €</span><div class="fs1" aria-hidden="true" data-icon="" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
+							$htmlDay.append('<div onmouseover="loadSingleActivity(this, \''+ id +'\')" data-order="'+order+'" data-id="'+ id +'" class="dc"><i class="fa '+type+'"></i><span class="popit"></span>'+ activityname +' <span class="dp">'+ price +' €</span><div class="fa fa-trash-o" onclick="deleteActivity(\''+ day +'\', '+ id +', '+ price +')"></div></div>');
 							$htmlDay.find('div.dc').sort(function (a, b) {
 										return +a.getAttribute('data-order') - +b.getAttribute('data-order');
 									})
@@ -1311,168 +1422,11 @@ function the_activites(){
 	}
 }
 
-/**
- * changingTerms
- * should be triggerd once trip is fully loaded, not before
- * reload post
- */
-function changingTerms(){
-	$('.terms-change').change(function () {
-		console.log('place/type triggered');
-		if(reservationActivityCounter() > 0){
-			notyAction(loadPostsFromScratch(),'Recommencer ?','Oui','Non', 'merci');
-		}else {
-			loadPostsFromScratch();
-		}
 
-	});
-}
 
 
 jQuery(function () {
 	//DATEPICKER settings
-	$.datepicker.setDefaults($.datepicker.regional["fr"]);
-	$.datepicker.regional[ "fr" ]
-	//forms settings
-	$('.date-picker').datepicker({
-		dateFormat: "dd/mm/yy",
-		altFormat: "dd/mm/yy",
-		showOptions: { direction: "up" },
-	});
-	
-	$('.wpcf7-range').slider();
-	//sidebar
- 	$("#side-stick").sticky({
-	 topSpacing:70,
-	 bottomSpacing:530
-	 });
-	 //select 2
-	$('.postform').select2({
-		'width' : '96%'
-	});
-
-	$('.open-popup-link').magnificPopup({
-		type:'inline',
-		midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
-	});
-
-	//SLIDER RANGE SETTINGS
-	var getBudgetMin = (reservation.budgetPerMin && reservation.budgetPerMin > minBudget) ? reservation.budgetPerMin : minBudget;
-	var getBudgetMax = (reservation.budgetPerMax && reservation.budgetPerMax > minBudget) ? reservation.budgetPerMax : maxBudget;
-
-	$("#slider-range").slider({
-		range: true,
-		min: minBudget,
-		max: maxBudget,
-		step: 10,
-		values: [getBudgetMin, getBudgetMax],
-		slide: function (event, ui) {
-			$("#budget").val(ui.values[0] + "/" + ui.values[1]);
-			$('#st').html(ui.values[0]);
-			$('#end').html(ui.values[1]);
-		},
-		stop: function (event, ui) {
-			setBudgetPer(ui.values[0], ui.values[1]);
-		}
-	});
-
-	
-
-	$("#arrival").datepicker({
-		closeText: 'Fermer',
-prevText: 'Précédent',
-nextText: 'Suivant',
-currentText: 'Aujourd\'hui',
-monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
-dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
-dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-weekHeader: 'Sem.',
-		defaultDate: "+1w",
-		dateFormat: "dd/mm/yy",
-		altFormat: "dd/mm/yy",
-		minDate: 0,
-		changeMonth: true,
-		numberOfMonths: 1,
-		inline: true,
-		showOtherMonths: true,
-		beforeShow: function (input, inst) {
-			$('#ui-datepicker-div').addClass('ll-skin-melon');
-		},
-		onClose: function (selectedDate) {
-			var maxRange = moment(selectedDate, 'DD/MM/YYYY').add(2, 'days');
-			var maxDate = maxRange.format('DD/MM/YYYY');
-			//$( "#departure" ).datepicker( "option", "minDate", maxDate );
-			//$("#departure").datepicker("setDate", maxDate);
-			//console.log(selectedDate);
-			arrival = moment(reservation.arrival, 'DD/MM/YYYY');
-			//console.log(arrival);
-			//if date does not change we don't move, otherwise we calculate the new days
-			if(moment(selectedDate, 'DD/MM/YYYY').isSame(arrival)){
-				console.log('no date move');
-			} else {
-				console.log('date move');
-				changeDateRangeEvent(selectedDate);
-			}
-
-
-		}
-	});
-	$("#arrival-form").datepicker({
-		closeText: 'Fermer',
-prevText: 'Précédent',
-nextText: 'Suivant',
-currentText: 'Aujourd\'hui',
-monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
-dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
-dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-weekHeader: 'Sem.',
-		defaultDate: "+1w",
-		dateFormat: "dd/mm/yy",
-		altFormat: "dd/mm/yy",
-		minDate: 0,
-		changeMonth: true,
-		numberOfMonths: 1,
-		inline: true,
-		showOtherMonths: true,
-		onClose: function (selectedDate) {
-			console.log(selectedDate);
-			$("#arrival-form").val(selectedDate);
-		}
-	});
-	
-	$("#departure").datepicker({
-		defaultDate: "+1w",
-		dateFormat: "dd/mm/yy",
-		altFormat: "dd/mm/yy",
-		changeMonth: true,
-		numberOfMonths: 1,
-		disabled: true,
-		minDate: 0,
-		inline: true,
-		showOtherMonths: true,
-		beforeShow: function (input, inst) {
-			//$('#ui-datepicker-div').addClass('ll-skin-melon');
-		},
-		onClose: function (selectedDate) {
-			//$("#arrival").datepicker("option", "maxDate", selectedDate);
-
-		}
-	});
-
-	$('#participants').change(function () {
-		var personNb = $(this).val();
-		setNumberOfPersonns(personNb);
-	});
-
-
-	//filtering event
-	$('#typeterms input[type=checkbox]').change(function(){
-		loadPostsFromScratch();
-	});
 	//i18n momentjs
 	moment.locale('fr', {
 		months: "janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre".split("_"),
@@ -1527,6 +1481,169 @@ weekHeader: 'Sem.',
 			doy: 4 // The week that contains Jan 4th is the first week of the year.
 		}
 	});
+	$.datepicker.setDefaults($.datepicker.regional["fr"]);
+
+	//forms settings
+	$('.date-picker').datepicker({
+		dateFormat: "dd/mm/yy",
+		altFormat: "dd/mm/yy",
+		showOptions: { direction: "up" }
+	});
+
+	//sidebar
+ 	$("#side-stick").sticky({
+	 topSpacing:70,
+	 bottomSpacing:530
+	 });
+	 /*
+	 $('#ob-btn-re').on('inview', function(event, isInView) {
+	  if (isInView) {
+	    // element is now visible in the viewport
+	    console.log('stick');
+	    $("#side-stick").sticky({
+	 topSpacing:70,
+	 bottomSpacing:530
+	 });
+	  } else {
+	    // element has gone out of viewport
+	    $("#side-stick").unstick();
+	    console.log('test');
+	  }
+	});*/
+
+	 //select 2
+	$('.postform').select2({
+		'width' : '96%'
+	});
+
+	$('.open-popup-link').magnificPopup({
+		type:'inline',
+		midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+	});
+
+	//SLIDER RANGE SETTINGS
+	var getBudgetMin = (reservation.budgetPerMin && reservation.budgetPerMin > minBudget) ? reservation.budgetPerMin : minBudget;
+	var getBudgetMax = (reservation.budgetPerMax && reservation.budgetPerMax > minBudget) ? reservation.budgetPerMax : maxBudget;
+
+	$("#slider-range").slider({
+		range: true,
+		min: minBudget,
+		max: maxBudget,
+		step: 10,
+		values: [getBudgetMin, getBudgetMax],
+		slide: function (event, ui) {
+			$("#budget").val(ui.values[0] + "/" + ui.values[1]);
+			$('#st').html(ui.values[0]);
+			$('#end').html(ui.values[1]);
+		},
+		stop: function (event, ui) {
+			setBudgetPer(ui.values[0], ui.values[1]);
+		}
+	});
+
+	
+
+	$("#arrival").datepicker({
+		closeText: 'Fermer',
+		prevText: 'Précédent',
+		nextText: 'Suivant',
+		currentText: 'Aujourd\'hui',
+		monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+		monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+		dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+		dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+		dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+		weekHeader: 'Sem.',
+		defaultDate: "+1w",
+		dateFormat: "dd/mm/yy",
+		altFormat: "dd/mm/yy",
+		minDate: 0,
+		changeMonth: true,
+		numberOfMonths: 1,
+		inline: true,
+		showOtherMonths: true,
+		beforeShow: function (input, inst) {
+			$('#ui-datepicker-div').addClass('ll-skin-melon');
+		},
+		onClose: function (selectedDate) {
+			var maxRange = moment(selectedDate, 'DD/MM/YYYY').add(2, 'days');
+			var maxDate = maxRange.format('DD/MM/YYYY');
+			//$( "#departure" ).datepicker( "option", "minDate", maxDate );
+			//$("#departure").datepicker("setDate", maxDate);
+			//console.log(selectedDate);
+			arrival = moment(reservation.arrival, 'DD/MM/YYYY');
+			//console.log(arrival);
+			//if date does not change we don't move, otherwise we calculate the new days
+			if(moment(selectedDate, 'DD/MM/YYYY').isSame(arrival)){
+				console.log('no date move');
+			} else {
+				console.log('date move');
+				changeDateRangeEvent(selectedDate);
+			}
+
+
+		}
+	});
+
+
+	$("#arrival-form").datepicker({
+		closeText: 'Fermer',
+		prevText: 'Précédent',
+		nextText: 'Suivant',
+		currentText: 'Aujourd\'hui',
+		monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+		monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+		dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+		dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+		dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+		weekHeader: 'Sem.',
+		defaultDate: "+1w",
+		dateFormat: "dd/mm/yy",
+		altFormat: "dd/mm/yy",
+		minDate: 0,
+		changeMonth: true,
+		numberOfMonths: 1,
+		inline: true,
+		showOtherMonths: true,
+		onClose: function (selectedDate) {
+			console.log(selectedDate);
+			$("#arrival-form").val(selectedDate);
+		}
+	});
+	
+	$("#departure").datepicker({
+		defaultDate: "+1w",
+		dateFormat: "dd/mm/yy",
+		altFormat: "dd/mm/yy",
+		changeMonth: true,
+		numberOfMonths: 1,
+		disabled: true,
+		minDate: 0,
+		inline: true,
+		showOtherMonths: true,
+		beforeShow: function (input, inst) {
+			//$('#ui-datepicker-div').addClass('ll-skin-melon');
+		},
+		onClose: function (selectedDate) {
+			//$("#arrival").datepicker("option", "maxDate", selectedDate);
+
+		}
+	});
+
+	$('#participants').change(function () {
+		var personNb = $(this).val();
+		setNumberOfPersonns(personNb);
+	});
+
+
+	//filtering event
+	$('#typeterms input[type=checkbox]').change(function(){
+		loadPostsFromScratch();
+	});
+	$('.js-sub-s').click(function(e){
+		loadPostsFromScratch();
+	});
+
 
 	//last action, set trip or load existant
 	//loadTrip(exampleReservation);
@@ -1546,8 +1663,8 @@ weekHeader: 'Sem.',
 			dots: false,
 			infinie: true,
 			arrows: true,
-			prevArrow: '<div class="fs1 prevmulti" aria-hidden="true" data-icon="4"></div>',
-			nextArrow: '<div class="fs1 nextmulti" aria-hidden="true" data-icon="5"></div>',
+			prevArrow: '<i class="fa fa-chevron-left prevmulti"></i>',
+            nextArrow: '<i class="fa fa-chevron-right nextmulti"></i>',
 			slidesToShow: 1,
 			slidesToScroll: 1,
 			adaptiveHeight: false

@@ -92,6 +92,15 @@ get_header(); ?>
 	</div>
 
 
+		    <h2 class="related-title">
+        <i class="fa fa-heart"></i>
+        <?php $lieu_sejour =  $ux->get_place($postid,false); ?>
+        <?php _e('Autres idées de package','online-booking'); ?>
+        </h2>
+
+		<?php Online_Booking_Public::the_sejours(8,false,$lieu_sejour); ?>
+		
+
 	</article><!-- #post -->
 			<?php endwhile; // end of the loop. ?>
 

@@ -112,7 +112,7 @@ get_header(); ?>
 <div class="pure-g">
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-g">
+		<div class="pure-g-r">
 			<div class="pure-u-1 pure-u-xl-8-24">							
 				<label class="floating-label" for="float-select">
 				<?php //<span class="fs1" aria-hidden="true" data-icon="g"></span> ?>
@@ -125,7 +125,7 @@ get_header(); ?>
 	</div>
 	
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-g">
+		<div class="pure-g-r">
 			<div class="pure-u-1 pure-u-xl-8-24">
 			<label class="floating-label" for="float-select">
 			<?php //<span class="fs1" aria-hidden="true" data-icon=""></span> ?>
@@ -139,7 +139,7 @@ get_header(); ?>
 	
 
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-	<div class="pure-g">
+	<div class="pure-g-r">
 		
 		<div class="pure-u-1 pure-u-xl-12-24">	
 			<div class="xs-field">
@@ -151,7 +151,7 @@ get_header(); ?>
 		</div>
 		<div class="pure-u-1 pure-u-xl-12-24">	
 			<div class="xs-field">	
-			<div class="fs1 input-box" aria-hidden="true" data-icon="">		
+			<div class="fa fa-calendar input-box">
 			<input data-value="" value="<?php echo $sel_date; ?>" class="datepicker bk-form form-control" id="arrival">
 			</div>	
 		</div>
@@ -162,7 +162,7 @@ get_header(); ?>
 
 							
 	<div class="pure-u-1 pure-u-md-8-24 on-field">
-		<div class="pure-g">
+		<div class="pure-g-r">
 		<div class="pure-u-1 pure-u-xl-8-24">
 			<label class="floating-label" for="participants">
 			
@@ -170,7 +170,7 @@ get_header(); ?>
 			</label>
 		</div>
 		<div class="pure-u-1 pure-u-xl-10-24">	
-			<div class="fs1 input-box" aria-hidden="true" data-icon="">
+			<div class="fa fa-users input-box">
 			<input type="number" id="participants" value="<?php echo $sel_participants; ?>" class="bk-form form-control" />
 			</div>
 		</div>
@@ -206,11 +206,10 @@ get_header(); ?>
 
 <!-- Number of days -->
 <div class="pure-u-1 pure-u-md-8-24 on-field">
-	<div class="pure-g">
+	<div class="pure-g-r">
 		<div class="pure-u-1 pure-u-xl-12-24">
 			<div class="xs-field">
 		<label class="floating-label" for="days">
-		<?php //<span class="fs1" aria-hidden="true" data-icon=""></span>  ?>
 		<?php _e('Nombre de jours',''); ?>
 		</label>	
 			</div>
@@ -302,7 +301,7 @@ $terms = get_terms($taxonomies, $args);
 		echo '</li>';
         
      }
-     echo '<li id="search-filter"><span class="fa fa-search"><input type="text" value="" placeholder="Rechercher" /></span></li>';
+     echo '<li id="search-filter"><input name="ob_s" id="ob-s" type="text" value="" placeholder="Rechercher" /><i class="fa fa-search js-sub-s"></i></li>';
      echo '</ul>';
  }
 	
@@ -318,9 +317,12 @@ $terms = get_terms($taxonomies, $args);
 		 echo '</div>';
 	?>
 
-		<h2 class="upptitle"><?php _e('Vous aimerez également','online-booking'); ?></h2>
+		    <h2 class="related-title">
+        <i class="fa fa-heart"></i>
+        <?php _e('Vous aimerez également','online-booking'); ?>
+        </h2>
 
-		<?php Online_Booking_Public::the_sejours(5,false); ?>
+		<?php Online_Booking_Public::the_sejours(8,false); ?>
 		</div>
 		</div><!-- #content -->
 
@@ -340,7 +342,7 @@ $terms = get_terms($taxonomies, $args);
 <?php if ( is_active_sidebar( 'right_sidebar' ) ) : ?>
       <?php dynamic_sidebar( 'right_sidebar' ); ?>
        <?php endif; ?>
-      	    <div id="caller-side" class="pure-g">
+      	    <div id="caller-side" class="pure-g-r">
 		    <div class="pure-u-1 pure-u-xl-1-2">
 			    	<div id="pre-padd">
 			    		<i id="phone-icon" class="fa fa-phone"></i>
@@ -372,7 +374,7 @@ Des questions ?
 	<div class="cleafix"></div>
 	<?php  if ( !is_user_logged_in() ): ?>
 <!-- FORMUAIRE SEND -->	
-	<a href="#login-popup" class="open-popup-link btn-danger btn btn-reg"><?php _e('Connectez-vous<br /> pour sauvegarder','online-booking'); ?></a>
+	<a id="ob-btn-re" href="#login-popup" class="open-popup-link btn-danger btn btn-reg"><?php _e('Connectez-vous<br /> pour sauvegarder','online-booking'); ?></a>
 <!-- #formulaire send -->
 <?php endif; ?>
 
@@ -396,7 +398,7 @@ Des questions ?
 			endif;
 			
 			
-			echo '<a href="#" onclick="saveTrip(\''.$eventid.'\')" class="btn btn-reg">';
+			echo '<a id="ob-btn-re" href="#" onclick="saveTrip(\''.$eventid.'\')" class="btn btn-reg">';
 			echo $btn_Name;
 			echo '<span class="fs1" aria-hidden="true" data-icon=""></span></a>';
 			?>

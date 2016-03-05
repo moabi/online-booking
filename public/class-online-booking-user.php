@@ -42,10 +42,12 @@ class online_booking_user  {
 	 */
 	private $version;
 	
-	/*
-		clear_reservation_cookie
-		Clear cookie on logout
-	*/
+
+	/**
+	 * clear_reservation_cookie
+	 *
+	 * @return bool
+	 */
 	public function clear_reservation_cookie(){
 		if (isset($_COOKIE['reservation'])) {
 			unset($_COOKIE['reservation']);
@@ -54,6 +56,13 @@ class online_booking_user  {
 			return false;
 		}
 	}
+
+	/**
+	 * get_invoiceID
+	 *
+	 * @param $bookingObject
+	 * @return string
+	 */
 	 public function get_invoiceID($bookingObject){
 		//var_dump($bookingObject);
 		$trip_id = $bookingObject->ID;
@@ -65,7 +74,14 @@ class online_booking_user  {
 		
 		return $invoiceID;
 	 }
-	 
+
+	/**
+	 * get_invoice_date
+	 *
+	 *
+	 * @param $bookingObject
+	 * @return bool|string
+	 */
 	 public function get_invoice_date($bookingObject){
 		 $tripDate = $bookingObject->booking_date;
 		 $newDate = date("d/m/y", strtotime($tripDate));
@@ -73,12 +89,15 @@ class online_booking_user  {
 		 return $newDate;
 	 }
 	
-	/*
-		retrieve trips
-		@param integer ($validation)
-	*/
-	public static function get_user_booking($validation){
 
+	/**
+	 * get_user_booking
+	 *
+	 * @param $validation integer
+	 * @return string
+	 */
+	public static function get_user_booking($validation){
+	
 			global $wpdb;
 			$userID = get_current_user_id();
 			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID	
@@ -94,7 +113,7 @@ class online_booking_user  {
 			//var_dump($results);	
 			$obp = new Online_Booking_Public('ob',1);		
 			
-			echo '<ul id="userTrips">';
+			$output = '<ul id="userTrips">';
 			foreach ( $results as $result ) 
 				{
 					$booking = $result->booking_object; 
@@ -107,69 +126,74 @@ class online_booking_user  {
 					$uri = get_bloginfo("url").'/public/?ut=';
 					$uri_var = $tripID.'-'.$userID;
 					$public_url = $uri.$obp->encode_str($uri_var);
-					
-					
-					echo '<li id="ut-'.$tripID.'">';
+
+
+					$output .= '<li id="ut-'.$tripID.'">';
 					if($validation == 0){
-						echo '<script>var trip'.$result->ID.' = '.$booking.'</script>';
+						$output .= '<script>var trip'.$result->ID.' = '.$booking.'</script>';
 					}
-					
-					
-					echo '<div class="pure-g head"><div class="pure-u-1">';				
-					echo $tripName;
+
+
+					$output .= '<div class="pure-g head"><div class="pure-u-1">';
+					$output .= $tripName;
 					if($validation == 0){
-					echo '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer ce devis</div>';
+						$output .= '<div class="fs1 js-delete-user-trip" aria-hidden="true" data-icon="" onclick="deleteUserTrip('.$tripID.')">Supprimer ce devis</div>';
 					}
-					echo '</div>';
-					echo '</div>';
-					
-					echo '<div class="pure-g">';
-					echo '<div class="pure-u-md-10-24"><div class="padd-l">';
+					$output .= '</div>';
+					$output .= '</div>';
+
+					$output .= '<div class="pure-g">';
+					$output .= '<div class="pure-u-md-10-24"><div class="padd-l">';
 					//BUDGET
 					if($validation == 0){
 					//online_booking_user::the_budget($tripID, $booking,$tripDate,$result);
-					echo '<span class="user-date-invoice"><a href="'.$public_url.'">'.__('Devis n°','online-booking').''.$newDateDevis.$tripID.' (daté du '.$newDate.')</a></span>';
+						$output .= '<span class="user-date-invoice"><a href="'.$public_url.'">'.__('Devis n°','online-booking').''.$newDateDevis.$tripID.' (daté du '.$newDate.')</a></span>';
 					} else {
-						echo 'Commande n°'.$tripID;
+						$output .= 'Commande n°'.$tripID;
 					}
-					
-					echo '<div class="sharetrip">'.__('Partager/Voir votre évènement :','online-booking');
-					echo '<br /><a target="_blank" href="'.$public_url.'"><div class="btn fs1" aria-hidden="true" data-icon=""></div></a><input type="text" value="'.$public_url.'" readonly="readonly" />';
-					echo '<br /><em>'.__('Cette adresse publique,mais anonyme, vous permet de partage votre event','online-booking').'</em>';
-					echo '</div></div>';
-					echo '</div>';
-					echo '<div class="pure-u-md-7-24">';
+
+					$output .= '<div class="sharetrip">'.__('Partager/Voir votre évènement :','online-booking');
+					$output .= '<br /><a target="_blank" href="'.$public_url.'"><div class="btn fs1" aria-hidden="true" data-icon=""></div></a><input type="text" value="'.$public_url.'" readonly="readonly" />';
+					$output .= '<br /><em>'.__('Cette adresse publique,mais anonyme, vous permet de partage votre event','online-booking').'</em>';
+					$output .= '</div></div>';
+					$output .= '</div>';
+					$output .= '<div class="pure-u-md-7-24">';
 					if($validation == 0){
-					echo '<div class="btn btn-border twobtn" onclick="loadTrip(trip'.$result->ID.',true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Modifier votre séjour','online-booking').'</div>';
-					echo '<a class="btn btn-border scnd" href="'.$public_url.'"><i class="fa fa-book"></i>'.__('Voir votre devis','online-booking').'</a>';
+						$output .= '<div class="btn btn-border twobtn" onclick="loadTrip(trip'.$result->ID.',true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Modifier votre séjour','online-booking').'</div>';
+						$output .= '<a class="btn btn-border scnd" href="'.$public_url.'"><i class="fa fa-book"></i>'.__('Voir votre devis','online-booking').'</a>';
 					}elseif($validation == 1) {
-						echo '<div class="progress-step">'.__('En cours de traitement','online-booking').'<br />';
-						echo '<div class="in-progress s-'.$validation.'"><span></span></div></div>';
+						$output .= '<div class="progress-step">'.__('En cours de traitement','online-booking').'<br />';
+						$output .= '<div class="in-progress s-'.$validation.'"><span></span></div></div>';
 					}elseif($validation == 2) {
-						echo '<div class="progress-step">'.__('Terminée','online-booking').'<br />';
-						echo '<div class="in-progress s-'.$validation.'"><span></span></div></div>';
+						$output .= '<div class="progress-step">'.__('Terminée','online-booking').'<br />';
+						$output .= '<div class="in-progress s-'.$validation.'"><span></span></div></div>';
 					}
-					echo '</div>';
-					echo '<div class="pure-u-md-7-24">';
+					$output .= '</div>';
+					$output .= '<div class="pure-u-md-7-24">';
 					if($validation == 0){
-						echo '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')"><i class="fa fa-check"></i>Valider ma demande</div>';
+						$output .= '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')"><i class="fa fa-check"></i>Valider ma demande</div>';
 					} else  {
-						echo '<a class="btn btn-border" href="'.$public_url.'"><i class="fa fa-search"></i>'.__('Voir le détail','online-booking').'</a>';
+						$output .= '<a class="btn btn-border" href="'.$public_url.'"><i class="fa fa-search"></i>'.__('Voir le détail','online-booking').'</a>';
 					}
-					echo '</div></div>';
-					echo '</li>';
+					$output .= '</div></div>';
+					$output .= '</li>';
 				}
-			echo '</ul>';
+		$output .= '</ul>';
+
+		return $output;
 	}
 	
-	/*
-		the_budget
-		
-		
-		$tripID integer
-		$item
-		$tripDate
-	*/
+
+	/**
+	 * the_budget
+	 * deprecated
+	 *
+	 *
+	 * @param $tripID
+	 * @param $item
+	 * @param $tripDate
+	 * @param $bookingObject
+	 */
 	private static function the_budget($tripID , $item, $tripDate,$bookingObject){
 		
 
@@ -267,10 +291,14 @@ class online_booking_user  {
 
 	}
 	
-	
-	/*
-		save user's trip to DB
-	*/
+
+	/**
+	 * save_trip
+	 * save to db
+	 *
+	 * @param $tripName
+	 * @return string
+	 */
 	public static function  save_trip($tripName){
 		
 		global $wpdb;
@@ -342,9 +370,12 @@ class online_booking_user  {
 		
 	}
 	
-	/*
+
+	/**
 	 * estimateUserTrip
 	 *
+	 * @param $tripIDtoEstimate
+	 * @return string
 	 */
 	 public function estimateUserTrip($tripIDtoEstimate){
 		 global $wpdb;
@@ -376,9 +407,13 @@ class online_booking_user  {
 		return $userTripsEstimate;
 	 }
 	 
-	/*
-		delete user's trip to DB
-	*/
+
+	/**
+	 * delete_trip
+	 *
+	 * @param $tripIDtoDelete
+	 * @return string
+	 */
 	public static function  delete_trip($tripIDtoDelete){
 		global $wpdb;
 		
@@ -400,7 +435,14 @@ class online_booking_user  {
 		
 	}
 
-	
+	/**
+	 * updateTrip
+	 *
+	 * @param $bookink_obj
+	 * @param $session_id_trip
+	 * @param $trip_name
+	 * @return string
+	 */
 	private static function updateTrip($bookink_obj,$session_id_trip,$trip_name){
 		
 		global $wpdb;

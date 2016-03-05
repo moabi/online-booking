@@ -1,3 +1,7 @@
+.pure-g-r {
+    display: flex;
+    flex-flow: row wrap;
+}  
 #slider-field .ui-state-default,#slider-field  .ui-widget-content .ui-state-default{border: 1px solid #D6D6D6;border-radius: 50%;background: rgb(240, 237, 232);}
 .xs-field{position: relative;}
 .cdnoty{text-align:center;width:auto;padding:1em 0;font-size:16px}
@@ -15,7 +19,7 @@ div.userpro-input input[type=text],div.userpro-input input[type=password],div.us
 .ll-skin-melon td .ui-state-active,.ll-skin-melon td .ui-state-hover{background:#F3A133!important;border-radius: 0;}
 .page #page-wrapper{padding:0}
 .wpcf7 input[type=text],.wpcf7 input[type=email],.wpcf7 input[type=tel],.wpcf7 input[type=number],.wpcf7 input[type=date]{line-height:50px;font-size:14px;padding:0 4px;max-width:90%;margin:auto;float:left;display:block;border:1px solid #ccc;text-align:left}
-.wpcf7 .pure-g{margin:0 0 1em}
+.wpcf7 .pure-g-r{margin:0 0 1em}
 .wpcf7 textarea{float:left;box-shadow:none}
 .form-box{padding:1em 3em;background:#fafafa}
 .form-box.blue{background:rgba(55,171,219,0.06)}
@@ -52,7 +56,7 @@ form.wpcf7-form{width:100%;max-width:100%;padding:0;float:left}
 .noty_buttons .btn.btn-reg{float:none;display:inline-block;width: 40%;margin:auto;padding: .5em 0;line-height: 1.4;font-size: 11px;}
 .btn.btn-danger{background:#f2910c;clear:both;width:80%;margin:auto;padding:.5em 0}
 .btn.btn-orange{background: #F2910C;}
-.day-content .dc::before, #booking-wrapper .day-content .fa{font-size: 14px;font-style:normal;position:absolute;top: 12px;left: 8px;color:#f2910c;margin:0;float:none;text-align:center;text-indent:0;width: 17px;height: 21px;display: block;}
+.day-content .dc::before, #booking-wrapper .day-content i.fa{font-size: 14px;font-style:normal;position:absolute;top: 12px;left: 8px;color:#f2910c;margin:0;float:none;text-align:center;text-indent:0;width: 17px;height: 21px;display: block;line-height: 1;}
 .select2-container--default .select2-selection--single{background-color:#fff;border:1px solid #DFDFDF;border-radius:1px;line-height:50px;height:50px}
 .select2-container--default .select2-selection--single .select2-selection__rendered{color:#444;line-height:50px}
 #site-wrapper #masthead{border:1px solid #DDD;height:70px}
@@ -74,7 +78,8 @@ h1.archive-title{padding-top:0}
 .ui-datepicker .ui-datepicker-header{background:#F3A133!important;color:#fff;opacity:1}
 .ui-datepicker-calendar thead{background:#fff}
 .booking-details,.addThis{position:relative;width:46%;text-align:center;text-decoration:none;padding:8px 0;border-radius:0;font-size:12px;text-transform:none;display:inline-block;float:none;margin:5px 2%;color:#FFF;background:#adadad;background:-moz-linear-gradient(top,#adadad 0%,#bababa 50%,#a0a0a0 100%);background:-webkit-linear-gradient(top,#adadad 0%,#bababa 50%,#a0a0a0 100%);background:linear-gradient(to bottom,#adadad 0%,#bababa 50%,#a0a0a0 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#adadad',endColorstr='#a0a0a0',GradientType=0)}
-.booking-details .fs1,.addThis .fs1{margin:0 0 0 5px}
+.booking-details .fa, .addThis .fa{margin:0 0 0 5px}
+.addThis .fa{border-radius:50%;border:1px solid;width: 15px;height: 15px;line-height: 16px;text-align:center;font-size:10px;}
 .choices span{padding:8px;margin:1%;background:#49484D;display:block;float:left;font-size:12px;color:#fff;cursor:pointer}
 .addThis{color:#fff;background:#2EAADD}
 .addThis:hover,.booking-details:hover{background:#F2910C;color:#fff}
@@ -89,8 +94,11 @@ h4.ajx-fetch i{margin:0 .5em 0 0;color: #F4EDE5;}
 #activities-content.blocks .block span.price-u,#selectedOne .price-u{position:absolute;width:70px;background:rgba(255,255,255,0.9);line-height:40px;font-size:16px;display:block;color:#7f7267;right:0;top:31px}
 #activities-content.blocks .presta h3,#selectedOne h3{font-weight:400;font-size:14px}
 #activities-content.blocks .presta ul li,#selectedOne .presta ul li{font-size:12px;margin:3% 2%;border-bottom:1px solid #ededed;padding:2%;list-style:none}
-#activities-content.blocks .block:hover .presta,#selectedOne .block:hover .presta{opacity:.9;height:234px;font-size:14px}
-#activities-content.blocks .presta,#selectedOne .presta{opacity:0;transition:all .4s ease;position:absolute;top:0;background:#fff;width:90%;padding:5%;font-weight:400}
+#activities-content.blocks .block:hover .presta,.block:hover .presta,.block-trip:hover .presta{opacity:.9;height:234px;font-size:14px;    word-wrap: break-word;}
+#activities-content.blocks .presta,.presta{opacity:0;transition:all .4s ease;position:absolute;top:0;background:#fff;width:90%;padding:5%;font-weight:400}
+.block-trip .presta{
+    top: 31px;
+}
 #activities-content.blocks .presta p{font-size:14px}
 .block-thumb{overflow:hidden;width:270px;height:220px;max-width: 100%;margin: auto;display: block;float: none;}
 #activities-content.blocks .block .head,#selectedOne .head{padding:0;text-align:center;top:-32px;position:absolute;left:0;right:0;opacity:1}
@@ -151,20 +159,20 @@ hr.clearfix{display:block}
 #pre-padd{padding:0 5px 0 0;color:#9C938A;text-align:center}
 #phone-side{font-weight:700;color:#9C938A;font-size:18px;clear:both;display:block;text-align:center}
 .vert-sep{height:100%;width:1px;background:#9C938A;position:absolute;left:50%;top:0;display:none}
-#sidebar-booking-b{margin-left:0;height:auto;display:block;position:relative;background:#F0EDE8;display:-webkit-flex;display:-ms-flexbox;display:flex;z-index:1}
+#sidebar-booking-b{margin-left:0;height:auto;display:block;position:relative;background:#F0EDE8;display:-webkit-flex;display:-ms-flexbox;display:flex;z-index:1;font-family: 'Lato',Arial,sans-serif;}
 #sidebar-sticky{padding:2em 0 1em 1em;height:auto;float:none;display:block;width:92%;margin:0 auto;max-width:340px;background:#F0EDE8}
 #side-stick{background:#F0EDE8}
 #daysTrip{padding:0 0 1em;border:none;clear:both;width:100%;margin: 5px 0;background:#F0EDE8;z-index:9}
 .dayblock.current,.dayblock:hover{color:#2eaadd;opacity:1;z-index:99;background:#25a0e8}
 .dayblock.current .day-wrapper{font-weight:300;color:#FFF;background:none;background:-webkit-linear-gradient(-63deg,#71e8f3 10%,#2daada 90%);background:-moz-linear-gradient(-63deg,#71e8f3 10%,#2daada 90%);background:-o-linear-gradient(-63deg,#71e8f3 10%,#2daada 90%);background:-ms-linear-gradient(-63deg,#71e8f3 10%,#2daada 90%);background:linear-gradient(153deg,#71e8f3 10%,#2daada 90%)}
-.dayblock:first-child .fs1.rd{display:none}
+.dayblock:first-child .rd{display:none}
 .dayblock.current{box-shadow:0 1px 2px #A9A9A9}
-.day-wrapper:hover span.fs1.rd{background:#fff}
+.day-wrapper:hover span.rd{background:#fff}
 .day-wrapper:hover span.fs1{color:#2DA9DC}
 .day-wrapper{width:100%;display:block;clear:none;float:left;text-align:center;background:#FFF;cursor:pointer;position:relative;color:#3A3A3A;line-height:40px;font-size:16px}
 .day-wrapper:hover,.dayblock.current .day-wrapper:hover,.dayblock.current .day-wrapper:hover .js-change::before,.day-wrapper:hover .js-change::before{background:#37ABDB;color:#fff}
-.day-wrapper .fs1.rd,.dayblock.current .day-wrapper .fs1.rd{position:absolute;font-size:16px;right:0;top:0;margin:0;background-color:rgba(255,255,255,0.98);padding:0 1em;line-height:40px;z-index:101;color:#7B7B7B}
-.day-wrapper .fs1.rd:hover{color:red}
+.day-wrapper .rd,.dayblock.current .day-wrapper .rd{position:absolute;font-size:16px;right:0;top:0;margin:0;background-color:rgba(255,255,255,0.98);padding:0 1em;line-height:40px;z-index:101;color:#7B7B7B}
+.day-wrapper .rd:hover{color:red}
 .day-wrapper .fs1{clear:both;display:block;font-size:20px;margin:5px 0 0;color:#626262}
 .day-wrapper .js-change{width:100%;z-index:99;position:absolute;margin:0;padding:0;height:40px;line-height:50px;font-size:26px;left:0;top:0}
 .day-wrapper .js-change:hover{color:red;z-index:0}
@@ -181,16 +189,15 @@ hr.clearfix{display:block}
 .popit h3{text-align:left;clear: both;font-size: 16px;text-indent: 0;margin: 0;}
 .day-content .dc img{width: auto;display:block;float:left;margin:0;}
 .day-content{height:100%;display:block;width:100%;float:left;clear:none;background:#ededed;padding:0;margin:0}
-.day-content .fs1{color:rgba(79,79,79,0.77);position:relative;display:inline-block;float:right;text-align:center;padding: 0 5px 0 0;width:20px;text-indent:0;background: #EDEDED;z-index: 1;}
-.day-content .fs1:hover{color:#e51b1b;cursor:pointer;transform:scale(1.05)}
+.day-content .fa{color:rgba(79,79,79,0.77);position:relative;display:inline-block;float:right;text-align:center;padding: 0 5px 0 0;width:20px;text-indent:0;/* background: #EDEDED; */z-index: 1;height: 40px;line-height: 40px;}
+.day-content .fa:hover{color:#e51b1b;cursor:pointer;transform:scale(1.05)}
 .dayblock{background:#FCFCFB;width:96%;margin:1% 1% 1.5em;padding:0;float:left;box-shadow:0 1px 2px rgba(0,0,0,0.36);text-align:center;font-size:12px;position:relative;opacity:.8;transition:all .4s ease}
-.dayblock::before,.dayblock.current::before{top:7px}
 .acf-field .acf-label p,.acf-field .acf-label{letter-spacing:0}
-.fs1.input-box{height:48px;line-height:54px;color:#25A0E8;background:#fff;display:inline-block;width:90%;text-align:center;float:left;clear:none;border:1px solid #DFDFDF;margin:0;font-size:17px;z-index:2;position:relative;max-width:140px}
+.fa.input-box{height:48px;line-height: 48px;color:#25A0E8;background:#fff;display:inline-block;width:90%;text-align:center;float:left;clear:none;border:1px solid #DFDFDF;margin:0;font-size: 18px;z-index:2;position:relative;max-width:140px}
 .form-booking input{width:80%;text-align:center;line-height:50px;font-size:14px}
 .form-booking input#participants,.form-booking input#arrival{float:right;width:70%;margin-left:-1px;border:none;max-height:46px;line-height:46px;padding: 0;}
 .form-booking label span.fs1{margin:0 4px 0 0;color:rgba(46,170,221,0.78)}
-.form-booking label{font-size:13px;color:rgba(0,0,0,0.57);line-height:22px;padding:0}
+.form-booking label{font-size:12px;color:rgba(0,0,0,0.57);line-height:22px;padding:0}
 .form-booking label em{font-size:10px}
 #days-modifier button{border-radius:0;height:50px;width:50px;font-size:100%;line-height:20px;text-align:center;margin:0;padding:0;background:#fff;color:#7B7B7B;border:1px solid #DFDFDF}
 #daysCount{display:inline-block;width:18px;text-align:center;border:none;padding:0 .2em;margin:0;background:none}
@@ -209,10 +216,16 @@ hr.clearfix{display:block}
 #typeterms li > ul li input{top:0}
 #typeterms li > ul li span{margin:0;font-size:12px;background:#F0EDE8;border:none;height:40px;padding:0}
 #typeterms span input[type=checkbox]{position:relative;width:auto;margin:15px 0 0 10px;line-height:1;display:inline-block;float:left}
-#typeterms #search-filter span{
+#typeterms #search-filter i{
     padding: 0;
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    cursor: pointer;
+    opacity: .6;
 }
-#typeterms #search-filter span::before{position:absolute;font-size: 24px;opacity: 0.3;right: 8px;top: 12px;}
+#typeterms #search-filter i:hover{opacity:1;}
+#typeterms #search-filter i::before{font-size: 24px;}
 #typeterms span input[type=text]{
     width: 92%;
     margin: 0;
@@ -222,15 +235,19 @@ hr.clearfix{display:block}
     border-radius: 0;
     background: rgb(244, 237, 229);
 }
-#typeterms span{float:left;display:block;clear:none;margin:0;padding:.4em 0;background:#F4EDE5;border:1px solid rgba(197,192,185,0.59);line-height:36px;color:#616161;width:100%;text-align:center;cursor:pointer}
+#typeterms span,#typeterms #ob-s{float:left;display:block;clear:none;margin:0;padding:.4em 0;background:#F4EDE5;border:1px solid rgba(197,192,185,0.59);line-height:36px;color:#616161;width:100%;text-align:center;cursor:pointer}
 img{max-width:100%}
+#typeterms #ob-s{text-align:left;text-indent: 8px;padding: 8px 0;}
 #desc-ar{background:rgba(175,175,175,0.13);padding:.5em 0 1em;margin:1em 0 2em;color:rgba(129,129,131,0.63)}
-.archive-reservations h4{border-bottom:1px solid;display:block;width:100%}
-.archive-reservations h4 .fs1{margin:0 .5em}
+.archive-reservations h4{border-bottom:1px solid;display:block;width:100%;margin-bottom: 2%;}
+.archive-reservations h4 .fa,h4 .fa{margin:0 .5em}
 h1{color:#000}
 h1 .fs1{display:inline;margin:0 .5em;color:#F2920E}
-.sejour-content .block-trip{width:260px;height:auto;max-width: 100%;}
-.sejour-content .block-trip img{width:260px;height: auto;clear:both;max-width: 100%;}
+.sejour-content .block-trip{width:260px;height:auto;max-width: 100%;padding: 0;margin: 0;}
+.sejour-content .slick-multi  .block-trip{margin:0 auto;min-width: 260px;}
+.sejour-content .block-trip img{width: 100%;height: auto;clear:both;max-width: 100%;margin: auto;}
+.archive-reservations .block-trip{width: 25%;padding: 0;overflow: hidden;margin: 0;}
+.archive-reservations .block-trip > .block-trip{width: 98%;margin: 0 1% 2%;overflow: hidden;}
 .block-trip{position:relative;width:150px;display:block;height:150px;margin:2%}
 .block-trip .seeit,.block-trip .loadit{background:#EFEFEF;font-size: 12px;text-transform:none;text-decoration:none;width:99%;bottom:20px;line-height:22px;text-align:center;margin:5px auto;padding:8px 0;color:#151515;clear:both;display:block;border:1px solid #DCDCDC}
 .block-trip .loadit{background:#00AADB;color:#fff;border-color:#1FB4DD;font-size: 12px;}
@@ -306,11 +323,13 @@ a#CTA:hover{background: #F18F11;color: #fff;}
 .in-progress.s-2 span{background: #C1DD33;width: 100%;}
 #on-settings{background-color:#F5F5F5;margin:0 0 1em -1em;padding:2em 1em 1em;box-shadow:0 2px 2px rgba(144,144,144,0.51)}
 #on-settings .on-field{padding:0 0 10px}
+
 #budget-icon{background:#fff;width: 18px;height: 18px;line-height: 20px;border-radius: 2px;margin: 0 .5em 0 0;}
 #budget-icon.ok{background: rgba(127, 202, 53, 0.63);color:#fff;}
 #budget-icon.exceeded{background:red;color:#fff;position: relative;}
 #budget-icon.exceeded::after{content: attr(data-exceeded);position:absolute;left: -105px;width: 100px;z-index: 9;background: rgb(57, 181, 222);color: #FFFFFF;top: 0;font-size: 10px;border-radius: 2px 24px 24px 2px;}
-#on-settings #slider-field label{padding:0;text-align:center}
+#on-settings #slider-field label{padding:0;text-align:center;margin:0 0 10px;clear:both;display:block;}
+#on-settings #slider-field{padding:10px 0 0}
 .hidden{display:none!important;visibility:hidden}
 .pack-perso{padding:0 0 0 4em;line-height: 50px;color:#8f8f8f;font-size:18px;font-weight:400;text-align:left}
 .pack-perso .fs1{display:inline-block;margin: 0 .5em 0 0;font-size: 24px;}
@@ -350,9 +369,11 @@ a#CTA:hover{background: #F18F11;color: #fff;}
 #event-trip-planning .single-activity-row img{width:auto;height:auto;display:block;max-height:120px}
 #event-trip-planning .etp-day{background:#EDEDED;color:#37ABDB;line-height:30px;display:block;margin:0;text-transform:none;padding:0;width:15%;text-align:center;font-size:18px;font-weight:700;float:left}
 .devis-line{line-height:50px;color: #8A8686;}
-.day-title{font-weight:500;font-size:16px;padding: 1em 0;}
+.day-title{font-weight:500;font-size:16px;padding: 1em 0;text-align: center;line-height: 1;}
 .day-title .fa{margin: 0;font-size: 24px;display: inline-block;}
-.single-sejour #event-trip-planning .event-day .day-title .fa{color: #2EAADC;}
+.tpl-public .day-title{text-align:left;}
+.tpl-public #event-trip-planning .event-day .day-title .fa{float:none;}
+.single-sejour #event-trip-planning .event-day .day-title .fa{color: #2EAADC;text-align: center;margin: auto;display: block;float: none;height: auto;line-height: 1;}
 #event-trip-planning .event-day .day-title .fa{margin:0 1em 0 0;position: relative;color: #fff;top: inherit;left: inherit;}
 .sejour-type{font-size: 16px;padding: 0;position:relative;text-align: center;font-weight: bold;}
 .trip-public .sejour-type i {color: #F38E12;font-size: 32px;display: block;text-align: center;margin: .5em auto .5em;float: left;width: 100%;clear: both;position: relative;top: inherit;left: inherit;}
@@ -363,7 +384,7 @@ a#CTA:hover{background: #F18F11;color: #fff;}
 #event-trip-planning .tags{font-size:20px;font-weight:bold;text-transform:uppercase;width: 80%;float: left;padding: .8em 0 .5em 2em;}
 #event-trip-planning .fa-trash-o{float:right;font-size: 24px;padding: .9em 2em 0 0;color: #929292;position: relative;top: inherit;left: inherit;}
 #event-trip-planning .fa-trash-o:hover{color:red;}
-#event-trip-planning .tags .fa{color: #F2910C;font-size: 30px;margin: 0 .5em 0 0;display: inline-block;position: relative;top: 0;left: 0;width: 30px;}
+#event-trip-planning .tags .fa{color: #F2910C;font-size: 30px;margin: 0 .5em 0 0;display: inline-block;position: relative;top: 0;left: 0;width: 30px;float: none;}
 #event-trip-planning .etp-days{float:right;padding: 2em 0 1em;background:#fff;width:85%}
 #event-trip-planning .etp-days li{width:100%;display:block;clear:both}
 #event-trip-planning .etp-days h3{font-size:16px;margin: .5em 0 0.1em;}
@@ -380,7 +401,7 @@ a#CTA:hover{background: #F18F11;color: #fff;}
 #event-trip-planning.trip-public .etp-days img{margin:0;max-width: 100%;width: 180px;height: auto;}
 h3 .fa{margin:0 .5em 0 0}
 #event-trip-planning .etp-days h3 a{font-size:16px;text-align:left;color: #000000;position:relative;padding:0;margin:1em 0 .5em;font-weight:700}
-#event-trip-planning .etp-days h3 a i{color: #929292;}
+#event-trip-planning .etp-days h3 a i{color: #929292;float: none;}
 #event-trip-planning .etp-days img{margin: 0;display:block;max-width:88%;max-height:none}
 .activity-budget-user.total-line{color:#191919;font-weight:700}
 .bdg{position:relative;width:20px;display:block;float:left;height:20px;margin:0 10px 0 4px}
@@ -389,9 +410,10 @@ h3 .fa{margin:0 .5em 0 0}
 .budget-day{background:#ededed;padding:2px 8px;margin:8px 0 4px}
 .trip-budget-user{max-width:800px;display:block;margin:auto;float:none;clear:both}
 #sejour-content{clear:both;display:block;float:left;width:100%;margin:30px 0 0;padding:0}
-.single h2{text-align:left;padding:0 0 10px;font-size:24px;color:rgba(68,68,68,0.78);font-weight:300;margin:30px 0 10px}
-.single h2.related-title{width:100%;border-bottom:1px solid}
-.single h2.related-title .fs1{color:#F2910C;float:left;margin:0 1em 0 0}
+h2{text-align:left;padding:0 0 10px;font-size:24px;color:rgba(68,68,68,0.78);font-weight:300;margin:30px 0 10px}
+h2.related-title{width:100%;border-bottom:1px solid;font-weight: 300;color: rgba(68,68,68,0.78)}
+h2.related-title em{display:inline-block;font-size:12px;margin:0 .5em;}
+h2.related-title i{color:#F2910C;float:left;margin:0 1em 0 0}
 .slickReservation img{display:block;max-width:100%;max-height:400px;margin:auto}
 .slickReservation .fs1.prevmulti,.slickReservation .fs1.nextmulti{cursor:pointer;position:absolute;font-size:70px;top:35%;left:0;width:auto;color:#FFF}
 #activity-gallery{position:relative;overflow:hidden;margin:0 0 1em;z-index:2}
@@ -401,7 +423,7 @@ h3 .fa{margin:0 .5em 0 0}
 #primary-b{position:relative;z-index:1}
 #custom-bg{position:absolute;top:120px;left:0;width:100%;height:400px;background-repeat:no-repeat;background-size:cover;z-index:0;-webkit-filter:blur(20px);-moz-filter:blur(20px);-o-filter:blur(20px);-ms-filter:blur(20px);filter:blur(20px);border-top:1px solid #ccc;overflow:hidden}
 .box-price{padding:2% 4%;border:1px solid #ccc;margin:auto;width:86%;float:right;height:100%;display:block;color:rgba(0,0,0,0.54);font-size:16px;z-index:1;background:#fff;position:relative}
-.box-price .fs1{float:left;margin:0 .5em 0 0;font-size:26px;color:#F18F11}
+.box-price .fs1,.box-price i{float:left;margin:10px .5em 0 0;font-size:26px;color:#F18F11}
 .box-price p{font-size:14px}
 #crp_related ul li{float:left;margin:0 5px 40px;text-align:center}
 #primary-b #activity-gallery h1{position:relative;z-index:1;left:0;width:100%;margin:0;top:20%;font-size:28px;text-shadow:0 1px 0 rgba(255,255,255,0.69);text-align:left;color:rgba(0,0,0,0.86);font-weight:700;padding:0}
@@ -449,7 +471,7 @@ h3 .fa{margin:0 .5em 0 0}
 #pre-xs{font-size:14px;text-align:center;padding:0}
 }
 @media screen and (max-width: 1280px ){
-    .xs-field{margin:auto;display: block;width: 160px;float: none;}
+    .xs-field{margin:auto;display: block;width: 150px;float: none;}
     #activities-content.blocks.related-activities .block{width:48%;max-width:270px;display:inline-block;float:none;margin: 0 1% 2em;}
     #activities-content.blocks .block,#selectedOne .block{
     /* width: 48%; */
@@ -457,7 +479,7 @@ h3 .fa{margin:0 .5em 0 0}
     /* display: inline-block; */
 }
 #activities-content.blocks .block img, #selectedOne .block img{height:auto;}
-#typeterms li{width:33%;}
+
 }
 @media screen and (max-width:1024px){
     #site-wrapper #site-navigation ul li a,#logger a{font-size:12px;padding: 0 .6em;}
@@ -465,6 +487,7 @@ h3 .fa{margin:0 .5em 0 0}
     width: 46%;
     float: left;
 }
+#typeterms li{width:33%;}
 }
 @media screen and (max-width: 955px){
     #logger{

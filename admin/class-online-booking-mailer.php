@@ -69,7 +69,13 @@ class Online_Booking_Mailer {
 		wp_mail( $to, $subject, $body, $headers );
 
 	}
-	
+
+	/**
+	 * confirmation_mail
+	 *
+	 *
+	 * @param $userID
+	 */
 	public function confirmation_mail($userID){
 		
 		$user_info = get_userdata($userID);

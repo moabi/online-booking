@@ -1,5 +1,7 @@
 <?php
-
+// include autoloader
+require_once 'libs/dompdf/autoload.inc.php';
+use Dompdf\Dompdf;
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -99,6 +101,32 @@ class Online_Booking_Admin {
 		//wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/online-booking-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+	
+	/*
+	 * ob_generate_pdf
+	 * 
+	 *
+	 * @param $text string (html)
+	 * @param $name string
+	 * @return pdf
+	*/
+	public function ob_generate_pdf($text,$name){
+		
+		// instantiate and use the dompdf class
+		$dompdf = new Dompdf();
+		$text = '';
+		$dompdf->loadHtml($text);
+		$dompdf->setPaper('A4', 'landscape');
+		$dompdf->render();
+		$output = $dompdf->output();
+		file_put_contents('pdf/'.$name.'.pdf', $output);
+	    
+		// Output the generated PDF to Browser
+		//$dompdf->stream();
+	
+	}
+
+
 	
 	/*
 		Add option page
