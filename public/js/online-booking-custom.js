@@ -1,8 +1,8 @@
 /*online-booking*/
-var $ = jQuery;
+var $ = jQuery,
+	ajaxUrl = '/onlyoo/wp-admin/admin-ajax.php';
 var bookingPage = '/reservation-service/';
 var isBookingTpl = $('#booking-wrapper').length;
-var USERID = $('#user-logged-in-infos').attr("data-id");
 var daysSelector = $('#daysSelector'),
 	sliderRange = $("#slider-range"),
 	tripNameInput = $('#tripName'),
@@ -31,6 +31,8 @@ var reservation = {
 	tripObject   : {}
 
 };
+
+var USERID = $('#user-logged-in-infos').attr("data-id");;
 
 
 $.noty.defaults = {
@@ -143,7 +145,7 @@ function removeParam(key, sourceURL) {
 function doAjaxRequest( theme , geo, type, searchTextTerm ){
 	//console.log(type);
 	jQuery.ajax({
-		url: '/wp-admin/admin-ajax.php',
+		url: ajaxUrl,
 		settings:{
 			cache : true
 		},
@@ -188,7 +190,7 @@ function doAjaxRequest( theme , geo, type, searchTextTerm ){
 function ajaxPostRequest( id,target ){
 	//console.log(type);
 	jQuery.ajax({
-		url: '/wp-admin/admin-ajax.php',
+		url: ajaxUrl,
 		settings:{
 			cache : true
 		},
@@ -1234,7 +1236,7 @@ function loadTrip($trip,gotoBookingPage){
 	console.log('load trip');
 	reservation = {};
 	reservation = $trip;
-	reservation.user = USERID;
+	reservation.user = (reservation.user) ? reservation.user :  USERID;
 	reservation.currentBudget = 0;
 	//either we need to go to the page or not
 	if(gotoBookingPage === true){
@@ -1335,7 +1337,8 @@ function loadPostsFromScratch(){
 
 }
 
-/*
+/**
+ * initTrip
  * init trip if there is no previous data, based on dates inputs
  * define global obj :  budget, participants, dates
  * init tripdates fn and activities fn
@@ -1345,7 +1348,7 @@ function initTrip(){
 	//get global var from project
 	$participants = $('#participants').val();
 	$budgetRange = $('#budget').val().split('/');
-	reservation.user = USERID;
+	reservation.user = (reservation.user) ? reservation.user :  USERID;
 	reservation.participants = $participants;
 	reservation.budgetPerMin = $budgetRange[0];
 	reservation.budgetPerMax = $budgetRange[1];

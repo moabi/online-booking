@@ -12,17 +12,32 @@
  * @since Twenty Twelve 1.0
  */
 
-get_header(); ?>
+get_header();
+
+//Class
+$ux = new online_booking_ux;
+$obp = new Online_Booking_Public('online-booking','v1');
+
+echo $ux->get_onlyoo_admin_trip_manager();
+?>
+
+
 
 <?php
-	
-	/*
-		Validate if comes from front form
-	*/
+
+	/**
+	 * validateDate
+	 * Validate if comes from front form
+	 *
+	 * @param $date
+	 * @param string $format
+	 * @return bool
+	 */
 	function validateDate($date, $format = 'Y-m-d H:i:s'){
 		    $d = DateTime::createFromFormat($format, $date);
 		    return $d && $d->format($format) == $date;
 	}
+
 	$sel_participants = (isset($_POST["participants"])) ? intval($_POST["participants"]) : 5;
 	$sel_theme = (isset($_POST["cat"])) ? intval($_POST["cat"]) : false;
 	$sel_lieu = (isset($_POST["categories"])) ? intval($_POST["categories"]) : false;
@@ -55,57 +70,55 @@ get_header(); ?>
 		
 <! -- SETTINGS -->
 <div id="on-settings">
-	<!--
-<h2 id="settings-title" class="upptitle"><span class="fs1" aria-hidden="true" data-icon=""></span> Paramètres de votre séjour</h2>	-->
 		
-			<?php 
-			
-			$args = array(
-				'show_option_all'    => '',
-				'show_option_none'   => '',
-				'option_none_value'  => '-1',
-				'orderby'            => 'NAME', 
-				'order'              => 'ASC',
-				'show_count'         => 0,
-				'hide_empty'         => true, 
-				'child_of'           => 0,
-				'exclude'            => '',
-				'echo'               => 1,
-				'selected'           => $sel_theme,
-				'hierarchical'       => 0, 
-				'name'               => 'cat',
-				'id'                 => 'theme',
-				'class'              => 'postform terms-change form-control',
-				'depth'              => 0,
-				'tab_index'          => 0,
-				'taxonomy'           => 'theme',
-				'hide_if_empty'      => true,
-				'value_field'	     => 'term_id',	
-			); 
-			
-			$argsLieux = array(
-				'show_option_all'    => '',
-				'show_option_none'   => '',
-				'option_none_value'  => '-1',
-				'orderby'            => 'NAME', 
-				'order'              => 'ASC',
-				'show_count'         => 0,
-				'hide_empty'         => true, 
-				'child_of'           => 0,
-				'exclude'            => '',
-				'echo'               => 1,
-				'selected'           => $sel_lieu,
-				'hierarchical'       => 1, 
-				'name'               => 'categories',
-				'id'                 => 'lieu',
-				'class'              => 'postform terms-change form-control',
-				'depth'              => 0,
-				'tab_index'          => 0,
-				'taxonomy'           => 'lieu',
-				'hide_if_empty'      => true,
-				'value_field'	     => 'term_id',	
-			); 
-		?>
+	<?php
+
+	$args = array(
+		'show_option_all'    => '',
+		'show_option_none'   => '',
+		'option_none_value'  => '-1',
+		'orderby'            => 'NAME',
+		'order'              => 'ASC',
+		'show_count'         => 0,
+		'hide_empty'         => true,
+		'child_of'           => 0,
+		'exclude'            => '',
+		'echo'               => 1,
+		'selected'           => $sel_theme,
+		'hierarchical'       => 0,
+		'name'               => 'cat',
+		'id'                 => 'theme',
+		'class'              => 'postform terms-change form-control',
+		'depth'              => 0,
+		'tab_index'          => 0,
+		'taxonomy'           => 'theme',
+		'hide_if_empty'      => true,
+		'value_field'	     => 'term_id',
+	);
+
+	$argsLieux = array(
+		'show_option_all'    => '',
+		'show_option_none'   => '',
+		'option_none_value'  => '-1',
+		'orderby'            => 'NAME',
+		'order'              => 'ASC',
+		'show_count'         => 0,
+		'hide_empty'         => true,
+		'child_of'           => 0,
+		'exclude'            => '',
+		'echo'               => 1,
+		'selected'           => $sel_lieu,
+		'hierarchical'       => 1,
+		'name'               => 'categories',
+		'id'                 => 'lieu',
+		'class'              => 'postform terms-change form-control',
+		'depth'              => 0,
+		'tab_index'          => 0,
+		'taxonomy'           => 'lieu',
+		'hide_if_empty'      => true,
+		'value_field'	     => 'term_id',
+	);
+?>
 		
 
 
@@ -115,7 +128,6 @@ get_header(); ?>
 		<div class="pure-g-r">
 			<div class="pure-u-1 pure-u-xl-8-24">							
 				<label class="floating-label" for="float-select">
-				<?php //<span class="fs1" aria-hidden="true" data-icon="g"></span> ?>
 				Secteur d'activité</label>
 			</div>
 			<div class="pure-u-1 pure-u-xl-16-24">
@@ -128,7 +140,6 @@ get_header(); ?>
 		<div class="pure-g-r">
 			<div class="pure-u-1 pure-u-xl-8-24">
 			<label class="floating-label" for="float-select">
-			<?php //<span class="fs1" aria-hidden="true" data-icon=""></span> ?>
 			Le lieu</label>
 			</div>
 			<div class="pure-u-1 pure-u-xl-16-24">
@@ -233,7 +244,10 @@ get_header(); ?>
 
 
 <!-- ACTIVITES -->
-	<h2 class="upptitle"><?php _e('Votre évènement sur mesure','online-booking'); ?> <span><?php _e('Sélectionnez vos activités à la carte','online-booking'); ?></span></h2>
+	<h2 class="upptitle">
+		<?php _e('Votre évènement sur mesure','online-booking'); ?>
+		<span><?php _e('Sélectionnez vos activités à la carte','online-booking'); ?></span>
+	</h2>
 	<div class="clearfix"></div>
 	
 							<div class="pure-g">
@@ -241,75 +255,13 @@ get_header(); ?>
 <div class="pure-u-1 pure-u-md-24-24">
 
 	<?php
-		// no default values. using these as examples
-$taxonomies = array( 
-    'reservation_type'
-);
-
-$args = array(
-
-    'hide_empty'        => true, 
-    'exclude'           => array(), 
-    'exclude_tree'      => array(), 
-    'include'           => array(),
-    'number'            => '', 
-    'fields'            => 'all', 
-    'slug'              => '',
-    'parent'            => 0,
-    'hierarchical'      => true, 
-    'child_of'          => 0,
-    'childless'         => false,
-    'get'               => '', 
-    'name__like'        => '',
-    'description__like' => '',
-    'pad_counts'        => false, 
-    'offset'            => '', 
-    'search'            => '', 
-    'cache_domain'      => 'core',
-    'order'				=> 'ASC'
-); 
-
-$terms = get_terms($taxonomies, $args);
-
-//var_dump($terms);
- if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
-     echo '<ul id="typeterms" class="sf-menu">';
-     foreach ( $terms as $term ) {
-	 	//var_dump($term);
-	 	$fa_icon = get_field('fa_icon', $term->taxonomy.'_'.$term->term_id);
-	 	echo '<li>';
-       echo '<span><i class="fa '.$fa_icon.'"></i><input id="term-'.$term->term_id.'" type="checkbox" name="typeactivite" value="'.$term->term_id.'" />';
-       echo '<label for="term-'.$term->term_id.'">'.$term->name.'</label></span>';
-       	     $args = array(
-		    'hide_empty'        => true, 
-		    'child_of'          => $term->term_id,
-		    'cache_domain'      => 'core',
-		    'order'				=> 'ASC'
-		); 
-		$childTerms = get_terms($taxonomies, $args);
-		 if ( ! empty( $childTerms ) && ! is_wp_error( $terms ) ){
-			 echo '<ul class="sub">';
-		foreach ( $childTerms as $childterm ) {
-			
-			echo '<li><span>';
-			echo '<input id="term-'.$childterm->term_id.'" type="checkbox" name="typeactivite" value="'.$childterm->term_id.'" />';
-			echo '<label for="term-'.$childterm->term_id.'">'.$childterm->name.'</label>';
-			echo '</span></li>';
-		}
-		echo '</ul>';
-		}
-		echo '</li>';
-        
-     }
-     echo '<li id="search-filter"><input name="ob_s" id="ob-s" type="text" value="" placeholder="Rechercher" /><i class="fa fa-search js-sub-s"></i></li>';
-     echo '</ul>';
- }
-	
-		?>
+	// DISPLAY FILTERS
+	echo $ux->get_filters();
+	?>
 </div>
 </div>
 
-	<?php echo Online_Booking_Public::wp_query_thumbnail_posts(); ?>
+	<?php echo $obp->wp_query_thumbnail_posts(); ?>
 	
 	<?php
 		//START POST LISTING
@@ -322,7 +274,7 @@ $terms = get_terms($taxonomies, $args);
         <?php _e('Vous aimerez également','online-booking'); ?>
         </h2>
 
-		<?php Online_Booking_Public::the_sejours(8,false); ?>
+		<?php $obp->the_sejours(8,false); ?>
 		</div>
 		</div><!-- #content -->
 
@@ -374,11 +326,13 @@ Des questions ?
 	<div class="cleafix"></div>
 	<?php  if ( !is_user_logged_in() ): ?>
 <!-- FORMUAIRE SEND -->	
-	<a id="ob-btn-re" href="#login-popup" class="open-popup-link btn-danger btn btn-reg"><?php _e('Connectez-vous<br /> pour sauvegarder','online-booking'); ?></a>
+	<a id="ob-btn-re" href="#login-popup" class="open-popup-link btn-danger btn btn-reg">
+		<?php _e('Connectez-vous<br /> pour sauvegarder','online-booking'); ?>
+	</a>
 <!-- #formulaire send -->
 <?php endif; ?>
 
-<?php  if ( is_user_logged_in() ): ?>
+<?php  if ( is_user_logged_in() && ((!current_user_can( 'administrator' ) || !current_user_can('onlyoo_team')) && !isset($_GET['mod'])) ): ?>
 
 <div class="pure-g" id="user-actions">
 	<div id="savetrip" >
@@ -400,7 +354,7 @@ Des questions ?
 			
 			echo '<a id="ob-btn-re" href="#" onclick="saveTrip(\''.$eventid.'\')" class="btn btn-reg">';
 			echo $btn_Name;
-			echo '<span class="fs1" aria-hidden="true" data-icon=""></span></a>';
+			echo '<i class="fa fa-floppy-o"></i></a>';
 			?>
 		</div>
 </div>

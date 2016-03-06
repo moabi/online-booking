@@ -1,12 +1,142 @@
 <?php
 
-/*
-	Class to embed utilities
-*/
+/**
+ * Class online_booking_ux
+ */
 
 class online_booking_ux
 {
 
+    /**
+     * get_onlyoo_admin_trip_manager
+     * allow admin to load a user trip
+     * modify it
+     * save it as a new invoice/quote
+     * Send email to user
+     * @return string
+     */
+    public function get_onlyoo_admin_trip_manager(){
+        $modify = (isset($_GET['mod'])) ? true : false;
+        if((current_user_can( 'administrator' ) || current_user_can('onlyoo_team')) && $modify == true ){
+            global $wpdb;
+            $validation = 0;
+            //Get 30 last - if not in, user should be able to request by ID
+            $sql = $wpdb->prepare(" 
+						SELECT *
+						FROM ".$wpdb->prefix."online_booking a	
+						WHERE a.validation = %d
+						LIMIT 30
+						",$validation);
+
+            $results = $wpdb->get_results($sql);
+            
+            $output = '<div id="ob-trip-manager">';
+            $output .= 'Load a trip :';
+            $output .= '<ul>';
+            $output .= '<li><i class="fa fa-chevron-down"></i>Select trip<ul class="dropdown">';
+            foreach ( $results as $result )
+            {
+                $booking = $result->booking_object;
+                $bdate = $result->booking_date;
+                $tripID = $result->ID;
+                $tripName = $result->booking_ID;
+                $tripDate = $result->booking_date;
+                $newDate = date("d/m/y", strtotime($tripDate));
+                $userID = $result->user_ID;
+                $user_info = get_userdata( $userID );
+
+                $output .= '<li data-value="'.$result->ID.'">';
+                $output .= '<script>var trip'.$result->ID.' = '.$booking.'</script>';
+                $output .= $user_info->user_email;
+                $output .= '<br /><a onclick="loadTrip(trip'.$result->ID.',false)" href="#">'.$tripName.'</a>';
+                $output .= ' ('.$newDate.')';
+
+                $output .= '</li>';
+            }
+            $output .= '</ul></li></ul>';
+            
+            $output .= '<a onclick="saveUserTripByAdmin()" href="#" class="btn btn-reg">SAVE</a>';
+
+            $output .= '</div>';
+        } else {
+            $output = '';
+        }
+
+        return $output;
+    }
+    /**
+     * @return string
+     */
+    public function get_filters(){
+
+        $output = '';
+        // no default values. using these as examples
+        $taxonomies = array(
+            'reservation_type'
+        );
+
+        $args = array(
+
+            'hide_empty'        => true,
+            'exclude'           => array(),
+            'exclude_tree'      => array(),
+            'include'           => array(),
+            'number'            => '',
+            'fields'            => 'all',
+            'slug'              => '',
+            'parent'            => 0,
+            'hierarchical'      => true,
+            'child_of'          => 0,
+            'childless'         => false,
+            'get'               => '',
+            'name__like'        => '',
+            'description__like' => '',
+            'pad_counts'        => false,
+            'offset'            => '',
+            'search'            => '',
+            'cache_domain'      => 'core',
+            'order'				=> 'ASC'
+        );
+
+        $terms = get_terms($taxonomies, $args);
+
+//var_dump($terms);
+        if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
+            $output .= '<ul id="typeterms" class="sf-menu">';
+            foreach ( $terms as $term ) {
+                //var_dump($term);
+                $fa_icon = get_field('fa_icon', $term->taxonomy.'_'.$term->term_id);
+                $output .= '<li>';
+                $output .= '<span><i class="fa '.$fa_icon.'"></i><input id="term-'.$term->term_id.'" type="checkbox" name="typeactivite" value="'.$term->term_id.'" />';
+                $output .= '<label for="term-'.$term->term_id.'">'.$term->name.'</label></span>';
+                $args = array(
+                    'hide_empty'        => true,
+                    'child_of'          => $term->term_id,
+                    'cache_domain'      => 'core',
+                    'order'				=> 'ASC'
+                );
+                $childTerms = get_terms($taxonomies, $args);
+                if ( ! empty( $childTerms ) && ! is_wp_error( $terms ) ){
+                    $output .= '<ul class="sub">';
+                    foreach ( $childTerms as $childterm ) {
+
+                        $output .= '<li><span>';
+                        $output .= '<input id="term-'.$childterm->term_id.'" type="checkbox" name="typeactivite" value="'.$childterm->term_id.'" />';
+                        $output .= '<label for="term-'.$childterm->term_id.'">'.$childterm->name.'</label>';
+                        $output .= '</span></li>';
+                    }
+                    $output .= '</ul>';
+                }
+                $output .= '</li>';
+
+            }
+            $output .= '<li id="search-filter"><input name="ob_s" id="ob-s" type="text" value="" placeholder="Rechercher" /><i class="fa fa-search js-sub-s"></i></li>';
+            $output .= '</ul>';
+        }
+
+        return $output;
+
+    }
     /**
      * slider
      * provide a slider utility from acf image galery field (gallerie)
@@ -126,8 +256,9 @@ class online_booking_ux
     /**
      * get_place
      * get the location for an activity - should be mixed with get_reservation_type
+     *
      * @param $id
-     * @param $html bolean 
+     * @param bool|true $html
      * @return string
      */
     public function get_place($id,$html = true)
@@ -218,7 +349,6 @@ class online_booking_ux
     public function get_trash_btn($day_number, $id)
     {
         global $post;
-        $data = '';
         $price = get_field('prix', $id);
         $object_name = 'Uniquesejour' . $post->ID;
         $data = '<i title="Supprimer cette activité" onclick="deleteSejourActivity(' . $day_number . ',' . $id . ',' . $price . ',' . $object_name . ');" class="fa fa-trash-o"></i>';

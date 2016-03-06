@@ -1,3 +1,12 @@
+/*Admin manager*/
+#ob-trip-manager{position: fixed;top:4em;left: 0;width: 200px;text-align: left;background: #000;padding: 1em;z-index: 999;color: #fff;box-shadow: 0 1px 4px #444;}
+#ob-trip-manager ul{padding:.5em 0;margin:0 0 0 1em;font-size: 11px;}
+#ob-trip-manager ul li{padding:0;list-style:none;position:relative;margin: 0;line-height: 30px;}
+#ob-trip-manager ul li i{margin:0 .5em 0 0;}
+#ob-trip-manager ul.dropdown{display:none;position:absolute;top: 25px;left: -22px;width:200px;background:#fff;color:#000;padding:.5em;}
+#ob-trip-manager ul.dropdown > li{border-bottom:1px solid #ccc;line-height: 1.2;padding: .4em;}
+#ob-trip-manager ul li:hover > ul.dropdown{display:block;}
+/*GENERAL*/
 .pure-g-r {
     display: flex;
     flex-flow: row wrap;
@@ -89,7 +98,9 @@ h4.ajx-fetch i{margin:0 .5em 0 0;color: #F4EDE5;}
     width: 23%;
     margin: 1% 1% 2em;
 }
-#selectedOne{margin: auto;padding:0;clear:both;width: auto;}
+.add-id-load .mfp-close{display:none;}
+.add-id-load .mfp-content{width:auto;max-width:260px;background: transparent;border: none;}
+#selectedOne{margin: auto;padding:0;clear:both;width: auto;background: transparent;}
 #activities-content.blocks .block h2,#selectedOne h2{line-height:30px;float:left;padding:0 2%;font-weight:700;font-size:12px;margin:0;color:#7f7267;clear:both;height:30px;overflow:hidden;text-transform:none}
 #activities-content.blocks .block span.price-u,#selectedOne .price-u{position:absolute;width:70px;background:rgba(255,255,255,0.9);line-height:40px;font-size:16px;display:block;color:#7f7267;right:0;top:31px}
 #activities-content.blocks .presta h3,#selectedOne h3{font-weight:400;font-size:14px}
@@ -104,8 +115,10 @@ h4.ajx-fetch i{margin:0 .5em 0 0;color: #F4EDE5;}
 #activities-content.blocks .block .head,#selectedOne .head{padding:0;text-align:center;top:-32px;position:absolute;left:0;right:0;opacity:1}
 #activities-content.blocks .block,#selectedOne .block{background:#fff;margin: 30px 2% 1em;width: 29%;float:left;position:relative;max-width: 270px;}
 #activities-content.blocks .block img,#selectedOne .block img{width:270px;height:220px}
-#selectedOne .block{float: none;margin: 30px auto;}
-#selectedOne .block .head{}
+#selectedOne .block{float: none;margin: 0;width: 100%;background: transparent;}
+#selectedOne .block .head{
+    background: #fff;
+}
 #selectedOne .block .head h2{/* font-weight:700; *//* color:#fff */}
 .future-flying-img{border-radius:50%;margin:-260px;z-index:99;position:absolute;top:0;left:0}
 #front-form .date-wrapper,#front-form .people-wrapper{position:relative}
@@ -134,7 +147,7 @@ input.required{color:red!important;border-color:red!important;background-color:r
 #savetrip a,.btn-orange{margin:10px auto;position:relative;line-height:40px;background:#F2910C;width:80%;padding:.5em 0;font-size:14px}
 #savetrip{color:#2da9dc;width:100%;float:none;text-align:left;font-size:12px;padding:0;margin:0;line-height:24px}
 #savetrip input[type=text]{line-height:50px;height:50px;font-size:16px;float:none;width:80%;margin:auto;text-align:left}
-#savetrip .fs1{position:absolute;right:1em;top:0;font-size:24px;line-height:60px}
+#savetrip i{position:absolute;right:1em;top: -2px;font-size:24px;line-height:60px}
 #content-wrap{width:96%;margin:auto;display:block;max-width:1280px}
 #footer-newsletter{clear:both;display:block;width:100%;float:left;background:rgba(239,239,239,0.93);border-top:1px solid #DADADA;padding:2em 0 0;position:relative;margin: 2em 0 0;}
 #booking-wrapper{position:relative;width:100%;margin:auto;display:block;float:left;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap}

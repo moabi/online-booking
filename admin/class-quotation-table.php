@@ -108,12 +108,17 @@ class Quotation_Table extends WP_List_Table
 			$data = json_decode(json_encode($results), true);
 			//var_dump($data);
 			return $data;
-			
-			
     }
     
     
-		    // Used to display the value of the id column
+
+	/**
+	 * column_id
+	 * Used to display the value of the id column
+	 *
+	 * @param $item
+	 * @return string
+	 */
 		public function column_id($item)
 		{
 		    //return $item['ID'];
@@ -128,7 +133,12 @@ class Quotation_Table extends WP_List_Table
         );
         
 		}
-		
+
+	/**
+	 * column_booking_object
+	 *
+	 * @param $item
+	 */
 		public function column_booking_object($item){
 			$json_obj = $item['booking_object'];
 			$tripID =  $item['ID'];
@@ -206,7 +216,7 @@ class Quotation_Table extends WP_List_Table
 			//return $budgetMaxTotal;
 		}
 		
-		/**
+	/**
      * Define what data to show on each column of the table
      *
      * @param  Array $item        Data
@@ -404,10 +414,12 @@ class Quotation_Table extends WP_List_Table
 		     wp_die('Settings updated');
 	  }
 	}
-	
-	/*
-		@param integer ($id)
-	*/
+
+	/**
+	 * deleteItems
+	 *
+	 * @param $id
+	 */
 	public function deleteItems($id){
 	  global $wpdb;
       $table = $wpdb->prefix.'online_booking';

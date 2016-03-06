@@ -17,6 +17,12 @@
 <?php add_thickbox(); ?>
 <div class="wrap">
 <h1>Online Booking - Events en cours</h1>
+	<p>
+		Pour modifier les events des users :
+		<a target="_blank" href="<?php echo site_url().'/'.BOOKING_URL.'/?mod=on'; ?>">
+			Modifier
+		</a>
+	</p>
 <form method="post">
 <?php 
 	

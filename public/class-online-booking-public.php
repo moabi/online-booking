@@ -20,7 +20,7 @@
  * @subpackage Online_Booking/public
  * @author     little-dream.fr <david@loading-data.com>
  */
-define('BOOKING_URL', 'reservation-service');
+define('BOOKING_URL', "reservation-service");
 define('CONFIRMATION_URL', 'validation-devis');
 define('SEJOUR_URL', 'nos-sejours');
 define('DEVIS_EXPRESS', 'devis-express');
@@ -122,19 +122,6 @@ class Online_Booking_Public
     public function enqueue_styles()
     {
 
-        /**
-         * This function is provided for demonstration purposes only.
-         *
-         * An instance of this class should be passed to the run() function
-         * defined in Online_Booking_Loader as all of the hooks are defined
-         * in that particular class.
-         *
-         * The Online_Booking_Loader will then create the relationship
-         * between the defined hooks and the functions defined in this
-         * class.
-         */
-
-
         wp_enqueue_style($this->plugin_name . 'plugins', plugin_dir_url(__FILE__) . 'css/onlyoo-plugins.css', array(), $this->version, 'all');
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/online-booking-public.css', array(), $this->version, 'all');
         wp_enqueue_style($this->plugin_name . 'jquery-ui', plugin_dir_url(__FILE__) . 'js/jquery-ui/jquery-ui.min.css', array(), $this->version, 'all');
@@ -148,27 +135,26 @@ class Online_Booking_Public
      */
     public function enqueue_scripts()
     {
-
-        /**
-         * This function is provided for demonstration purposes only.
-         *
-         * An instance of this class should be passed to the run() function
-         * defined in Online_Booking_Loader as all of the hooks are defined
-         * in that particular class.
-         *
-         * The Online_Booking_Loader will then create the relationship
-         * between the defined hooks and the functions defined in this
-         * class.
-         */
         wp_enqueue_script($this->plugin_name . 'moment', plugin_dir_url(__FILE__) . 'js/moment-with-locales.js', array('jquery'), $this->version, true);
         wp_enqueue_script($this->plugin_name . 'jqueryUi', plugin_dir_url(__FILE__) . 'js/jquery-ui/jquery-ui.min.js', array('jquery'), $this->version, true);
 
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/online-booking-plugins.js', array('jquery'), $this->version, true);
         wp_enqueue_script('booking-custom', plugin_dir_url(__FILE__) . 'js/online-booking-custom.js', array('jquery'), $this->version, true);
 
+        $modify = (isset($_GET['mod'])) ? true : false;
+        if( current_user_can( 'administrator' ) || current_user_can('onlyoo_team') ) {
+            wp_enqueue_script('booking-admin', plugin_dir_url(__FILE__) . 'js/online-booking-admin.js', array('jquery','booking-custom'), $this->version, true);
+        }
+
     }
 
-
+    /**
+     * get_custom_post_type_template
+     * Load specific template
+     *
+     * @param $single_template
+     * @return string
+     */
     public function get_custom_post_type_template($single_template)
     {
         global $post;
@@ -181,7 +167,13 @@ class Online_Booking_Public
         return $single_template;
     }
 
-
+    /**
+     * remove_medialibrary_tab
+     * hide library to non administrators
+     *
+     * @param $tabs
+     * @return mixed
+     */
     public function remove_medialibrary_tab($tabs)
     {
         if (!current_user_can('administrator')) {
@@ -190,7 +182,14 @@ class Online_Booking_Public
         return $tabs;
     }
 
-    /*add specific classes to body*/
+
+    /**
+     * my_body_class_names
+     * add specific classes to body
+     *
+     * @param $classes
+     * @return array
+     */
     public function my_body_class_names($classes)
     {
         global $post;
@@ -202,9 +201,14 @@ class Online_Booking_Public
         return $classes;
     }
 
-    /*
+
+    /**
+     * booking_page_template
      * add page templates
-    */
+     *
+     * @param $page_template
+     * @return string
+     */
     public function booking_page_template($page_template)
     {
         if (is_page(BOOKING_URL)) {
@@ -347,9 +351,16 @@ class Online_Booking_Public
     }
 
 
-    /*
-    * provide a way to work with date range
-    */
+    /**
+     * date_range
+     * provide a way to work with date range
+     *
+     * @param $first
+     * @param $last
+     * @param string $step
+     * @param string $output_format
+     * @return array
+     */
     public function date_range($first, $last, $step = '+1 day', $output_format = 'd/m/Y')
     {
 
@@ -366,10 +377,9 @@ class Online_Booking_Public
         return $dates;
     }
 
-
     /**
+     * lieu
      * Register Custom Taxonomy
-     *
      * for reservation & sejour
      */
     public function lieu()
@@ -407,8 +417,8 @@ class Online_Booking_Public
 
     }
 
-
     /**
+     * reservation_type
      * Register Custom Taxonomy
      * for reservation custom post type
      */
@@ -575,11 +585,9 @@ class Online_Booking_Public
 
     }
 
-
-
     /**
+     * sejour_post_type
      * Register Custom Post Type: sejour
-     *
      */
     public function sejour_post_type()
     {
@@ -624,8 +632,8 @@ class Online_Booking_Public
     }
 
 
-
     /**
+     * partner_post_type
      * Register Custom Post Type: partner
      */
     public function partner_post_type()
@@ -672,8 +680,10 @@ class Online_Booking_Public
 
 
     /**
+     * ajxfn
      * ajax FUNCTIONS
      * filter request and take actions
+     *
      */
     public function ajxfn()
     {
@@ -683,7 +693,7 @@ class Online_Booking_Public
         if (!empty($_REQUEST['theme']) && !empty($_REQUEST['geo'])) {
             $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : null;
             $searchTerm = isset($_REQUEST['search']) ? $_REQUEST['search'] : '';
-            $content = Online_Booking_Public::ajax_get_latest_posts($_REQUEST['theme'], $_REQUEST['geo'], $type,$searchTerm);
+            $content = Online_Booking_Public::ajax_get_latest_posts($_REQUEST['theme'], $_REQUEST['geo'], $type, $searchTerm);
             $output = $content;
 
         } else if (!empty($_REQUEST['reservation'])) {
@@ -851,6 +861,7 @@ class Online_Booking_Public
       src: selectedOne,
       type: 'inline'
   },
+  mainClass: 'add-id-load',
   callbacks: {
 	  afterClose: function() {
 	  	console.log('Popup is completely closed');
@@ -875,11 +886,10 @@ class Online_Booking_Public
             return $posts;
 
 
-        } else{
+        } else {
             return '';
         }
     }
-
 
 
     /**
@@ -1152,7 +1162,7 @@ class Online_Booking_Public
 
             $posts .= '<div class="term_wrapper" data-place="' . $global_lieu . '" data-theme="' . $global_theme . '" data-id="' . $reservation_type_ID . '-' . $reservation_type_slug . '-- ' . $filter_type . '">';
 
-			$_s = strip_tags($searchTerm);
+            $_s = strip_tags($searchTerm);
             $args = array(
                 'post_type' => 'reservation',
                 'post_status' => 'publish',
@@ -1176,7 +1186,7 @@ class Online_Booking_Public
                     ),
 
                 ),
-                 's' => $_s
+                's' => $_s
             );
 
 
@@ -1209,24 +1219,24 @@ class Online_Booking_Public
      * @param int $nb
      * @param bool|false $onBookingPage
      */
-    public static function the_sejours($nb = 5, $onBookingPage = false,$lieu = false)
+    public static function the_sejours($nb = 5, $onBookingPage = false, $lieu = false)
     {
 
-		if($lieu == false){
-			$terms = get_terms('lieu', array(
-	            'orderby' => 'count',
-	            'hide_empty' => 1,
-	            'parent' => 0,
-	        ));
-		} else {
-			$terms = get_terms('lieu', array(
-	            'orderby' => 'count',
-	            'hide_empty' => 1,
-	            'parent' => 0,
-	            'name' => $lieu
-	        ));
-		}
-        
+        if ($lieu == false) {
+            $terms = get_terms('lieu', array(
+                'orderby' => 'count',
+                'hide_empty' => 1,
+                'parent' => 0,
+            ));
+        } else {
+            $terms = get_terms('lieu', array(
+                'orderby' => 'count',
+                'hide_empty' => 1,
+                'parent' => 0,
+                'name' => $lieu
+            ));
+        }
+
         //var_dump($terms);
         foreach ($terms as $term) {
             $goToBookingPage = $onBookingPage ? 'true' : 'false';
@@ -1314,11 +1324,11 @@ class Online_Booking_Public
                         endwhile;
                     endif;
                     $dayTrip .= '}';
-					$colgrid = ($nb == 3) ? 'pure-u-md-1-3' : 'pure-u-md-1-4';
-                    $sejour .= '<div id="post-' . $postID . '" class="block-trip pure-u-1 '.$colgrid.'"><div class="block-trip">';
+                    $colgrid = ($nb == 3) ? 'pure-u-md-1-3' : 'pure-u-md-1-4';
+                    $sejour .= '<div id="post-' . $postID . '" class="block-trip pure-u-1 ' . $colgrid . '"><div class="block-trip">';
                     $sejour .= '<h2>' . get_the_title() . '</h2>';
                     $sejour .= get_the_post_thumbnail($postID, 'square');
-                    $sejour .= '<div class="presta">'. substr(get_the_content(), 0,120) .'</div>';
+                    $sejour .= '<div class="presta">' . substr(get_the_content(), 0, 120) . '</div>';
                     $sejour .= '<script>';
                     $sejour .= 'sejour' . $postID . ' = {
 	                		"sejour" : "' . get_the_title() . '",

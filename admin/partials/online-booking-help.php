@@ -1,6 +1,14 @@
 <div class="wrap">
 <h2>Online-booking - Help</h2>
-
+	<?php
+	$obp = new Online_Booking_Public('online-booking','1.0');
+	?>
+<p>
+	Pour modifier les events des users :
+	<a target="_blank" href="<?php echo site_url().'/'.BOOKING_URL.'/?mod=on'; ?>">
+		Modifier
+	</a>
+</p>
 
 
 <h3>UserRoles</h3>
