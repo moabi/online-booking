@@ -310,7 +310,7 @@ function tripToCookie(reservation){
  */
 function estimateUserTrip(tripID){
 	$.ajax({
-		url: '/wp-admin/admin-ajax.php',
+		url: ajaxUrl,
 		data:{
 			'action':'do_ajax',
 			'estimateUserTrip' : tripID

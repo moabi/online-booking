@@ -42,7 +42,7 @@ class online_booking_budget  {
 	 */
 	private $version;
 	
-	public static function the_budget($tripID , $item, $tripDate){
+	public function the_budget($tripID , $item, $tripDate){
 		
 
 		$budget = json_decode($item, true);
@@ -116,22 +116,50 @@ class online_booking_budget  {
 		echo '</div>';
 
 	}
-	
-	
-	/*
-		Display a SEJOUR from the jSON file in DB
-		@param integer ($tripID) tripID as in the DB
-		@param string ($item) the booking original object
-		@param integer validation state (0 - 4 )
-	*/
-	public static function the_trip($tripID , $item, $state){
 
-		$budget = json_decode($item, true);
+
+
+
+	/**
+	 * the_trip
+	 * Display a SEJOUR from the jSON file in DB
+	 *
+	 *
+	 * @param $tripID integer tripID as in the DB
+	 * @param $item object the booking original object json
+	 * @param $state integer (0 - 4 )
+	 * @param bool $from_db
+	 * @return $output Quote/invoice
+	 */
+	public function the_trip($tripID , $item, $state,$from_db = false){
+
+		if($from_db == true){
+
+			global $wpdb;
+			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID
+			$sql = $wpdb->prepare("
+						SELECT *
+						FROM ".$wpdb->prefix."online_booking a
+						WHERE a.ID = %d
+						",$tripID);
+
+			$results = $wpdb->get_results($sql);
+			//var_dump($results);
+			$it = $results[0];
+			$item = (isset($results[0])) ? $it->booking_object : $item;
+
+			$budget = json_decode($item, true);
+
+		} else {
+			$budget = json_decode($item, true);
+		}
+		$output = '';
+
 		$budgetMaxTotal = $budget['participants'] * $budget['budgetPerMax'];
 		$ux = new online_booking_ux;
 		//var_dump($budget);
-		echo '<div id="event-trip-planning" class="trip-public">';
-		echo '<div class="trip-public-user">';
+		$output .= '<div id="event-trip-planning" class="trip-public">';
+		$output .= '<div class="trip-public-user">';
 
 		$trips = $budget['tripObject'];
 		$budgetSingle = array();
@@ -142,22 +170,22 @@ class online_booking_budget  {
 		$place_trip = get_term_by('id', $place_id, 'lieu');
 		$dates = ($budget['arrival'] == $budget['departure']) ? $budget['arrival'] : ' du '.$budget['arrival'].' au '.$budget['departure'];
 		
-			echo '<div class="activity-budget-user pure-g"><div class="post-content" style="width:100%">';
-			echo '<div class="pure-u-6-24"><i class="fa fa-map-marker"></i>Lieu: <strong>'.$place_trip->name.'</strong></div>';
-		    echo '<div class="pure-u-6-24"><i class="fa fa-users"></i>Participants: <strong>'.$budget['participants'].' personnes</strong></div>';
-		    echo '<div class="pure-u-6-24"><i class="fa fa-clock-o"></i>Durée : <strong>'.$days.'</strong></div>';
-		    echo '<div class="pure-u-6-24"><i class="fa fa-calendar"></i>Date : <strong>'.$dates.'</strong></div>';
-		    echo '</div></div>';
+			$output .= '<div class="activity-budget-user pure-g"><div class="post-content" style="width:100%">';
+			$output .= '<div class="pure-u-6-24"><i class="fa fa-map-marker"></i>Lieu: <strong>'.$place_trip->name.'</strong></div>';
+		    $output .= '<div class="pure-u-6-24"><i class="fa fa-users"></i>Participants: <strong>'.$budget['participants'].' personnes</strong></div>';
+		    $output .= '<div class="pure-u-6-24"><i class="fa fa-clock-o"></i>Durée : <strong>'.$days.'</strong></div>';
+		    $output .= '<div class="pure-u-6-24"><i class="fa fa-calendar"></i>Date : <strong>'.$dates.'</strong></div>';
+		    $output .= '</div></div>';
 		
 		$trip_dates =  array_keys($trips);
 		$days_count = 0;
 		foreach ($trips as $trip) {
 			$dayunit = $days_count + 1;
-			echo '<div class="event-day day-content post-content">';
-			echo '<div class="etp-day">';
-			echo '<div class="day-title">';
-			echo '<i class="fa fa-calendar"></i>Journée '. $dayunit .' - '.$trip_dates[$days_count].'</div>';
-			echo '</div>';
+			$output .= '<div class="event-day day-content post-content">';
+			$output .= '<div class="etp-day">';
+			$output .= '<div class="day-title">';
+			$output .= '<i class="fa fa-calendar"></i>Journée '. $dayunit .' - '.$trip_dates[$days_count].'</div>';
+			$output .= '</div>';
 			
 		    //  Check type
 		    if (is_array($trip)){
@@ -165,39 +193,39 @@ class online_booking_budget  {
 		        //var_dump($trip);
 		        $trip_id =  array_keys($trip);
 		        $i = 0;
-		        echo '<div class ="etp-days" >';
+		        $output .= '<div class ="etp-days" >';
 		        foreach ($trip as $value) {
 			        //calculate 
 			        //var_dump($value);
 			        array_push($budgetSingle, $value['price']);
 			        $excerpt = get_field('la_prestation_comprend',$trip_id[$i]);
 			        //html
-			        echo '<div data-id="'.$trip_id[$i].'" class="pure-u-1 single-activity-row">';
+			        $output .= '<div data-id="'.$trip_id[$i].'" class="pure-u-1 single-activity-row">';
 			        
 										
-			        echo '<div class="pure-u-1 pure-u-md-3-24">';
-			        echo get_the_post_thumbnail($trip_id[$i],array(180,120));
-			        echo'</div>';
+			        $output .= '<div class="pure-u-1 pure-u-md-3-24">';
+			        $output .= get_the_post_thumbnail($trip_id[$i],array(180,120));
+					$output .= '</div>';
 			        
-			        echo '<div class="pure-u-1 pure-u-md-3-24 sejour-type">';
-			        	echo $ux->get_reservation_type($trip_id[$i]);
-			        echo'</div>';
+			        $output .= '<div class="pure-u-1 pure-u-md-3-24 sejour-type">';
+			        	$output .=$ux->get_reservation_type($trip_id[$i]);
+					$output .= '</div>';
 			        
-			        echo '<div class="pure-u-1 pure-u-md-17-24">';
-			        echo '<h3><a href="'.get_permalink($trip_id[$i]).'" target="_blank">';
-			        echo $value['name'].'</a></h3>';
-		            echo substr($excerpt, 0, 250) ;
-		            echo '</div>';
-		            echo '</div>';
+			        $output .= '<div class="pure-u-1 pure-u-md-17-24">';
+			        $output .= '<h3><a href="'.get_permalink($trip_id[$i]).'" target="_blank">';
+			        $output .= $value['name'].'</a></h3>';
+		            $output .= substr($excerpt, 0, 250) ;
+		            $output .= '</div>';
+		            $output .= '</div>';
 		            $i++;
 		        }
-		        echo '</div>';
+		        $output .= '</div>';
 		        $days_count++;
 		    }else{
 		        // one, two, three
-		        echo $trip;
+		        $output .= $trip;
 		    }
-		    echo '</div>';
+		    $output .= '</div>';
 		    
 		}
 
@@ -206,29 +234,31 @@ class online_booking_budget  {
 			if(is_user_logged_in() && $state < 2){
 			$budgetPerParticipant = array_sum($budgetSingle);
 			$budgetPerParticipantTtc = $budgetPerParticipant*1.2;
-			echo '<div class="pure-g post-content"><div class="event-day" style="padding:1em;background:#fafafa;">';
-		    echo '<div class="pure-g">';
-		    echo '<div class="pure-u-1-2">Nos prix sont calculés sur la base de nombre de participants indiqués dans votre devis. Le prix et la disponibilité de la prestation sont garantis le jour de l\'émission du devis et sont suceptibles d\'être réajustés lors de votre validation.</div>';
-		    echo '<div class="pure-u-1-2" style="text-align:right;">';
-		    echo 'Total budget HT : '.$budgetPerParticipant.'€<br />';
-		    echo 'Total budget TTC : '.$budgetPerParticipantTtc.'€<br />';
-		    echo '</div></div>';
+			$output .= '<div class="pure-g post-content"><div class="event-day" style="padding:1em;background:#fafafa;">';
+		    $output .= '<div class="pure-g">';
+		    $output .= '<div class="pure-u-1-2">Nos prix sont calculés sur la base de nombre de participants indiqués dans votre devis. Le prix et la disponibilité de la prestation sont garantis le jour de l\'émission du devis et sont suceptibles d\'être réajustés lors de votre validation.</div>';
+		    $output .= '<div class="pure-u-1-2" style="text-align:right;">';
+		    $output .= 'Total budget HT : '.$budgetPerParticipant.'€<br />';
+		    $output .= 'Total budget TTC : '.$budgetPerParticipantTtc.'€<br />';
+		    $output .= '</div></div>';
 		    
 		    if($state == 0){
-				echo '<div class="pure-g" id="userTrips"><div class="pure-u-1-2">';
-			    echo '<div class="btn btn-border" onclick="loadTrip(trip,true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Modifier votre séjour','online-booking').'</div>';
-			    echo '</div><div class="pure-u-1-2">';
-			    echo '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')"><i class="fa fa-check"></i>Valider mon devis</div>';
-			    echo '</div></div>';
+				$output .= '<div class="pure-g" id="userTrips"><div class="pure-u-1-2">';
+			    $output .= '<div class="btn btn-border" onclick="loadTrip(trip,true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Modifier votre séjour','online-booking').'</div>';
+			    $output .= '</div><div class="pure-u-1-2">';
+			    $output .= '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')"><i class="fa fa-check"></i>Valider mon devis</div>';
+			    $output .= '</div></div>';
 		    }
-		    echo '</div>';
-		    echo '</div></div>';
+		    $output .= '</div>';
+		    $output .= '</div></div>';
 		    
 		    //#budget
 		    }
 		
-		echo '</div>';
-		echo '</div>';
+		$output .= '</div>';
+		$output .= '</div>';
+
+		return $output;
 
 	}
 

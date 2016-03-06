@@ -90,13 +90,14 @@ class Online_Booking_Admin {
 	public function ob_generate_pdf($text,$name){
 		
 		// instantiate and use the dompdf class
+		$html_content = (!empty($text)) ? $text : 'Empty document - please refer to your webmaster';
 		$dompdf = new Dompdf();
-		$text = '';
 		$dompdf->loadHtml($text);
 		$dompdf->setPaper('A4', 'landscape');
 		$dompdf->render();
 		$output = $dompdf->output();
-		file_put_contents('pdf/'.$name.'.pdf', $output);
+		$path = __DIR__.'/pdf/';
+		file_put_contents($path.$name.'.pdf', $output);
 	    
 		// Output the generated PDF to Browser
 		//$dompdf->stream();
@@ -104,10 +105,10 @@ class Online_Booking_Admin {
 	}
 
 
-	
-	/*
-		Add option page
-	*/
+	/**
+	 * online_booking_menu
+	 * Add option page
+	 */
 	public function online_booking_menu(){	
 		add_menu_page( 'Online Booking', 'Online Booking', 'publish_pages', 'online-booking-orders', array( $this, 'helper' ) );
 		
@@ -126,9 +127,11 @@ class Online_Booking_Admin {
 	  return $links;
 	}
 	
-	/*
-		
-	*/
+
+	/**
+	 * helper,estimate,emails,ob_help
+	 * include partial admin display
+	 */
 	public function helper(){
 		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-orders.php';
 		include_once $admin_view;
@@ -145,7 +148,11 @@ class Online_Booking_Admin {
 		$admin_view = plugin_dir_path( __FILE__ ) . 'partials/online-booking-help.php';
 		include_once $admin_view;
 	}
-	
+
+	/**
+	 * register_ob_settings
+	 * register admin wp settings
+	 */
 	public function register_ob_settings() {
 		//register our settings
 		register_setting( 'ob-settings-group', 'ob_admin_email' );
@@ -159,11 +166,12 @@ class Online_Booking_Admin {
 
 	}
 
-	
-	/*
-		get_users_booking
-	*/
-	public static function get_users_booking($validation = '0'){
+
+	/**
+	 * get_users_booking
+	 * @param integer $validation (0- 4)
+	 */
+	public static function get_users_booking($validation = 0){
 			global $wpdb;
 			//LEFT JOIN $wpdb->users b ON a.user_ID = b.ID	
 			$sql = $wpdb->prepare(" 

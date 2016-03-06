@@ -378,31 +378,41 @@ class online_booking_user  {
 	 * @return string
 	 */
 	 public function estimateUserTrip($tripIDtoEstimate){
+		 $oba = new Online_Booking_Admin( 'online-booking','1.0');
+		 $obb = new online_booking_budget;
 		 global $wpdb;
 		
 		$userID = get_current_user_id();
 		$date =  current_time('mysql', 1);
-		if(!empty($userID) &&  is_user_logged_in() ):
-			$table = $wpdb->prefix.'online_booking';
-			$rowToEstimate = $wpdb->update( 
-					$table, 
-					array(
-						'validation'	=> '1'
-					),
-					array( 
-						'ID' 			=> $tripIDtoEstimate,
-					),
-					array(
-						'%d'
-					),
-					array( '%d' ) 
-			 );
+		 //Security - user logged
+		 //relation between user && trip
+		if(!empty($userID) &&  is_user_logged_in() ) {
+			$table = $wpdb->prefix . 'online_booking';
+			$rowToEstimate = $wpdb->update(
+				$table,
+				array(
+					'validation' => '1'
+				),
+				array(
+					'ID' => $tripIDtoEstimate,
+				),
+				array(
+					'%d'
+				),
+				array('%d')
+			);
 			$userTripsEstimate = "success";
+			//send confirmation email
 			$mailer = new Online_Booking_Mailer;
 			$mailer->confirmation_mail($userID);
-		else: 
-			$userTripsEstimate = 'failed to delete';
-		endif;
+			//generate pdf quote
+			$html_content = $obb->the_trip($tripIDtoEstimate, false,0,true);
+			$pdf_name = 'ob-devis-'.$userID.$tripIDtoEstimate.'-v0';
+			$oba->ob_generate_pdf($html_content, $pdf_name);
+
+		} else {
+			$userTripsEstimate = 'failed to update trip status';
+		}
 
 		return $userTripsEstimate;
 	 }

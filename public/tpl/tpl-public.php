@@ -14,7 +14,7 @@
  
  $ux = new online_booking_ux;
  $obp = new Online_Booking_Public('ob',1);
- $online_booking_budget = new online_booking_budget();
+ $online_booking_budget = new online_booking_budget;
  $online_booking_user = new online_booking_user;
  
 ?>
@@ -81,9 +81,9 @@
 					echo '<script>var trip = '.$booking.'</script>';
 					
 				}
-				
-				
-				online_booking_budget::the_trip($results[0]->ID , $booking,$state);
+
+
+				echo $online_booking_budget->the_trip($results[0]->ID , $booking,$state,true);
 				if(intval($state) == 0){
 					echo '<div class="post-content">';
 					echo $ux->socialShare();
