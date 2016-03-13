@@ -16,7 +16,10 @@
  * @since Twenty Fifteen 1.0
  */
 
-get_header(); ?>
+get_header();
+
+$obp = new Online_Booking_Public('online-booking','1.0');
+?>
 
 			<div id="desc-ar">
 			<header class="page-header inner-content">
@@ -28,7 +31,7 @@ get_header(); ?>
 			
 	<section id="primary" class="content-area archive-reservations">
 		<main id="main" class="site-main" role="main">
-			<?php Online_Booking_Public::the_sejours(20,true); ?>
+			<?php $obp->the_sejours(20,false,false,true); ?>
 		</main><!-- .site-main -->
 	</section><!-- .content-area -->
 

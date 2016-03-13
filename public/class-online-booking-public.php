@@ -1217,9 +1217,10 @@ class Online_Booking_Public
      * displays packages filtered by place
      *
      * @param int $nb
-     * @param bool|false $onBookingPage
+     * @param bool $onBookingPage
+     * @param bool $lieu
      */
-    public static function the_sejours($nb = 5, $onBookingPage = false, $lieu = false)
+    public function the_sejours($nb = 5, $onBookingPage = false, $lieu = false,$slider = false)
     {
 
         if ($lieu == false) {
@@ -1240,7 +1241,7 @@ class Online_Booking_Public
         //var_dump($terms);
         foreach ($terms as $term) {
             $goToBookingPage = $onBookingPage ? 'true' : 'false';
-            $is_slider = $onBookingPage ? 'grid-style' : 'slick-multi';
+            $slider = ($slider == false) ? 'grid-style' : 'slick-multi';
             // The Loop
 
             $args = array(
@@ -1254,7 +1255,7 @@ class Online_Booking_Public
             $the_query = new WP_Query($args);
 
             if ($the_query->have_posts()) {
-                $sejour = '<div class="blocks sejour-content pure-g"><div class="' . $is_slider . '">';
+                $sejour = '<div class="blocks sejour-content pure-g"><div class="' . $slider . '">';
                 echo '<h4><i class="fa fa-map-marker"></i>' . $term->name . '</h4>';
                 while ($the_query->have_posts()) {
                     $the_query->the_post();
@@ -1369,7 +1370,7 @@ class Online_Booking_Public
      * @param $postid
      * @param bool|false $single_btn
      */
-    public static function the_sejour_btn($postid, $single_btn = false)
+    public function the_sejour_btn($postid, $single_btn = false)
     {
         $postID = $postid;
         $sejours_url = 'nos-sejours';

@@ -1,6 +1,7 @@
 /*online-booking*/
 var $ = jQuery,
-	ajaxUrl = '/onlyoo/wp-admin/admin-ajax.php';
+	$ajxPrefix = (window.location.hostname === 'localhost') ? '/onlyoo': '';
+	ajaxUrl = $ajxPrefix+'/wp-admin/admin-ajax.php';
 var bookingPage = '/reservation-service/';
 var isBookingTpl = $('#booking-wrapper').length;
 var daysSelector = $('#daysSelector'),

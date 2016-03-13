@@ -12,6 +12,7 @@ get_header(); ?>
 <?php 
 	$postid = get_the_ID(); 
 	$ux = new online_booking_ux;
+	$obp = new Online_Booking_Public('online-booking','1.0');
 ?>
 
 <?php if (has_post_thumbnail( $post->ID ) ): ?>
@@ -54,7 +55,7 @@ get_header(); ?>
 			<?php echo $ux->get_place($postid); ?>
 				</span>
 			<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'twentytwelve' ) ); ?>
-			<?php Online_Booking_Public::the_sejour_btn($postid); ?>
+			<?php $obp->the_sejour_btn($postid); ?>
 		</div>
 	</div>
 </div>
@@ -87,7 +88,7 @@ get_header(); ?>
 			
 		</div>
 		<div class="pure-u-1-2">
-			<?php Online_Booking_Public::the_sejour_btn($postid,true); ?>
+			<?php $obp->the_sejour_btn($postid,true); ?>
 		</div>
 	</div>
 
@@ -98,7 +99,7 @@ get_header(); ?>
         <?php _e('Autres idées de package','online-booking'); ?>
         </h2>
 
-		<?php Online_Booking_Public::the_sejours(8,false,$lieu_sejour); ?>
+		<?php $obp->the_sejours(8,false,$lieu_sejour,true); ?>
 		
 
 	</article><!-- #post -->

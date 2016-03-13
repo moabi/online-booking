@@ -274,7 +274,7 @@ echo $ux->get_onlyoo_admin_trip_manager();
         <?php _e('Vous aimerez également','online-booking'); ?>
         </h2>
 
-		<?php $obp->the_sejours(8,false); ?>
+		<?php $obp->the_sejours(8,true,false,true); ?>
 		</div>
 		</div><!-- #content -->
 

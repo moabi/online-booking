@@ -11,6 +11,7 @@ get_header(); ?>
 
 <?php
 $ux = new online_booking_ux;
+global $post;
 ?>
 <?php if (has_post_thumbnail($post->ID)): ?>
     <?php $image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID)); ?>
@@ -238,7 +239,7 @@ $ux = new online_booking_ux;
             ?>
         </em>
     </h2>
-    <div id="activities-content" class="blocks related-activities">
+    <div id="activities-content" class="blocks related-activities slick-multi">
         <?php
 
         //var_dump($term_lieu[0]->slug);
