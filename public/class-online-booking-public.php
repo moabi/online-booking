@@ -854,7 +854,7 @@ class Online_Booking_Public
 
 
                     $posts .= '</div>';
-                    $posts .= '<script>jQuery(function(){';
+                    $posts .= '<script type="text/javascript">jQuery(function(){';
                     $posts .= "var selectedOne = $('#selectedOne');";
                     $posts .= "$.magnificPopup.open({
   items: {
@@ -1555,7 +1555,7 @@ class Online_Booking_Public
     public function header_form()
     {
         global $current_user;
-        get_currentuserinfo();
+        wp_get_current_user();
         //var_dump($current_user);
         if (!is_user_logged_in()):
             $output = '<div id="logger">';
@@ -1609,7 +1609,7 @@ class Online_Booking_Public
     public function current_user_infos()
     {
         global $current_user;
-        get_currentuserinfo();
+        wp_get_current_user();
         //var_dump($current_user);
         if (is_user_logged_in()):
             $output = '<div id="logged_in_info" style="display:none;">';
