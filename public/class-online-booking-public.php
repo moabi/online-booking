@@ -63,6 +63,7 @@ class Online_Booking_Public
 
     }
 
+
     public function get_plugin_utilities($name)
     {
         $utility = '';
@@ -159,8 +160,8 @@ class Online_Booking_Public
     {
         global $post;
 
-        if ($post->post_type == 'reservation') {
-            $single_template = plugin_dir_path(__FILE__) . 'tpl/single-reservation.php';
+        if ($post->post_type == 'product') {
+            $single_template = plugin_dir_path(__FILE__) . 'tpl/single-product.php';
         } else if ($post->post_type == 'sejour') {
             $single_template = plugin_dir_path(__FILE__) . 'tpl/single-sejour.php';
         }
@@ -413,7 +414,7 @@ class Online_Booking_Public
             'show_in_nav_menus' => true,
             'show_tagcloud' => true,
         );
-        register_taxonomy('lieu', array('reservation', 'sejour'), $args);
+        register_taxonomy('lieu', array('reservation', 'sejour','product'), $args);
 
     }
 
@@ -453,7 +454,7 @@ class Online_Booking_Public
             'show_in_nav_menus' => true,
             'show_tagcloud' => true,
         );
-        register_taxonomy('reservation_type', array('reservation'), $args);
+        register_taxonomy('reservation_type', array('reservation','product'), $args);
 
     }
 
@@ -493,7 +494,7 @@ class Online_Booking_Public
             'show_in_nav_menus' => true,
             'show_tagcloud' => true,
         );
-        register_taxonomy('theme', array('reservation'), $args);
+        register_taxonomy('theme', array('reservation','product'), $args);
 
     }
 
@@ -534,7 +535,7 @@ class Online_Booking_Public
             'show_in_nav_menus' => true,
             'show_tagcloud' => true,
         );
-        register_taxonomy('theme_activity', array('reservation'), $args);
+        register_taxonomy('theme_activity', array('reservation','product'), $args);
 
     }
 
@@ -707,7 +708,7 @@ class Online_Booking_Public
             $output = $user_action->estimateUserTrip($userTrip);
         } else if (!empty($_REQUEST['id'])) {
             $post_id = intval($_REQUEST['id']);
-            $page_data = get_page($post_id);
+            $page_data = get_post($post_id);
             if ($page_data) {
                 if ($page_data->post_status == "publish") {
                     //post_name
@@ -792,7 +793,7 @@ class Online_Booking_Public
             $data_order_val = (!empty($data_order)) ? $data_order : 0;
 
             $args = array(
-                'post_type' => 'reservation',
+                'post_type' => 'product',
                 'post_status' => 'publish',
                 'posts_per_page' => 1,
                 'p' => $post_ID
@@ -854,23 +855,26 @@ class Online_Booking_Public
 
 
                     $posts .= '</div>';
-                    $posts .= '<script type="text/javascript">jQuery(function(){';
-                    $posts .= "var selectedOne = $('#selectedOne');";
-                    $posts .= "$.magnificPopup.open({
-  items: {
-      src: selectedOne,
-      type: 'inline'
-  },
-  mainClass: 'add-id-load',
-  callbacks: {
-	  afterClose: function() {
-	  	console.log('Popup is completely closed');
-	  	var originalURL = window.location.href ;
-	  	removeParam('addId', originalURL);
-	}
-  }
-});";
-                    $posts .= '});</script>';
+                    $posts .= '<script type="text/javascript">
+                                    jQuery(function() {
+                                      var selectedOne = $("#selectedOne");
+                                      $.magnificPopup.open({
+                                        items: {
+                                          src: selectedOne,
+                                          type: "inline"
+                                        },
+                                        mainClass: "add-id-load",
+                                        callbacks: {
+                                          afterClose: function() {
+                                            console.log("Popup is completely closed");
+                                            var originalURL = window.location.href;
+                                            removeParam("addId", originalURL);
+                                          }
+                                        }
+                                      });
+                                    });
+                                </script>
+                            ';
 
                     $count_post++;
 
@@ -907,7 +911,7 @@ class Online_Booking_Public
         wp_reset_postdata();
 
         $args_act = array(
-            'post_type' => 'reservation',
+            'post_type' => 'product',
             'post_status' => 'publish',
             'posts_per_page' => 8,
             'orderby' => 'rand'
@@ -1164,7 +1168,7 @@ class Online_Booking_Public
 
             $_s = strip_tags($searchTerm);
             $args = array(
-                'post_type' => 'reservation',
+                'post_type' => 'product',
                 'post_status' => 'publish',
                 'posts_per_page' => 20,
                 'tax_query' => array(

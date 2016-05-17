@@ -64,10 +64,10 @@ function tsm_deregister_admin_styles() {
 				'post_title' => true,
 				'post_content' => true,
 				'new_post'		=> array(
-					'post_type'		=> 'reservation',
+					'post_type'		=> 'product',
 					'post_status'		=> 'pending'
 				),
-				'updated_message'    => 'Merci pour votre contribution,nous reviendrons vers vous rapidement pour valider votre activité'
+				'updated_message'    => 'Merci pour votre contribution,nous reviendrons vers vous rapidement pour valider votre activité',
 				'submit_value'		=> 'Proposez votre event'
 			)); 
 			

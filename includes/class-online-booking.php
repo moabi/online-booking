@@ -68,6 +68,8 @@ class Online_Booking {
 	 */
 	public function __construct() {
 
+
+
 		$this->plugin_name = 'online-booking';
 		$this->version = '1.0.0';
 
@@ -127,6 +129,7 @@ class Online_Booking {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-partners.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-budget.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-ux.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-online-booking-woocommerce.php';
 
 		$this->loader = new Online_Booking_Loader();
 
@@ -196,6 +199,7 @@ class Online_Booking {
 		
 		
 		$plugin_public = new Online_Booking_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_wc = new onlineBookingWoocommerce( $this->get_plugin_name(), $this->get_version() );
 		
 		//$this->loader->add_action( 'wpcf7_init',$plugin_public, 'custom_add_shortcode_clock' );
 
@@ -236,7 +240,15 @@ class Online_Booking {
 		//filter head
 		$this->loader->add_action('wp_head',$plugin_public,'header_form');
 		$this->loader->add_action('wp_head',$plugin_public,'current_user_infos');
-		
+
+		//woocommerce
+		$this->loader->add_filter( 'template_include', $plugin_wc,'wc_tpl', 99 );
+		$this->loader->add_action('init',$plugin_wc, 'wc_empty_cart');
+		$this->loader->add_action('init',$plugin_wc, 'wc_items_to_cart',10,5);
+		//
+		$this->loader->add_action( 'woocommerce_before_template_part',$plugin_wc, 'wc_before', 20, 0 );
+		$this->loader->add_action( 'woocommerce_after_template_part',$plugin_wc, 'wc_after', 20, 0 );
+
 
 
 	}

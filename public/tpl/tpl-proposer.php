@@ -45,7 +45,7 @@ function tsm_deregister_admin_styles() {
 			'post_title' => true,
 			'post_content' => true,
 			'new_post'		=> array(
-						'post_type'		=> 'reservation',
+						'post_type'		=> 'product',
 						'post_status'		=> 'pending'
 					),
 			// PUT IN YOUR OWN FIELD GROUP ID(s)
@@ -82,7 +82,7 @@ function tsm_do_pre_save_post( $post_id ) {
 	
 	// Create a new post
 	$post = array(
-		'post_type'     => 'reservation', // Your post type ( post, page, custom post type )
+		'post_type'     => 'product', // Your post type ( post, page, custom post type )
 		'post_status'   => 'pending', // (publish, draft, private, etc.)
 		'tax_input'      => array(
 			'lieu' => $acf_lieu,

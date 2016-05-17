@@ -21,7 +21,8 @@
  * @subpackage Online_Booking/public
  * @author     little-dream.fr <david@loading-data.com>
  */
- 
+
+
 class online_booking_budget  {
 
 		/**
@@ -144,10 +145,9 @@ class online_booking_budget  {
 						",$tripID);
 
 			$results = $wpdb->get_results($sql);
-			//var_dump($results);
+
 			$it = $results[0];
 			$item = (isset($results[0])) ? $it->booking_object : $item;
-
 			$budget = json_decode($item, true);
 
 		} else {
@@ -169,10 +169,11 @@ class online_booking_budget  {
 		$place_id = $budget['lieu'];
 		$place_trip = get_term_by('id', $place_id, 'lieu');
 		$dates = ($budget['arrival'] == $budget['departure']) ? $budget['arrival'] : ' du '.$budget['arrival'].' au '.$budget['departure'];
+		$number_participants = (isset($budget['participants'])) ? $budget['participants'] : 1;
 		
 			$output .= '<div class="activity-budget-user pure-g"><div class="post-content" style="width:100%">';
 			$output .= '<div class="pure-u-6-24"><i class="fa fa-map-marker"></i>Lieu: <strong>'.$place_trip->name.'</strong></div>';
-		    $output .= '<div class="pure-u-6-24"><i class="fa fa-users"></i>Participants: <strong>'.$budget['participants'].' personnes</strong></div>';
+		    $output .= '<div class="pure-u-6-24"><i class="fa fa-users"></i>Participants: <strong>'.$number_participants.' personnes</strong></div>';
 		    $output .= '<div class="pure-u-6-24"><i class="fa fa-clock-o"></i>Durée : <strong>'.$days.'</strong></div>';
 		    $output .= '<div class="pure-u-6-24"><i class="fa fa-calendar"></i>Date : <strong>'.$dates.'</strong></div>';
 		    $output .= '</div></div>';
@@ -187,33 +188,48 @@ class online_booking_budget  {
 			$output .= '<i class="fa fa-calendar"></i>Journée '. $dayunit .' - '.$trip_dates[$days_count].'</div>';
 			$output .= '</div>';
 			
-		    //  Check type
+
+			/**
+			 * loop through products
+			 * destroy any previous woocommerce session
+			 * create a new cart
+			 * add each product to cart with quantities (based on number of participants)
+			 */
+			//  Check type
 		    if (is_array($trip)){
 		        //  Scan through inner loop
-		        //var_dump($trip);
 		        $trip_id =  array_keys($trip);
 		        $i = 0;
 		        $output .= '<div class ="etp-days" >';
 		        foreach ($trip as $value) {
 			        //calculate 
 			        //var_dump($value);
-			        array_push($budgetSingle, $value['price']);
-			        $excerpt = get_field('la_prestation_comprend',$trip_id[$i]);
-			        //html
-			        $output .= '<div data-id="'.$trip_id[$i].'" class="pure-u-1 single-activity-row">';
-			        
-										
+					$product_id = (isset($trip_id[$i])) ? $trip_id[$i] : 0;
+					$productPrice = (isset($value['price'])) ? $value['price'] : 0;
+					$productName = (isset($value['name'])) ? $value['name'] : 'Undefined Name';
+					//old way to calculate price
+			        array_push($budgetSingle, $productPrice);
+					//woocommerce calculate price
+					//$obwc->wc_items_to_cart($product_id,$number_participants,0,array(),array());
+					//do_action( 'wc_items_to_cart', $product_id,$number_participants,0,array(),array());
+					//global $woocommerce;
+					//WC()->cart->add_to_cart($product_id, $number_participants);
+
+			        $excerpt = get_field('la_prestation_comprend',$product_id);
+			        //html - display each product
+			        $output .= '<div data-id="'.$product_id.'" class="pure-u-1 single-activity-row">';
 			        $output .= '<div class="pure-u-1 pure-u-md-3-24">';
-			        $output .= get_the_post_thumbnail($trip_id[$i],array(180,120));
+			        $output .= get_the_post_thumbnail($product_id,array(180,120));
 					$output .= '</div>';
 			        
 			        $output .= '<div class="pure-u-1 pure-u-md-3-24 sejour-type">';
-			        	$output .=$ux->get_reservation_type($trip_id[$i]);
+					$output .= $ux->get_reservation_type($product_id);
 					$output .= '</div>';
 			        
 			        $output .= '<div class="pure-u-1 pure-u-md-17-24">';
-			        $output .= '<h3><a href="'.get_permalink($trip_id[$i]).'" target="_blank">';
-			        $output .= $value['name'].'</a></h3>';
+			        $output .= '<h3><a href="'.get_permalink($product_id).'" target="_blank">';
+			        $output .= $productName.'</a></h3>';
+					$output .= do_shortcode('[add_to_cart id='.$product_id.']');
 		            $output .= substr($excerpt, 0, 250) ;
 		            $output .= '</div>';
 		            $output .= '</div>';
@@ -231,22 +247,29 @@ class online_booking_budget  {
 
 			//bUdget display
 			//var_dump($budgetSingle);
+			/*
+			 * User is logged In
+			 * Estimate or invoice Step
+			 *  */
 			if(is_user_logged_in() && $state < 2){
-			$budgetPerParticipant = array_sum($budgetSingle);
-			$budgetPerParticipantTtc = $budgetPerParticipant*1.2;
-			$output .= '<div class="pure-g post-content"><div class="event-day" style="padding:1em;background:#fafafa;">';
-		    $output .= '<div class="pure-g">';
-		    $output .= '<div class="pure-u-1-2">Nos prix sont calculés sur la base de nombre de participants indiqués dans votre devis. Le prix et la disponibilité de la prestation sont garantis le jour de l\'émission du devis et sont suceptibles d\'être réajustés lors de votre validation.</div>';
-		    $output .= '<div class="pure-u-1-2" style="text-align:right;">';
-		    $output .= 'Total budget HT : '.$budgetPerParticipant.'€<br />';
-		    $output .= 'Total budget TTC : '.$budgetPerParticipantTtc.'€<br />';
-		    $output .= '</div></div>';
-		    
+				$budgetPerParticipant = array_sum($budgetSingle);
+				$budgetPerParticipantTtc = $budgetPerParticipant*1.2;
+				$output .= '<div class="pure-g post-content"><div class="event-day" style="padding:1em;background:#fafafa;">';
+				$output .= '<div class="pure-g">';
+				$output .= '<div class="pure-u-1-2">Nos prix sont calculés sur la base de nombre de participants indiqués dans votre devis. Le prix et la disponibilité de la prestation sont garantis le jour de l\'émission du devis et sont suceptibles d\'être réajustés lors de votre validation.</div>';
+				$output .= '<div class="pure-u-1-2" style="text-align:right;">';
+				$output .= 'Total budget HT : '.$budgetPerParticipant.'€<br />';
+				$output .= 'Total budget TTC : '.$budgetPerParticipantTtc.'€<br />';
+				$output .= '</div></div>';
+		    /*
+		     * estimate step
+		     * */
 		    if($state == 0){
 				$output .= '<div class="pure-g" id="userTrips"><div class="pure-u-1-2">';
 			    $output .= '<div class="btn btn-border" onclick="loadTrip(trip,true)"><i class="fs1" aria-hidden="true" data-icon="j"></i>'.__('Modifier votre séjour','online-booking').'</div>';
 			    $output .= '</div><div class="pure-u-1-2">';
 			    $output .= '<div class="btn-orange btn quote-it js-quote-user-trip" onclick="estimateUserTrip('.$tripID.')"><i class="fa fa-check"></i>Valider mon devis</div>';
+
 			    $output .= '</div></div>';
 		    }
 		    $output .= '</div>';

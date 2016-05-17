@@ -59,7 +59,7 @@ class online_booking_partners
         $args = array(
             'author' => $userID,
             'post_status' => array('pending', 'draft', 'publish'),
-            'post_type' => 'reservation'
+            'post_type' => 'product'
         );
         $the_query = new WP_Query($args);
 

@@ -411,7 +411,7 @@ function saveTrip(existingTripId){
 		}
 		//request the ajax store fn
 		$.ajax({
-			url: '/wp-admin/admin-ajax.php',
+			url: ajaxUrl+'/wp-admin/admin-ajax.php',
 			data:{
 				'action':'do_ajax',
 				'reservation' : 1,
@@ -444,7 +444,7 @@ function saveTrip(existingTripId){
 					});
 				}
 				setTimeout(function(){
-					window.location = '/compte';
+					window.location = ajaxUrl+'/compte';
 				}, 1200)
 				
 
